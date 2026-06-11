@@ -47,8 +47,18 @@ if uploaded_files and st.button("Procesar Currículums 🚀"):
                 max_tokens=1000,
                 messages=[{"role": "user", "content": prompt}]
             )
-            datos_candidato = json.loads(message.content[0].text)
+            respuesta_texto = message.content[0].text
+            respuesta_texto = respuesta_texto.strip()
+            if "```" in respuesta_texto:
+                respuesta_texto = respuesta_texto.split("```")[1]
+                if respuesta_texto.startswith("json"):
+                    respuesta_texto = respuesta_texto[4:]
+            inicio = respuesta_texto.find("{")
+            fin = respuesta_texto.rfind("}") + 1
+            respuesta_texto = respuesta_texto[inicio:fin]
+            datos_candidato = json.loads(respuesta_texto)
             resultados.append(datos_candidato)
+            
         except Exception as e:
             st.error(f"Error procesando {file.name}: {e}")
         
