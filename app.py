@@ -43,7 +43,7 @@ if uploaded_files and st.button("Procesar Currículums 🚀"):
         
         try:
             message = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model="claude-3-5-sonnet-latest",
                 max_tokens=1000,
                 temperature=0,
                 messages=[{"role": "user", "content": prompt}]
