@@ -31,93 +31,182 @@ authenticator = stauth.Authenticate(
     cookie_expiry_days=30
 )
 
-# ── CSS GLOBAL (púrpura RecrutAI) ─────────────────────────────────────────────
+# ── CSS GLOBAL (púrpura RecrutAI - alta visibilidad) ──────────────────────────
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
   html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-  .main { background-color: #0e0c1e; }
+  /* Fondo principal: gris muy oscuro (no morado) para que el contenido respire */
+  .main { background-color: #12111a; }
 
-  /* Login personalizado */
-  .stForm { background: #1a1535 !important; border: 1px solid #534AB7 !important;
-            border-radius: 16px !important; padding: 2rem !important; }
-
-  /* Sidebar */
-  [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0e0c1e 0%, #1a1535 100%);
-    border-right: 1px solid #3C3489;
+  /* ── Textos globales: blanco puro para máxima legibilidad ── */
+  label, .stTextInput label, .stSelectbox label, .stTextArea label,
+  .stSlider label, .stFileUploader label, .stRadio label,
+  .stMultiSelect label, p, span, div {
+    color: #f0eeff !important;
   }
 
-  /* Botones primarios */
+  /* Inputs: fondo blanco roto con texto oscuro — se ven claramente */
+  .stTextInput input, .stTextArea textarea {
+    background: #f5f3ff !important;
+    color: #1a1035 !important;
+    border: 1.5px solid #7F77DD !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+  }
+  .stTextInput input::placeholder, .stTextArea textarea::placeholder {
+    color: #9490b8 !important;
+  }
+  .stTextInput input:focus, .stTextArea textarea:focus {
+    border-color: #AFA9EC !important;
+    box-shadow: 0 0 0 2px rgba(127,119,221,0.25) !important;
+  }
+
+  /* Selectbox: fondo claro, texto oscuro */
+  .stSelectbox > div > div {
+    background: #f5f3ff !important;
+    color: #1a1035 !important;
+    border: 1.5px solid #7F77DD !important;
+    border-radius: 8px !important;
+  }
+  .stSelectbox svg { fill: #534AB7 !important; }
+
+  /* Multiselect */
+  .stMultiSelect > div > div {
+    background: #f5f3ff !important;
+    border: 1.5px solid #7F77DD !important;
+    border-radius: 8px !important;
+    color: #1a1035 !important;
+  }
+
+  /* Radio buttons: texto blanco visible */
+  .stRadio > div { gap: 8px; }
+  .stRadio label { color: #f0eeff !important; font-size: 14px !important; }
+
+  /* Sliders: track en púrpura, label visible */
+  .stSlider > div > div > div { background: #534AB7 !important; }
+  .stSlider .st-emotion-cache-1dp5vir { color: #f0eeff !important; }
+
+  /* File uploader */
+  [data-testid="stFileUploader"] {
+    background: #1e1b2e !important;
+    border: 2px dashed #7F77DD !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── Sidebar: fondo oscuro con buena separación ── */
+  [data-testid="stSidebar"] {
+    background: #1a1730 !important;
+    border-right: 2px solid #534AB7;
+  }
+  [data-testid="stSidebar"] label {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+  }
+  [data-testid="stSidebar"] .stTextInput input,
+  [data-testid="stSidebar"] .stTextArea textarea {
+    background: #f5f3ff !important;
+    color: #1a1035 !important;
+    border: 1.5px solid #7F77DD !important;
+  }
+  [data-testid="stSidebar"] .stSelectbox > div > div {
+    background: #f5f3ff !important;
+    color: #1a1035 !important;
+    border: 1.5px solid #7F77DD !important;
+  }
+  /* Valores actuales de slider visibles */
+  [data-testid="stSidebar"] .stSlider [data-testid="stTickBarMin"],
+  [data-testid="stSidebar"] .stSlider [data-testid="stTickBarMax"],
+  [data-testid="stSidebar"] p { color: #e0dbff !important; }
+
+  /* ── Botones ── */
   .stButton > button[kind="primary"] {
     background: linear-gradient(135deg, #534AB7, #7F77DD) !important;
     border: none !important; border-radius: 10px !important;
     color: white !important; font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
+    font-size: 15px !important; letter-spacing: 0.5px !important;
+    padding: 0.6rem 1.2rem !important;
   }
   .stButton > button[kind="primary"]:hover {
-    background: linear-gradient(135deg, #7F77DD, #AFA9EC) !important;
+    background: linear-gradient(135deg, #6b61cc, #9890e8) !important;
     transform: translateY(-1px);
   }
-
-  /* Botones secundarios */
   .stButton > button {
     border-radius: 8px !important;
-    border: 1px solid #534AB7 !important;
-    color: #AFA9EC !important;
+    border: 1.5px solid #534AB7 !important;
+    color: #e0dbff !important;
+    background: transparent !important;
   }
+  .stButton > button:hover { background: #26215C !important; }
 
-  /* Tabs */
-  .stTabs [data-baseweb="tab-list"] { background: #1a1535; border-radius: 10px; padding: 4px; }
-  .stTabs [data-baseweb="tab"] { color: #7F77DD; border-radius: 8px; }
+  /* ── Tabs ── */
+  .stTabs [data-baseweb="tab-list"] {
+    background: #1e1b2e; border-radius: 10px; padding: 4px;
+    border: 1px solid #3C3489;
+  }
+  .stTabs [data-baseweb="tab"] { color: #AFA9EC; border-radius: 8px; font-weight: 500; }
   .stTabs [aria-selected="true"] { background: #534AB7 !important; color: white !important; }
 
-  /* Progress bar */
+  /* ── Login form ── */
+  .stForm {
+    background: #1e1b2e !important;
+    border: 1.5px solid #534AB7 !important;
+    border-radius: 16px !important; padding: 2rem !important;
+  }
+  .stForm label { color: #ffffff !important; font-weight: 500 !important; }
+  .stForm input {
+    background: #f5f3ff !important;
+    color: #1a1035 !important;
+    border: 1.5px solid #7F77DD !important;
+    border-radius: 8px !important;
+  }
+
+  /* ── Progress bar ── */
   .stProgress > div > div { background: linear-gradient(90deg, #534AB7, #AFA9EC); }
 
-  /* Sliders */
-  .stSlider [data-baseweb="slider"] div { background: #534AB7 !important; }
-
-  /* Metric cards */
+  /* ── Metric cards ── */
   .metric-card {
-    background: linear-gradient(135deg, #1a1535, #26215C);
-    border: 1px solid #3C3489;
+    background: #1e1b2e;
+    border: 1.5px solid #534AB7;
     padding: 20px; border-radius: 14px;
     text-align: center; color: white;
   }
-  .metric-card h2 { font-size: 2rem; margin: 0; font-weight: 700; }
-  .metric-card p  { margin: 4px 0 0; font-size: 13px; color: #AFA9EC; }
+  .metric-card h2 { font-size: 2rem; margin: 0; font-weight: 700; color: white !important; }
+  .metric-card p  { margin: 4px 0 0; font-size: 13px; color: #AFA9EC !important; }
 
-  /* Candidate cards */
+  /* ── Candidate cards ── */
   .candidate-card {
-    background: #1a1535;
-    border: 1px solid #3C3489;
+    background: #1e1b2e;
+    border: 1.5px solid #3C3489;
     border-radius: 12px; padding: 16px; margin: 8px 0;
   }
   .badge-alto  { background:#1a4731; color:#4ade80; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
   .badge-medio { background:#4a3800; color:#fbbf24; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
   .badge-bajo  { background:#4a1c1c; color:#f87171; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
 
-  /* Dividers */
-  hr { border-color: #3C3489 !important; }
+  /* ── Dataframe ── */
+  [data-testid="stDataFrame"] { border: 1px solid #534AB7 !important; border-radius: 8px; }
 
-  /* Headings */
-  h1, h2, h3 { color: #e2e8f0 !important; }
+  /* ── Dividers & headings ── */
+  hr { border-color: #534AB7 !important; }
+  h1, h2, h3 { color: #f0eeff !important; }
 
-  /* Logo header */
-  .logo-header {
-    display: flex; align-items: center; gap: 14px;
-    padding: 0 0 1rem 0;
-  }
+  /* ── Logo header ── */
+  .logo-header { display: flex; align-items: center; gap: 14px; padding: 0 0 1rem 0; }
   .logo-icon {
     width: 48px; height: 48px; border-radius: 12px;
     background: linear-gradient(135deg, #534AB7, #7F77DD);
     display: flex; align-items: center; justify-content: center;
-    font-size: 24px; font-weight: 800; color: white;
-    letter-spacing: -1px;
+    font-size: 22px; font-weight: 800; color: white;
   }
+
+  /* ── Mensajes de éxito / error / info ── */
+  .stSuccess { background: #0f2e1a !important; color: #4ade80 !important; border: 1px solid #1a6b3c !important; }
+  .stError   { background: #2e0f0f !important; color: #f87171 !important; border: 1px solid #6b1a1a !important; }
+  .stInfo    { background: #1a1b2e !important; color: #AFA9EC !important; border: 1px solid #534AB7 !important; }
 </style>
 """, unsafe_allow_html=True)
 
