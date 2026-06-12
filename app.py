@@ -367,10 +367,29 @@ def exportar_excel_proveedores(df_exp):
             "contacto": 24, "Archivo": 30, "Fuente": 14,
         }
 
+        # Mapa de nombres legibles con tildes para encabezados Excel Proveedores
+        nombres_col_prov = {
+            "nombre": "Nombre", "nombre_empresa": "Nombre Empresa",
+            "descripcion": "Descripci\u00f3n", "sitio_web": "Sitio Web",
+            "pais_sede": "Pa\u00eds Sede", "cobertura": "Cobertura",
+            "anos_experiencia": "A\u00f1os de Experiencia",
+            "certificaciones": "Certificaciones", "productos_servicios": "Productos / Servicios",
+            "rango_precio": "Rango de Precio", "condiciones_comerciales": "Condiciones Comerciales",
+            "tiempo_entrega": "Tiempo de Entrega", "clientes_referencia": "Clientes de Referencia",
+            "fortalezas": "Fortalezas", "debilidades": "Debilidades",
+            "puntaje_precio": "Puntaje Precio", "puntaje_certificaciones": "Puntaje Certificaciones",
+            "puntaje_reputacion": "Puntaje Reputaci\u00f3n", "puntaje_cobertura": "Puntaje Cobertura",
+            "puntaje_recomendacion": "Puntaje General", "nivel_recomendacion": "Nivel de Recomendaci\u00f3n",
+            "justificacion": "Justificaci\u00f3n", "razon_recomendacion": "Raz\u00f3n de Recomendaci\u00f3n",
+            "cumple_certificaciones": "Cumple Certificaciones",
+            "certificaciones_faltantes": "Certificaciones Faltantes",
+            "contacto": "Contacto", "Archivo": "Archivo", "Fuente": "Fuente",
+        }
+
         # Encabezados
         for cn, col in enumerate(df_exp.columns, 1):
             c = ws.cell(row=1, column=cn)
-            c.value     = col.replace("_", " ").title()
+            c.value     = nombres_col_prov.get(col, col.replace("_", " ").title())
             c.font      = Font(bold=True, color="FFFFFF", size=11, name="Calibri")
             c.fill      = header_fill
             c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
@@ -930,9 +949,23 @@ else:
 
                 st.markdown("#### Tabla Comparativa Detallada")
                 cols_tabla = ["nombre","cobertura","anos_experiencia","certificaciones",
-                              "rango_precio","puntaje_recomendacion","nivel_recomendacion"]
+                              "rango_precio","contacto","sitio_web","fortalezas",
+                              "puntaje_recomendacion","nivel_recomendacion"]
                 cols_ok = [c for c in cols_tabla if c in df_sel.columns]
-                st.dataframe(df_sel[cols_ok], use_container_width=True, height=300)
+                rename_map = {
+                    "nombre": "Nombre",
+                    "cobertura": "Cobertura",
+                    "anos_experiencia": "A\u00f1os de Experiencia",
+                    "certificaciones": "Certificaciones",
+                    "rango_precio": "Rango de Precio",
+                    "contacto": "Contacto",
+                    "sitio_web": "Sitio Web",
+                    "fortalezas": "Fortalezas",
+                    "puntaje_recomendacion": "Puntaje",
+                    "nivel_recomendacion": "Nivel de Recomendaci\u00f3n",
+                }
+                df_tabla = df_sel[cols_ok].rename(columns=rename_map)
+                st.dataframe(df_tabla, use_container_width=True, height=300)
 
             if st.button("Limpiar comparador", use_container_width=True):
                 st.session_state.df_proveedores  = None
