@@ -31,148 +31,180 @@ authenticator = stauth.Authenticate(
     cookie_expiry_days=30
 )
 
-# ── CSS GLOBAL (púrpura RecrutAI - alta visibilidad) ──────────────────────────
+# ── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-  html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+  /* Reset fuente */
+  html, body, [class*="css"] { font-family: 'Inter', sans-serif !important; }
 
-  /* Fondo principal: gris muy oscuro (no morado) para que el contenido respire */
-  .main { background-color: #12111a; }
+  /* ── Fondo oscuro en TODA la app ── */
+  .stApp,
+  .stApp > div,
+  [data-testid="stAppViewContainer"],
+  [data-testid="stAppViewContainer"] > section,
+  [data-testid="stAppViewContainer"] > section > div,
+  .main, .block-container {
+    background-color: #12111a !important;
+  }
 
-  /* ── Textos globales: blanco puro para máxima legibilidad ── */
-  label, .stTextInput label, .stSelectbox label, .stTextArea label,
-  .stSlider label, .stFileUploader label, .stRadio label,
-  .stMultiSelect label, p, span, div {
+  /* ── Texto general blanco ── */
+  .stApp, .stApp p, .stApp span, .stApp div,
+  .stApp label, .stMarkdown, .stMarkdown p {
     color: #f0eeff !important;
   }
 
-  /* Inputs: fondo blanco roto con texto oscuro — se ven claramente */
+  /* ── Sidebar ── */
+  [data-testid="stSidebar"],
+  [data-testid="stSidebar"] > div {
+    background-color: #1a1730 !important;
+    border-right: 2px solid #534AB7 !important;
+  }
+  [data-testid="stSidebar"] label,
+  [data-testid="stSidebar"] p,
+  [data-testid="stSidebar"] span {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+  }
+
+  /* ── Inputs: fondo blanco, texto oscuro ── */
+  input[type="text"], input[type="password"],
   .stTextInput input, .stTextArea textarea {
-    background: #f5f3ff !important;
+    background-color: #ffffff !important;
     color: #1a1035 !important;
     border: 1.5px solid #7F77DD !important;
     border-radius: 8px !important;
     font-size: 14px !important;
   }
-  .stTextInput input::placeholder, .stTextArea textarea::placeholder {
+  input::placeholder, textarea::placeholder {
     color: #9490b8 !important;
   }
-  .stTextInput input:focus, .stTextArea textarea:focus {
-    border-color: #AFA9EC !important;
-    box-shadow: 0 0 0 2px rgba(127,119,221,0.25) !important;
-  }
 
-  /* Selectbox: fondo claro, texto oscuro */
-  .stSelectbox > div > div {
-    background: #f5f3ff !important;
+  /* ── Selectbox: fondo blanco, texto oscuro y visible ── */
+  .stSelectbox > div > div,
+  .stSelectbox [data-baseweb="select"] > div {
+    background-color: #ffffff !important;
     color: #1a1035 !important;
     border: 1.5px solid #7F77DD !important;
     border-radius: 8px !important;
   }
-  .stSelectbox svg { fill: #534AB7 !important; }
+  /* Texto dentro del selectbox seleccionado */
+  .stSelectbox [data-baseweb="select"] span,
+  .stSelectbox [data-baseweb="select"] div {
+    color: #1a1035 !important;
+  }
+  /* Dropdown de opciones */
+  [data-baseweb="popover"] ul,
+  [data-baseweb="popover"] li,
+  [data-baseweb="menu"] {
+    background-color: #ffffff !important;
+    color: #1a1035 !important;
+  }
+  [data-baseweb="option"]:hover {
+    background-color: #ede9ff !important;
+  }
 
-  /* Multiselect */
+  /* ── Multiselect ── */
   .stMultiSelect > div > div {
-    background: #f5f3ff !important;
+    background-color: #ffffff !important;
     border: 1.5px solid #7F77DD !important;
     border-radius: 8px !important;
     color: #1a1035 !important;
   }
 
-  /* Radio buttons: texto blanco visible */
-  .stRadio > div { gap: 8px; }
-  .stRadio label { color: #f0eeff !important; font-size: 14px !important; }
-
-  /* Sliders: track en púrpura, label visible */
-  .stSlider > div > div > div { background: #534AB7 !important; }
-  .stSlider .st-emotion-cache-1dp5vir { color: #f0eeff !important; }
-
-  /* File uploader */
-  [data-testid="stFileUploader"] {
-    background: #1e1b2e !important;
-    border: 2px dashed #7F77DD !important;
-    border-radius: 12px !important;
-  }
-
-  /* ── Sidebar: fondo oscuro con buena separación ── */
-  [data-testid="stSidebar"] {
-    background: #1a1730 !important;
-    border-right: 2px solid #534AB7;
-  }
-  [data-testid="stSidebar"] label {
-    color: #ffffff !important;
-    font-weight: 500 !important;
-    font-size: 13px !important;
-  }
-  [data-testid="stSidebar"] .stTextInput input,
-  [data-testid="stSidebar"] .stTextArea textarea {
-    background: #f5f3ff !important;
+  /* ── Textarea ── */
+  .stTextArea textarea {
+    background-color: #ffffff !important;
     color: #1a1035 !important;
     border: 1.5px solid #7F77DD !important;
+    border-radius: 8px !important;
   }
-  [data-testid="stSidebar"] .stSelectbox > div > div {
-    background: #f5f3ff !important;
-    color: #1a1035 !important;
-    border: 1.5px solid #7F77DD !important;
-  }
-  /* Valores actuales de slider visibles */
-  [data-testid="stSidebar"] .stSlider [data-testid="stTickBarMin"],
-  [data-testid="stSidebar"] .stSlider [data-testid="stTickBarMax"],
-  [data-testid="stSidebar"] p { color: #e0dbff !important; }
 
-  /* ── Botones ── */
+  /* ── Sliders ── */
+  .stSlider [data-baseweb="slider"] [role="slider"] {
+    background-color: #7F77DD !important;
+    border-color: #534AB7 !important;
+  }
+
+  /* ── Botón primario ── */
   .stButton > button[kind="primary"] {
     background: linear-gradient(135deg, #534AB7, #7F77DD) !important;
-    border: none !important; border-radius: 10px !important;
-    color: white !important; font-weight: 600 !important;
-    font-size: 15px !important; letter-spacing: 0.5px !important;
-    padding: 0.6rem 1.2rem !important;
+    border: none !important;
+    border-radius: 10px !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
   }
   .stButton > button[kind="primary"]:hover {
     background: linear-gradient(135deg, #6b61cc, #9890e8) !important;
     transform: translateY(-1px);
   }
+
+  /* ── Botones normales ── */
   .stButton > button {
     border-radius: 8px !important;
     border: 1.5px solid #534AB7 !important;
     color: #e0dbff !important;
     background: transparent !important;
   }
-  .stButton > button:hover { background: #26215C !important; }
+  .stButton > button:hover {
+    background: #26215C !important;
+  }
+
+  /* ── File uploader ── */
+  [data-testid="stFileUploader"] {
+    background: #1e1b2e !important;
+    border: 2px dashed #7F77DD !important;
+    border-radius: 12px !important;
+  }
+  [data-testid="stFileUploader"] label,
+  [data-testid="stFileUploader"] span,
+  [data-testid="stFileUploader"] p {
+    color: #f0eeff !important;
+  }
 
   /* ── Tabs ── */
   .stTabs [data-baseweb="tab-list"] {
-    background: #1e1b2e; border-radius: 10px; padding: 4px;
-    border: 1px solid #3C3489;
+    background: #1e1b2e !important;
+    border-radius: 10px !important;
+    padding: 4px !important;
+    border: 1px solid #3C3489 !important;
   }
-  .stTabs [data-baseweb="tab"] { color: #AFA9EC; border-radius: 8px; font-weight: 500; }
-  .stTabs [aria-selected="true"] { background: #534AB7 !important; color: white !important; }
+  .stTabs [data-baseweb="tab"] {
+    color: #AFA9EC !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+  }
+  .stTabs [aria-selected="true"] {
+    background: #534AB7 !important;
+    color: white !important;
+  }
 
   /* ── Login form ── */
   .stForm {
     background: #1e1b2e !important;
     border: 1.5px solid #534AB7 !important;
-    border-radius: 16px !important; padding: 2rem !important;
+    border-radius: 16px !important;
+    padding: 2rem !important;
   }
-  .stForm label { color: #ffffff !important; font-weight: 500 !important; }
-  .stForm input {
-    background: #f5f3ff !important;
-    color: #1a1035 !important;
-    border: 1.5px solid #7F77DD !important;
-    border-radius: 8px !important;
+  .stForm label {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
   }
 
   /* ── Progress bar ── */
-  .stProgress > div > div { background: linear-gradient(90deg, #534AB7, #AFA9EC); }
+  .stProgress > div > div {
+    background: linear-gradient(90deg, #534AB7, #AFA9EC) !important;
+  }
 
-  /* ── Metric cards ── */
+  /* ── Metric cards custom ── */
   .metric-card {
     background: #1e1b2e;
     border: 1.5px solid #534AB7;
     padding: 20px; border-radius: 14px;
-    text-align: center; color: white;
+    text-align: center;
   }
   .metric-card h2 { font-size: 2rem; margin: 0; font-weight: 700; color: white !important; }
   .metric-card p  { margin: 4px 0 0; font-size: 13px; color: #AFA9EC !important; }
@@ -187,12 +219,15 @@ st.markdown("""
   .badge-medio { background:#4a3800; color:#fbbf24; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
   .badge-bajo  { background:#4a1c1c; color:#f87171; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
 
-  /* ── Dataframe ── */
-  [data-testid="stDataFrame"] { border: 1px solid #534AB7 !important; border-radius: 8px; }
-
-  /* ── Dividers & headings ── */
+  /* ── Headings y dividers ── */
   hr { border-color: #534AB7 !important; }
-  h1, h2, h3 { color: #f0eeff !important; }
+  h1, h2, h3, h4 { color: #f0eeff !important; }
+
+  /* ── Dataframe ── */
+  [data-testid="stDataFrame"] {
+    border: 1px solid #534AB7 !important;
+    border-radius: 8px !important;
+  }
 
   /* ── Logo header ── */
   .logo-header { display: flex; align-items: center; gap: 14px; padding: 0 0 1rem 0; }
@@ -202,11 +237,6 @@ st.markdown("""
     display: flex; align-items: center; justify-content: center;
     font-size: 22px; font-weight: 800; color: white;
   }
-
-  /* ── Mensajes de éxito / error / info ── */
-  .stSuccess { background: #0f2e1a !important; color: #4ade80 !important; border: 1px solid #1a6b3c !important; }
-  .stError   { background: #2e0f0f !important; color: #f87171 !important; border: 1px solid #6b1a1a !important; }
-  .stInfo    { background: #1a1b2e !important; color: #AFA9EC !important; border: 1px solid #534AB7 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -220,7 +250,7 @@ def mostrar_login():
                background:linear-gradient(135deg,#534AB7,#7F77DD);
                display:inline-flex;align-items:center;justify-content:center;
                font-size:28px;font-weight:800;color:white;margin-bottom:16px;">RA</div>
-          <h2 style="color:#e2e8f0;margin:0;font-size:1.8rem;font-weight:700;">RecrutAI</h2>
+          <h2 style="color:#f0eeff;margin:0;font-size:1.8rem;font-weight:700;">RecrutAI</h2>
           <p style="color:#AFA9EC;margin:4px 0 0;font-size:14px;letter-spacing:2px;">POWERED BY CLAUDE AI</p>
         </div>
         """, unsafe_allow_html=True)
@@ -239,7 +269,7 @@ if authentication_status is None:
     st.info("👆 Ingresa tus credenciales para acceder")
     st.stop()
 
-# ── APP PRINCIPAL (solo si autenticado) ───────────────────────────────────────
+# ── APP PRINCIPAL ─────────────────────────────────────────────────────────────
 try:
     api_key_segura = st.secrets["CLAUDE_API_KEY"]
 except Exception:
@@ -258,18 +288,19 @@ with st.sidebar:
              display:flex;align-items:center;justify-content:center;
              font-size:15px;font-weight:800;color:white;">RA</div>
         <div>
-          <div style="color:#e2e8f0;font-weight:600;font-size:15px;">RecrutAI</div>
-          <div style="color:#7F77DD;font-size:11px;letter-spacing:1px;">POWERED BY CLAUDE AI</div>
+          <div style="color:#ffffff;font-weight:700;font-size:15px;">RecrutAI</div>
+          <div style="color:#AFA9EC;font-size:11px;letter-spacing:1px;">POWERED BY CLAUDE AI</div>
         </div>
       </div>
-      <div style="color:#AFA9EC;font-size:12px;margin-top:8px;">
-        👤 {name} &nbsp;|&nbsp; <span style="color:#7F77DD;">{username}</span>
+      <div style="color:#e0dbff;font-size:12px;margin-top:8px;">
+        👤 <strong style="color:white;">{name}</strong>
+        &nbsp;|&nbsp; <span style="color:#AFA9EC;">{username}</span>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.divider()
-    st.markdown("## ⚙️ Configurar Puesto")
+    st.markdown("<p style='color:#ffffff;font-size:16px;font-weight:700;margin-bottom:12px;'>⚙️ Configurar Puesto</p>", unsafe_allow_html=True)
 
     puesto = st.text_input("🏢 Nombre del puesto", placeholder="Ej: Analista de Datos")
     experiencia_min = st.slider("📅 Años mínimos de experiencia", 0, 20, 2)
@@ -285,7 +316,7 @@ with st.sidebar:
     ])
 
     st.divider()
-    st.markdown("**Pesos de puntuación**")
+    st.markdown("<p style='color:#ffffff;font-weight:700;margin-bottom:4px;'>📊 Pesos de puntuación</p>", unsafe_allow_html=True)
     peso_exp = st.slider("Experiencia", 0, 100, 35)
     peso_edu = st.slider("Educación",   0, 100, 25)
     peso_hab = st.slider("Habilidades", 0, 100, 30)
@@ -299,7 +330,7 @@ st.markdown("""
 <div class="logo-header">
   <div class="logo-icon">RA</div>
   <div>
-    <h1 style="margin:0;font-size:1.9rem;font-weight:700;color:#e2e8f0;">RecrutAI</h1>
+    <h1 style="margin:0;font-size:1.9rem;font-weight:700;color:#f0eeff !important;">RecrutAI</h1>
     <p style="margin:0;color:#AFA9EC;font-size:13px;letter-spacing:2px;">PLATAFORMA INTELIGENTE DE RECLUTAMIENTO</p>
   </div>
 </div>
@@ -447,20 +478,20 @@ if st.session_state.df_candidatos is not None:
             <div class="candidate-card">
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div>
-                  <strong style="font-size:16px;color:#e2e8f0;">#{row['Ranking']} {row.get('Nombre','N/A')}</strong>
+                  <strong style="font-size:16px;color:#f0eeff;">#{row['Ranking']} {row.get('Nombre','N/A')}</strong>
                   &nbsp;<span class="{badge}">{nivel}</span>
-                  &nbsp;<small style="color:#7F77DD;">{cumple}</small>
+                  &nbsp;<small style="color:#AFA9EC;">{cumple}</small>
                 </div>
                 <div style="text-align:right;">
                   <span style="font-size:26px;font-weight:700;color:#7F77DD;">{puntaje}/10</span>
                 </div>
               </div>
-              <div style="margin-top:8px;color:#AFA9EC;font-size:13px;">
+              <div style="margin-top:8px;color:#c4bfee;font-size:13px;">
                 🏢 {row.get('Ultimo_Cargo','N/A')} en {row.get('Ultima_Empresa','N/A')}
                 &nbsp;|&nbsp; 📅 {row.get('Experiencia_Anos',0)} años
                 &nbsp;|&nbsp; 🎓 {row.get('Educacion_Maxima','N/A')}
               </div>
-              <div style="margin-top:6px;color:#8b83d0;font-size:12px;font-style:italic;">
+              <div style="margin-top:6px;color:#9890cc;font-size:12px;font-style:italic;">
                 💬 {row.get('Justificacion','Sin justificación')}
               </div>
             </div>
@@ -469,7 +500,6 @@ if st.session_state.df_candidatos is not None:
     # ── TAB 2: DASHBOARDS ─────────────────────────────────────────────────────
     with tab2:
         st.markdown("## 📊 Dashboards & Métricas")
-
         PURPLE = ["#26215C","#3C3489","#534AB7","#7F77DD","#AFA9EC","#CECBF6"]
 
         col_a, col_b = st.columns(2)
@@ -481,7 +511,7 @@ if st.session_state.df_candidatos is not None:
                          color="Nivel",
                          color_discrete_map={"Alto":"#4ade80","Medio":"#fbbf24","Bajo":"#f87171"},
                          hole=0.45)
-            fig1.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e2e8f0")
+            fig1.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#f0eeff")
             st.plotly_chart(fig1, use_container_width=True)
 
         with col_b:
@@ -490,7 +520,7 @@ if st.session_state.df_candidatos is not None:
             fig2 = px.bar(conteo_edu, x="Cantidad", y="Educacion", orientation="h",
                          title="Distribución por Nivel Educativo",
                          color="Cantidad", color_continuous_scale=PURPLE)
-            fig2.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e2e8f0")
+            fig2.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#f0eeff")
             st.plotly_chart(fig2, use_container_width=True)
 
         col_c, col_d = st.columns(2)
@@ -503,7 +533,7 @@ if st.session_state.df_candidatos is not None:
                 fig3 = px.bar(df_hab, x="Frecuencia", y="Habilidad", orientation="h",
                              title="Habilidades Técnicas más Frecuentes",
                              color="Frecuencia", color_continuous_scale=PURPLE)
-                fig3.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e2e8f0")
+                fig3.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#f0eeff")
                 st.plotly_chart(fig3, use_container_width=True)
 
         with col_d:
@@ -515,7 +545,7 @@ if st.session_state.df_candidatos is not None:
                 fig4 = px.pie(df_idi, values="Frecuencia", names="Idioma",
                              title="Distribución por Idiomas",
                              color_discrete_sequence=PURPLE)
-                fig4.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e2e8f0")
+                fig4.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#f0eeff")
                 st.plotly_chart(fig4, use_container_width=True)
 
         col_e, col_f = st.columns(2)
@@ -523,7 +553,7 @@ if st.session_state.df_candidatos is not None:
             fig5 = px.histogram(df, x="Experiencia_Anos", nbins=15,
                                title="Distribución de Años de Experiencia",
                                color_discrete_sequence=["#534AB7"])
-            fig5.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e2e8f0")
+            fig5.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#f0eeff")
             st.plotly_chart(fig5, use_container_width=True)
 
         with col_f:
@@ -532,7 +562,7 @@ if st.session_state.df_candidatos is not None:
                              hover_data=["Nombre","Ultimo_Cargo"],
                              title="Experiencia vs Puntaje",
                              color_discrete_map={"Alto":"#4ade80","Medio":"#fbbf24","Bajo":"#f87171"})
-            fig6.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#e2e8f0")
+            fig6.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#f0eeff")
             st.plotly_chart(fig6, use_container_width=True)
 
         st.markdown("### 📈 Indicadores Clave")
