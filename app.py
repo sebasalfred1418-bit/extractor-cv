@@ -273,7 +273,7 @@ def exportar_excel_cvs(df_exp):
             "Ultimo_Cargo":26,"Ultima_Empresa":24,"Experiencia_Anos":14,
             "Habilidades_Tecnicas":38,"Habilidades_Blandas":30,
             "Idiomas":16,"Certificaciones":26,"Puntaje":10,
-            "Nivel_Potencial":16,"Justificacion":44,
+            "Nivel_Potencial":16,"Justificacion":60,
             "Cumple_Requisitos":16,"Requisitos_Cumplidos":32,
             "Requisitos_Faltantes":32,"Archivo":30,
         }
@@ -324,7 +324,7 @@ def exportar_excel_cvs(df_exp):
                 lineas = max(1, -(-len(valor) // chars_por_linea))
                 if lineas > max_lineas:
                     max_lineas = lineas
-            ws.row_dimensions[rn].height = max(40, min(max_lineas * 16, 130))
+            ws.row_dimensions[rn].height = max(40, min(max_lineas * 16, 280))
         ws.freeze_panes = "A2"
     return output.getvalue()
 
@@ -408,7 +408,7 @@ def exportar_excel_proveedores(df_exp):
                 lineas = max(1, -(-len(valor) // chars_por_linea))
                 if lineas > max_lineas:
                     max_lineas = lineas
-            ws.row_dimensions[rn].height = max(40, min(max_lineas * 16, 130))
+            ws.row_dimensions[rn].height = max(40, min(max_lineas * 16, 280))
         ws.freeze_panes = "A2"
     return output.getvalue()
 
@@ -470,8 +470,6 @@ if st.session_state.modulo_activo == "cvs":
                     for marcador in ["Puntaje calculado", "calculo:", "C\u00e1lculo:", "= ", "+ (", "\u00d7"]:
                         if marcador in just:
                             just = just.split(marcador)[0].strip()
-                    if len(just) > 220:
-                        just = just[:217].rsplit(" ", 1)[0] + "..."
                     datos["Justificacion"] = just
                 datos["Archivo"] = file.name; resultados.append(datos)
             except Exception as e:
