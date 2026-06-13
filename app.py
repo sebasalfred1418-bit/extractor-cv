@@ -453,12 +453,26 @@ if st.session_state.modulo_activo == "cvs":
                 f'- Cumple_Requisitos: true si experiencia >= {experiencia_min} y puntaje >= 6\n'
                 f'- Experiencia_Anos: solo numero entero\n'
                 f'- Habilidades_Tecnicas: maximo 6, separadas por coma\n'
-                f'- Si un dato no existe: "No especifica"\n\nCV:\n{texto[:4000]}'
+                f'- Si un dato no existe: "No especifica"\n'
+                f'- Justificacion: maximo 2 oraciones cortas (menos de 200 caracteres). '
+                f'NO incluyas formulas, calculos matematicos, porcentajes ni la suma del puntaje. '
+                f'Solo menciona la fortaleza y debilidad principal del candidato de forma breve.\n\n'
+                f'CV:\n{texto[:4000]}'
             )
             try:
                 msg   = client.messages.create(model="claude-haiku-4-5-20251001", max_tokens=1200,
                             messages=[{"role":"user","content":prompt}])
                 datos = limpiar_json(msg.content[0].text)
+                # Limitar longitud de Justificacion para evitar desbordes en Excel
+                if "Justificacion" in datos and isinstance(datos["Justificacion"], str):
+                    just = datos["Justificacion"]
+                    # Si contiene calculos o formulas, cortar antes de "Puntaje calculado" o similar
+                    for marcador in ["Puntaje calculado", "calculo:", "C\u00e1lculo:", "= ", "+ (", "\u00d7"]:
+                        if marcador in just:
+                            just = just.split(marcador)[0].strip()
+                    if len(just) > 220:
+                        just = just[:217].rsplit(" ", 1)[0] + "..."
+                    datos["Justificacion"] = just
                 datos["Archivo"] = file.name; resultados.append(datos)
             except Exception as e:
                 st.error(f"Error procesando {file.name}: {e}")
