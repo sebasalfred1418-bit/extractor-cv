@@ -28,7 +28,7 @@ authenticator = stauth.Authenticate(
     credentials, "nexora_cookie", "nexora_secret_key_2024", cookie_expiry_days=30
 )
 
-# ── CSS ARCTIC SLATE ──────────────────────────────────────────────────────────
+# ── CSS SUNLIT SLATE (clara y calida) ────────────────────────────────────────
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -38,97 +38,97 @@ st.markdown("""
   [data-testid="stAppViewContainer"],
   [data-testid="stAppViewContainer"] > section,
   [data-testid="stAppViewContainer"] > section > div,
-  .main, .block-container { background-color: #0D1520 !important; }
+  .main, .block-container { background-color: #F4F1EB !important; }
   [data-testid="stVerticalBlock"], [data-testid="stHorizontalBlock"] { background-color: transparent !important; }
 
   .stApp, .stApp p, .stApp span, .stApp div, .stApp label,
-  .stMarkdown, .stMarkdown p { color: #E8F4F8 !important; }
+  .stMarkdown, .stMarkdown p { color: #2E3A45 !important; }
 
   [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
-    background-color: #0A0F1A !important;
-    border-right: 2px solid #1C2E44 !important;
+    background-color: #EDE8DE !important;
+    border-right: 2px solid #D8CFC0 !important;
   }
   [data-testid="stSidebar"] label,
   [data-testid="stSidebar"] p,
-  [data-testid="stSidebar"] span { color: #ffffff !important; font-weight: 500 !important; }
+  [data-testid="stSidebar"] span { color: #2E3A45 !important; font-weight: 500 !important; }
 
   input[type="text"], input[type="password"], .stTextInput input, .stTextArea textarea {
-    background-color: #ffffff !important; color: #0A0F1A !important;
-    border: 1.5px solid #2E6B8A !important; border-radius: 8px !important; font-size: 14px !important; }
-  input::placeholder, textarea::placeholder { color: #7EC8E3 !important; }
+    background-color: #ffffff !important; color: #2E3A45 !important;
+    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; font-size: 14px !important; }
+  input::placeholder, textarea::placeholder { color: #9CA8B0 !important; }
 
   .stSelectbox > div > div, .stSelectbox [data-baseweb="select"] > div {
-    background-color: #ffffff !important; color: #0A0F1A !important;
-    border: 1.5px solid #2E6B8A !important; border-radius: 8px !important; }
+    background-color: #ffffff !important; color: #2E3A45 !important;
+    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
   .stSelectbox [data-baseweb="select"] span,
-  .stSelectbox [data-baseweb="select"] div { color: #0A0F1A !important; }
+  .stSelectbox [data-baseweb="select"] div { color: #2E3A45 !important; }
   [data-baseweb="popover"] ul, [data-baseweb="popover"] li, [data-baseweb="menu"] {
-    background-color: #ffffff !important; color: #0A0F1A !important; }
-  [data-baseweb="option"]:hover { background-color: #E8F4F8 !important; }
+    background-color: #ffffff !important; color: #2E3A45 !important; }
+  [data-baseweb="option"]:hover { background-color: #DCEEFA !important; }
 
   .stMultiSelect > div > div {
-    background-color: #ffffff !important; border: 1.5px solid #2E6B8A !important;
-    border-radius: 8px !important; color: #0A0F1A !important; }
+    background-color: #ffffff !important; border: 1.5px solid #D8CFC0 !important;
+    border-radius: 8px !important; color: #2E3A45 !important; }
   .stTextArea textarea {
-    background-color: #ffffff !important; color: #0A0F1A !important;
-    border: 1.5px solid #2E6B8A !important; border-radius: 8px !important; }
+    background-color: #ffffff !important; color: #2E3A45 !important;
+    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
 
   .stButton > button[kind="primary"] {
-    background: #2E6B8A !important; border: none !important;
-    border-radius: 10px !important; color: #E8F4F8 !important;
+    background: #4A90B8 !important; border: none !important;
+    border-radius: 10px !important; color: #FFFFFF !important;
     font-weight: 600 !important; font-size: 15px !important; }
   .stButton > button[kind="primary"]:hover {
-    background: #7EC8E3 !important; color: #0A0F1A !important; }
+    background: #3A7CA5 !important; color: #FFFFFF !important; }
   .stButton > button {
-    border-radius: 8px !important; border: 1.5px solid #2E6B8A !important;
-    color: #7EC8E3 !important; background: transparent !important; }
-  .stButton > button:hover { background: #1C2E44 !important; }
+    border-radius: 8px !important; border: 1.5px solid #B8CBD6 !important;
+    color: #3A7CA5 !important; background: #FFFFFF !important; }
+  .stButton > button:hover { background: #DCEEFA !important; }
 
   [data-testid="stFileUploader"] {
-    background: #111927 !important; border: 2px dashed #2E6B8A !important; border-radius: 12px !important; }
+    background: #FFFFFF !important; border: 2px dashed #B8CBD6 !important; border-radius: 12px !important; }
   [data-testid="stFileUploader"] label,
   [data-testid="stFileUploader"] span,
-  [data-testid="stFileUploader"] p { color: #E8F4F8 !important; }
+  [data-testid="stFileUploader"] p { color: #2E3A45 !important; }
 
   .stTabs [data-baseweb="tab-list"] {
-    background: #111927 !important; border-radius: 10px !important;
-    padding: 4px !important; border: 1px solid #1C2E44 !important; }
-  .stTabs [data-baseweb="tab"] { color: #7EC8E3 !important; border-radius: 8px !important; font-weight: 500 !important; }
-  .stTabs [aria-selected="true"] { background: #2E6B8A !important; color: #E8F4F8 !important; }
+    background: #FFFFFF !important; border-radius: 10px !important;
+    padding: 4px !important; border: 1px solid #E5DFD3 !important; }
+  .stTabs [data-baseweb="tab"] { color: #7A8590 !important; border-radius: 8px !important; font-weight: 500 !important; }
+  .stTabs [aria-selected="true"] { background: #4A90B8 !important; color: #FFFFFF !important; }
 
-  .stForm { background: #111927 !important; border: 1.5px solid #2E6B8A !important;
+  .stForm { background: #FFFFFF !important; border: 1.5px solid #B8CBD6 !important;
     border-radius: 16px !important; padding: 2rem !important; }
-  .stForm label { color: #ffffff !important; font-weight: 600 !important; font-size: 14px !important; }
-  .stForm input { background: #ffffff !important; color: #0A0F1A !important;
-    border: 1.5px solid #2E6B8A !important; border-radius: 8px !important; }
+  .stForm label { color: #2E3A45 !important; font-weight: 600 !important; font-size: 14px !important; }
+  .stForm input { background: #ffffff !important; color: #2E3A45 !important;
+    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
 
-  .stProgress > div > div { background: linear-gradient(90deg, #2E6B8A, #7EC8E3) !important; }
+  .stProgress > div > div { background: linear-gradient(90deg, #4A90B8, #7AA9C7) !important; }
 
-  .metric-card { background: #111927; border: 1.5px solid #1C2E44;
+  .metric-card { background: #FFFFFF; border: 1px solid #E5DFD3;
     padding: 20px; border-radius: 14px; text-align: center; }
-  .metric-card h2 { font-size: 2rem; margin: 0; font-weight: 700; color: white !important; }
-  .metric-card p  { margin: 4px 0 0; font-size: 13px; color: #7EC8E3 !important; }
+  .metric-card h2 { font-size: 2rem; margin: 0; font-weight: 700; color: #2E3A45 !important; }
+  .metric-card p  { margin: 4px 0 0; font-size: 13px; color: #9CA8B0 !important; }
 
-  .candidate-card, .proveedor-card { background: #111927; border: 1.5px solid #1C2E44;
+  .candidate-card, .proveedor-card { background: #FFFFFF; border: 1px solid #E5DFD3;
     border-radius: 12px; padding: 16px; margin: 8px 0; }
-  .proveedor-card { border-color: #2E6B8A; }
+  .proveedor-card { border-color: #C9E4D5; }
 
-  .badge-alto   { background:#0a2e1a; color:#4ade80; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-medio  { background:#4a3800; color:#fbbf24; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-bajo   { background:#4a1c1c; color:#f87171; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-prov-a { background:#0a2e1a; color:#34d399; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-prov-b { background:#1a2e0a; color:#86efac; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-prov-c { background:#2e2a0a; color:#fde68a; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-alto   { background:#E6F4E9; color:#3D7A4D; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-medio  { background:#FBF1DD; color:#A8762E; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-bajo   { background:#FAE6E6; color:#B3504F; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-prov-a { background:#E6F4E9; color:#3D7A4D; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-prov-b { background:#EAF3DE; color:#5E7D3C; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-prov-c { background:#FBF1DD; color:#A8762E; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
 
-  hr { border-color: #1C2E44 !important; }
-  h1, h2, h3, h4 { color: #E8F4F8 !important; }
-  [data-testid="stDataFrame"] { border: 1px solid #2E6B8A !important; border-radius: 8px !important; }
+  hr { border-color: #E5DFD3 !important; }
+  h1, h2, h3, h4 { color: #2E3A45 !important; }
+  [data-testid="stDataFrame"] { border: 1px solid #B8CBD6 !important; border-radius: 8px !important; }
 
   .logo-header { display: flex; align-items: center; gap: 14px; padding: 0 0 1rem 0; }
   .logo-icon { width: 48px; height: 48px; border-radius: 12px;
-    background: #2E6B8A;
+    background: #4A90B8;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 800; color: #E8F4F8; }
+    font-size: 18px; font-weight: 800; color: #FFFFFF; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -139,19 +139,19 @@ def mostrar_login():
         st.markdown("""
         <div style="text-align:center;padding:2rem 0 1.5rem;">
           <div style="width:64px;height:64px;border-radius:16px;
-               background:#2E6B8A;
+               background:#4A90B8;
                display:inline-flex;align-items:center;justify-content:center;
-               font-size:24px;font-weight:800;color:#E8F4F8;margin-bottom:16px;">NX</div>
-          <h2 style="color:#E8F4F8;margin:0;font-size:1.8rem;font-weight:700;">Nexora</h2>
-          <p style="color:#7EC8E3;margin:4px 0 0;font-size:14px;letter-spacing:2px;">ANALIZA. DECIDE. AVANZA.</p>
-          <p style="color:#2E6B8A;margin:4px 0 0;font-size:11px;letter-spacing:1px;">POWERED BY CLAUDE AI</p>
+               font-size:24px;font-weight:800;color:#FFFFFF;margin-bottom:16px;">NX</div>
+          <h2 style="color:#2E3A45;margin:0;font-size:1.8rem;font-weight:700;">Nexora</h2>
+          <p style="color:#3A7CA5;margin:4px 0 0;font-size:14px;letter-spacing:2px;">ANALIZA. DECIDE. AVANZA.</p>
+          <p style="color:#9CA8B0;margin:4px 0 0;font-size:11px;letter-spacing:1px;">POWERED BY CLAUDE AI</p>
         </div>""", unsafe_allow_html=True)
 
 name, authentication_status, username = authenticator.login(
-    fields={"Form name": "Iniciar sesion", "Username": "Usuario", "Password": "Contrasena", "Login": "Entrar"}
+    fields={"Form name": "Iniciar sesi\u00f3n", "Username": "Usuario", "Password": "Contrase\u00f1a", "Login": "Entrar"}
 )
 if authentication_status == False:
-    mostrar_login(); st.error("Usuario o contrasena incorrectos"); st.stop()
+    mostrar_login(); st.error("Usuario o contrase\u00f1a incorrectos"); st.stop()
 if authentication_status is None:
     mostrar_login(); st.info("Ingresa tus credenciales para acceder"); st.stop()
 
@@ -159,7 +159,7 @@ if authentication_status is None:
 try:
     api_key_segura = st.secrets["CLAUDE_API_KEY"]
 except Exception:
-    st.error("No se encontro la API Key en los Secrets de Streamlit Cloud."); st.stop()
+    st.error("No se encontr\u00f3 la API Key en los Secrets de Streamlit Cloud."); st.stop()
 client = anthropic.Anthropic(api_key=api_key_segura)
 
 # ── SESSION STATE ─────────────────────────────────────────────────────────────
@@ -173,62 +173,62 @@ with st.sidebar:
     st.markdown(f"""
     <div style="padding:12px 0 8px;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-        <div style="width:36px;height:36px;border-radius:9px;background:#2E6B8A;
+        <div style="width:36px;height:36px;border-radius:9px;background:#4A90B8;
              display:flex;align-items:center;justify-content:center;
-             font-size:14px;font-weight:800;color:#E8F4F8;">NX</div>
+             font-size:14px;font-weight:800;color:#FFFFFF;">NX</div>
         <div>
-          <div style="color:#E8F4F8;font-weight:700;font-size:15px;">Nexora</div>
-          <div style="color:#2E6B8A;font-size:10px;letter-spacing:1.5px;">ANALIZA. DECIDE. AVANZA.</div>
+          <div style="color:#2E3A45;font-weight:700;font-size:15px;">Nexora</div>
+          <div style="color:#9CA8B0;font-size:10px;letter-spacing:1.5px;">ANALIZA. DECIDE. AVANZA.</div>
         </div>
       </div>
-      <div style="color:#7EC8E3;font-size:12px;margin-top:8px;">
-        Bienvenido, <strong style="color:#E8F4F8;">{name}</strong>
+      <div style="color:#7A8590;font-size:12px;margin-top:8px;">
+        Bienvenido, <strong style="color:#2E3A45;">{name}</strong>
       </div>
     </div>""", unsafe_allow_html=True)
     st.divider()
 
-    modulo = st.radio("Modulo activo", ["Analisis de CVs", "Analisis de Proveedores"],
+    modulo = st.radio("M\u00f3dulo activo", ["An\u00e1lisis de CVs", "An\u00e1lisis de Proveedores"],
                       index=0 if st.session_state.modulo_activo == "cvs" else 1)
     st.session_state.modulo_activo = "cvs" if "CVs" in modulo else "proveedores"
     st.divider()
 
     if st.session_state.modulo_activo == "cvs":
-        st.markdown("<p style='color:#E8F4F8;font-size:15px;font-weight:700;margin-bottom:12px;'>Configurar Puesto</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#2E3A45;font-size:15px;font-weight:700;margin-bottom:12px;'>Configurar Puesto</p>", unsafe_allow_html=True)
         puesto          = st.text_input("Nombre del puesto", placeholder="Ej: Analista de Datos")
         experiencia_min = st.slider("\U0001f4c5 A\u00f1os m\u00ednimos de experiencia", 0, 20, 2)
-        educacion_req   = st.selectbox("Educacion minima", ["Cualquiera","Tecnico","Bachiller","Licenciatura","Maestria","Doctorado"])
-        habilidades_req = st.text_area("Habilidades requeridas (una por linea)", placeholder="Python\nExcel\nSQL")
-        idioma_req      = st.selectbox("Idioma requerido", ["No requerido","Ingles","Ingles avanzado","Portugues","Frances"])
+        educacion_req   = st.selectbox("Educaci\u00f3n m\u00ednima", ["Cualquiera","T\u00e9cnico","Bachiller","Licenciatura","Maestr\u00eda","Doctorado"])
+        habilidades_req = st.text_area("Habilidades requeridas (una por l\u00ednea)", placeholder="Python\nExcel\nSQL")
+        idioma_req      = st.selectbox("Idioma requerido", ["No requerido","Ingl\u00e9s","Ingl\u00e9s avanzado","Portugu\u00e9s","Franc\u00e9s"])
         st.divider()
-        st.markdown("<p style='color:#E8F4F8;font-weight:700;margin-bottom:4px;'>Pesos de puntuacion</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#2E3A45;font-weight:700;margin-bottom:4px;'>Pesos de puntuaci\u00f3n</p>", unsafe_allow_html=True)
         peso_exp = st.slider("Experiencia", 0, 100, 35)
-        peso_edu = st.slider("Educacion",   0, 100, 25)
+        peso_edu = st.slider("Educaci\u00f3n",   0, 100, 25)
         peso_hab = st.slider("Habilidades", 0, 100, 30)
         peso_idi = st.slider("Idiomas",     0, 100, 10)
     else:
-        st.markdown("<p style='color:#E8F4F8;font-size:15px;font-weight:700;margin-bottom:12px;'>Configurar Busqueda</p>", unsafe_allow_html=True)
-        pais_busqueda   = st.text_input("Pais o region", placeholder="Ej: Peru, LATAM, Espana")
-        rubro_busqueda  = st.text_input("Rubro o industria", placeholder="Ej: Software, Logistica")
+        st.markdown("<p style='color:#2E3A45;font-size:15px;font-weight:700;margin-bottom:12px;'>Configurar B\u00fasqueda</p>", unsafe_allow_html=True)
+        pais_busqueda   = st.text_input("Pa\u00eds o regi\u00f3n", placeholder="Ej: Per\u00fa, LATAM, Espa\u00f1a")
+        rubro_busqueda  = st.text_input("Rubro o industria", placeholder="Ej: Software, Log\u00edstica")
         presupuesto_ref = st.selectbox("Presupuesto referencial", ["No especificado","< $10,000","$10,000 - $50,000","$50,000 - $200,000","> $200,000"])
-        cert_requeridas = st.text_area("Certificaciones requeridas (una por linea)", placeholder="ISO 9001\nAWS Certified")
-        cobertura_req   = st.selectbox("Cobertura geografica minima", ["Local","Nacional","Regional LATAM","Internacional"])
+        cert_requeridas = st.text_area("Certificaciones requeridas (una por l\u00ednea)", placeholder="ISO 9001\nAWS Certified")
+        cobertura_req   = st.selectbox("Cobertura geogr\u00e1fica m\u00ednima", ["Local","Nacional","Regional LATAM","Internacional"])
         st.divider()
-        st.markdown("<p style='color:#E8F4F8;font-weight:700;margin-bottom:4px;'>Pesos de evaluacion</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#2E3A45;font-weight:700;margin-bottom:4px;'>Pesos de evaluaci\u00f3n</p>", unsafe_allow_html=True)
         ppeso_precio = st.slider("Precio/Condiciones", 0, 100, 30)
         ppeso_cert   = st.slider("Certificaciones",    0, 100, 25)
-        ppeso_rep    = st.slider("Reputacion",         0, 100, 25)
+        ppeso_rep    = st.slider("Reputaci\u00f3n",         0, 100, 25)
         ppeso_cob    = st.slider("Cobertura",          0, 100, 20)
 
     st.divider()
-    authenticator.logout("Cerrar sesion", "sidebar")
+    authenticator.logout("Cerrar sesi\u00f3n", "sidebar")
 
 # ── HEADER ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="logo-header">
   <div class="logo-icon">NX</div>
   <div>
-    <h1 style="margin:0;font-size:1.9rem;font-weight:700;color:#E8F4F8 !important;">Nexora</h1>
-    <p style="margin:0;color:#7EC8E3;font-size:13px;letter-spacing:2px;">ANALIZA. DECIDE. AVANZA.</p>
+    <h1 style="margin:0;font-size:1.9rem;font-weight:700;color:#2E3A45 !important;">Nexora</h1>
+    <p style="margin:0;color:#7AA9C7;font-size:13px;letter-spacing:2px;">ANALIZA. DECIDE. AVANZA.</p>
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -412,15 +412,15 @@ def exportar_excel_proveedores(df_exp):
         ws.freeze_panes = "A2"
     return output.getvalue()
 
-CYAN   = ["#0A0F1A","#111927","#1C2E44","#2E6B8A","#7EC8E3","#E8F4F8"]
-VERDE  = ["#04342C","#085041","#0F6E56","#1D9E75","#5DCAA5","#9FE1CB"]
-LAYOUT = dict(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#E8F4F8")
+CYAN   = ["#FFFFFF","#FFFFFF","#E5DFD3","#4A90B8","#3A7CA5","#2E3A45"]
+VERDE  = ["#2E5E3D","#3D7A4D","#5C9C6E","#8AB89A","#B5D4C0","#E6F4E9"]
+LAYOUT = dict(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#2E3A45")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MODULO 1: CVs
 # ══════════════════════════════════════════════════════════════════════════════
 if st.session_state.modulo_activo == "cvs":
-    st.markdown("## Modulo de Analisis de CVs")
+    st.markdown("## M\u00f3dulo de An\u00e1lisis de CVs")
     uploaded_files = st.file_uploader("Sube los CVs en PDF", type=["pdf"], accept_multiple_files=True)
     if uploaded_files:
         st.info(f"{len(uploaded_files)} archivo(s) cargado(s) y listo(s) para procesar.")
@@ -497,7 +497,7 @@ if st.session_state.modulo_activo == "cvs":
             with c1: st.markdown(f'<div class="metric-card"><h2>{len(df)}</h2><p>Total CVs</p></div>', unsafe_allow_html=True)
             with c2: st.markdown(f'<div class="metric-card"><h2 style="color:#4ade80">{len(df[df["Nivel_Potencial"]=="Alto"])}</h2><p>Alto Potencial</p></div>', unsafe_allow_html=True)
             with c3: st.markdown(f'<div class="metric-card"><h2 style="color:#fbbf24">{len(df[df["Nivel_Potencial"]=="Medio"])}</h2><p>Potencial Medio</p></div>', unsafe_allow_html=True)
-            with c4: st.markdown(f'<div class="metric-card"><h2 style="color:#7EC8E3">{len(df[df["Cumple_Requisitos"]==True])}</h2><p>Cumplen Requisitos</p></div>', unsafe_allow_html=True)
+            with c4: st.markdown(f'<div class="metric-card"><h2 style="color:#3A7CA5">{len(df[df["Cumple_Requisitos"]==True])}</h2><p>Cumplen Requisitos</p></div>', unsafe_allow_html=True)
             st.markdown("### Top Candidatos")
             for _, row in df.head(20).iterrows():
                 nivel  = row.get("Nivel_Potencial","Bajo")
@@ -505,17 +505,17 @@ if st.session_state.modulo_activo == "cvs":
                 cumple = "Cumple requisitos" if row.get("Cumple_Requisitos") else "No cumple"
                 st.markdown(f"""<div class="candidate-card">
                   <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><strong style="font-size:16px;color:#E8F4F8;">#{row['Ranking']} {row.get('Nombre','N/A')}</strong>
+                    <div><strong style="font-size:16px;color:#2E3A45;">#{row['Ranking']} {row.get('Nombre','N/A')}</strong>
                       &nbsp;<span class="{badge}">{nivel}</span>
-                      &nbsp;<small style="color:#7EC8E3;">{cumple}</small></div>
-                    <span style="font-size:26px;font-weight:700;color:#7EC8E3;">{row.get('Puntaje',0)}/10</span>
+                      &nbsp;<small style="color:#3A7CA5;">{cumple}</small></div>
+                    <span style="font-size:26px;font-weight:700;color:#3A7CA5;">{row.get('Puntaje',0)}/10</span>
                   </div>
-                  <div style="margin-top:8px;color:#B5D4F4;font-size:13px;">
+                  <div style="margin-top:8px;color:#9CA8B0;font-size:13px;">
                     {row.get('Ultimo_Cargo','N/A')} en {row.get('Ultima_Empresa','N/A')}
                     &nbsp;|&nbsp;{row.get('Experiencia_Anos',0)} a\u00f1os
                     &nbsp;|&nbsp;{row.get('Educacion_Maxima','N/A')}
                   </div>
-                  <div style="margin-top:6px;color:#2E6B8A;font-size:12px;font-style:italic;">{row.get('Justificacion','')}</div>
+                  <div style="margin-top:6px;color:#4A90B8;font-size:12px;font-style:italic;">{row.get('Justificacion','')}</div>
                 </div>""", unsafe_allow_html=True)
 
         with tab2:
@@ -523,12 +523,12 @@ if st.session_state.modulo_activo == "cvs":
             col_a,col_b = st.columns(2)
             with col_a:
                 cnt = df["Nivel_Potencial"].value_counts().reset_index(); cnt.columns=["Nivel","Cantidad"]
-                fig1 = px.pie(cnt,values="Cantidad",names="Nivel",title="Distribucion por Potencial",hole=0.45,
+                fig1 = px.pie(cnt,values="Cantidad",names="Nivel",title="Distribuci\u00f3n por Potencial",hole=0.45,
                               color="Nivel",color_discrete_map={"Alto":"#4ade80","Medio":"#fbbf24","Bajo":"#f87171"})
                 fig1.update_layout(**LAYOUT); st.plotly_chart(fig1,use_container_width=True)
             with col_b:
-                edu = df["Educacion_Maxima"].value_counts().reset_index(); edu.columns=["Educacion","Cantidad"]
-                fig2 = px.bar(edu,x="Cantidad",y="Educacion",orientation="h",title="Nivel Educativo",
+                edu = df["Educacion_Maxima"].value_counts().reset_index(); edu.columns=["Educaci\u00f3n","Cantidad"]
+                fig2 = px.bar(edu,x="Cantidad",y="Educaci\u00f3n",orientation="h",title="Nivel Educativo",
                               color="Cantidad",color_continuous_scale=CYAN)
                 fig2.update_layout(**LAYOUT); st.plotly_chart(fig2,use_container_width=True)
             col_c,col_d = st.columns(2)
@@ -577,7 +577,7 @@ if st.session_state.modulo_activo == "cvs":
 
         with tab4:
             st.markdown("## Exportar Resultados")
-            op = st.radio("Que candidatos exportar?",["Todos","Solo Alto Potencial","Solo los que cumplen","Top 10"])
+            op = st.radio("\u00bfQu\u00e9 candidatos exportar?",["Todos","Solo Alto Potencial","Solo los que cumplen","Top 10"])
             df_exp = df.copy()
             if op=="Solo Alto Potencial":    df_exp=df[df["Nivel_Potencial"]=="Alto"]
             elif op=="Solo los que cumplen": df_exp=df[df["Cumple_Requisitos"]==True]
@@ -599,10 +599,10 @@ else:
 
     with tab_buscar:
         st.markdown("### B\u00fasqueda de Proveedores en Internet")
-        st.markdown("<p style='color:#7EC8E3;'>Describe con todo el detalle que necesites.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#3A7CA5;'>Describe con todo el detalle que necesites.</p>", unsafe_allow_html=True)
         col_q1,col_q2 = st.columns([3,1])
         with col_q1:
-            query_usuario = st.text_area("Describe que proveedor necesitas",
+            query_usuario = st.text_area("Describe qu\u00e9 proveedor necesitas",
                 placeholder="Ej: Necesito proveedores de servicios de nomina para una empresa de 200 empleados en Peru.",height=120)
         with col_q2:
             num_resultados   = st.selectbox("Cantidad de proveedores",[5,8,10,15],index=1)
@@ -611,7 +611,7 @@ else:
 
         if st.button("Buscar Proveedores",type="primary",use_container_width=True):
             if not query_usuario.strip():
-                st.warning("Por favor describe que proveedor necesitas.")
+                st.warning("Por favor describe qu\u00e9 proveedor necesitas.")
             else:
                 contexto=(f"Pais: {pais_busqueda or 'no especificado'} | Rubro: {rubro_busqueda or 'no especificado'} | "
                           f"Presupuesto: {presupuesto_ref} | Cobertura: {cobertura_req}")
@@ -661,7 +661,7 @@ else:
                         msg3=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=300,
                             messages=[{"role":"user","content":f"Resumen ejecutivo breve (2-3 oraciones) del mercado de proveedores para: {query_usuario}\nEmpresas: {nombres_lista}\nResponde SOLO: {{\"resumen\":\"texto\"}}"}])
                         datos3=limpiar_json(msg3.content[0].text)
-                        if datos3.get("resumen"): st.info(f"Analisis del mercado: {datos3['resumen']}")
+                        if datos3.get("resumen"): st.info(f"An\u00e1lisis del mercado: {datos3['resumen']}")
                     except: pass
                     st.session_state.proveedores_web=proveedores_detallados
                     st.success(f"Busqueda completada: {len(proveedores_detallados)} proveedores analizados.")
@@ -677,25 +677,25 @@ else:
                 st.markdown(f"""<div class="proveedor-card">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                     <div style="flex:1;">
-                      <strong style="font-size:16px;color:#E8F4F8;">#{i} {prov.get('nombre','N/A')}</strong>
+                      <strong style="font-size:16px;color:#2E3A45;">#{i} {prov.get('nombre','N/A')}</strong>
                       &nbsp;<span class="{badge_c}">{nivel_texto}</span>
-                      <div style="margin-top:6px;color:#B5D4F4;font-size:13px;">{prov.get('descripcion','')}</div>
+                      <div style="margin-top:6px;color:#9CA8B0;font-size:13px;">{prov.get('descripcion','')}</div>
                     </div>
-                    <span style="font-size:26px;font-weight:700;color:#7EC8E3;min-width:70px;text-align:right;">{prov.get('puntaje_recomendacion',0)}/10</span>
+                    <span style="font-size:26px;font-weight:700;color:#3A7CA5;min-width:70px;text-align:right;">{prov.get('puntaje_recomendacion',0)}/10</span>
                   </div>
-                  <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#7EC8E3;">
+                  <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#3A7CA5;">
                     <span>Pa\u00eds: {prov.get('pais_sede','N/A')}</span>
                     <span>Cobertura: {prov.get('cobertura','N/A')}</span>
                     <span>Exp: {prov.get('anos_experiencia','N/A')} a\u00f1os</span>
                     <span>Precio: {prov.get('rango_precio','N/A')}</span>
                     <span>Certif: {prov.get('certificaciones','N/A')}</span>
                   </div>
-                  <div style="margin-top:8px;font-size:12px;color:#7EC8E3;">
-                    Web: <a href="{prov.get('sitio_web','#')}" target="_blank" style="color:#7EC8E3;">{prov.get('sitio_web','N/A')}</a>
+                  <div style="margin-top:8px;font-size:12px;color:#3A7CA5;">
+                    Web: <a href="{prov.get('sitio_web','#')}" target="_blank" style="color:#3A7CA5;">{prov.get('sitio_web','N/A')}</a>
                     &nbsp;|&nbsp;Contacto: {prov.get('contacto','N/A')}
                   </div>
                   <div style="margin-top:6px;font-size:12px;color:#4ade80;">{prov.get('fortalezas','')}</div>
-                  <div style="margin-top:4px;font-size:11px;color:#2E6B8A;font-style:italic;">{prov.get('razon_recomendacion','')}</div>
+                  <div style="margin-top:4px;font-size:11px;color:#4A90B8;font-style:italic;">{prov.get('razon_recomendacion','')}</div>
                 </div>""", unsafe_allow_html=True)
             if st.button("Agregar al comparador",use_container_width=True):
                 df_web=pd.DataFrame(provs_sorted)
@@ -708,7 +708,7 @@ else:
 
     with tab_subir:
         st.markdown("### Analizar Documentos de Proveedores")
-        st.markdown("<p style='color:#7EC8E3;'>Sube propuestas, RFPs o fichas tecnicas en PDF.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#3A7CA5;'>Sube propuestas, RFPs o fichas tecnicas en PDF.</p>", unsafe_allow_html=True)
         docs=st.file_uploader("Sube documentos PDF",type=["pdf"],accept_multiple_files=True,key="docs_prov")
         if docs: st.info(f"{len(docs)} documento(s) cargado(s).")
         if docs and st.button("Analizar Documentos",type="primary",use_container_width=True):
@@ -777,46 +777,46 @@ else:
                     tiene_puntajes=any(row.get(c,0) not in [0,"-",None,""] for c in ["puntaje_precio","puntaje_certificaciones","puntaje_reputacion","puntaje_cobertura"])
                     if tiene_puntajes:
                         grid_html=(f'<div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#fbbf24;font-size:16px;font-weight:700;">{row.get("puntaje_precio","-")}</div><div style="color:#7EC8E3;font-size:11px;">Precio</div></div>'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#7EC8E3;font-size:16px;font-weight:700;">{row.get("puntaje_certificaciones","-")}</div><div style="color:#7EC8E3;font-size:11px;">Certif.</div></div>'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#f472b6;font-size:16px;font-weight:700;">{row.get("puntaje_reputacion","-")}</div><div style="color:#7EC8E3;font-size:11px;">Reput.</div></div>'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#34d399;font-size:16px;font-weight:700;">{row.get("puntaje_cobertura","-")}</div><div style="color:#7EC8E3;font-size:11px;">Cobert.</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#fbbf24;font-size:16px;font-weight:700;">{row.get("puntaje_precio","-")}</div><div style="color:#3A7CA5;font-size:11px;">Precio</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#3A7CA5;font-size:16px;font-weight:700;">{row.get("puntaje_certificaciones","-")}</div><div style="color:#3A7CA5;font-size:11px;">Certif.</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#f472b6;font-size:16px;font-weight:700;">{row.get("puntaje_reputacion","-")}</div><div style="color:#3A7CA5;font-size:11px;">Reput.</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#34d399;font-size:16px;font-weight:700;">{row.get("puntaje_cobertura","-")}</div><div style="color:#3A7CA5;font-size:11px;">Cobert.</div></div>'
                                    f'</div>')
                     else:
                         cv=row.get("cobertura","N/A"); av=row.get("anos_experiencia","N/A")
                         pv=row.get("rango_precio","N/A"); cerv=str(row.get("certificaciones","N/A"))[:30]
                         grid_html=(f'<div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#fbbf24;font-size:13px;font-weight:600;">{cv}</div><div style="color:#7EC8E3;font-size:11px;">Cobertura</div></div>'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#7EC8E3;font-size:13px;font-weight:600;">{av} a\u00f1os</div><div style="color:#7EC8E3;font-size:11px;">Experiencia</div></div>'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#f472b6;font-size:13px;font-weight:600;">{pv}</div><div style="color:#7EC8E3;font-size:11px;">Precio</div></div>'
-                                   f'<div style="background:#0A0F1A;border-radius:8px;padding:8px;"><div style="color:#34d399;font-size:11px;font-weight:600;">{cerv}</div><div style="color:#7EC8E3;font-size:11px;">Certif.</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#fbbf24;font-size:13px;font-weight:600;">{cv}</div><div style="color:#3A7CA5;font-size:11px;">Cobertura</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#3A7CA5;font-size:13px;font-weight:600;">{av} a\u00f1os</div><div style="color:#3A7CA5;font-size:11px;">Experiencia</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#f472b6;font-size:13px;font-weight:600;">{pv}</div><div style="color:#3A7CA5;font-size:11px;">Precio</div></div>'
+                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#34d399;font-size:11px;font-weight:600;">{cerv}</div><div style="color:#3A7CA5;font-size:11px;">Certif.</div></div>'
                                    f'</div>')
                     st.markdown(f"""<div class="proveedor-card">
                       <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <div><strong style="color:#E8F4F8;font-size:15px;">#{row.get('Ranking','?')} {row.get('nombre','N/A')}</strong>
+                        <div><strong style="color:#2E3A45;font-size:15px;">#{row.get('Ranking','?')} {row.get('nombre','N/A')}</strong>
                           &nbsp;<span class="{badge_c}">{nivel}</span>
-                          <div style="color:#7EC8E3;font-size:12px;margin-top:4px;">{desc}</div></div>
-                        <span style="font-size:24px;font-weight:700;color:#7EC8E3;">{puntaje}/10</span>
+                          <div style="color:#3A7CA5;font-size:12px;margin-top:4px;">{desc}</div></div>
+                        <span style="font-size:24px;font-weight:700;color:#3A7CA5;">{puntaje}/10</span>
                       </div>{grid_html}
-                      <div style="margin-top:8px;font-size:12px;color:#2E6B8A;font-style:italic;">{just}</div>
+                      <div style="margin-top:8px;font-size:12px;color:#4A90B8;font-style:italic;">{just}</div>
                     </div>""", unsafe_allow_html=True)
                 criterios_all=["puntaje_precio","puntaje_certificaciones","puntaje_reputacion","puntaje_cobertura"]
                 criterios_ok=[c for c in criterios_all if c in df_sel.columns and df_sel[c].sum()>0]
                 if len(df_sel)>1 and criterios_ok:
-                    st.markdown("#### Radar de Comparacion")
+                    st.markdown("#### Radar de Comparaci\u00f3n")
                     labels={"puntaje_precio":"Precio","puntaje_certificaciones":"Certif.","puntaje_reputacion":"Reput.","puntaje_cobertura":"Cobert."}
                     cats=[labels.get(c,c) for c in criterios_ok]
-                    colores=["#7EC8E3","#34d399","#fbbf24","#f87171","#60a5fa"]
+                    colores=["#3A7CA5","#34d399","#fbbf24","#f87171","#60a5fa"]
                     fig_r=go.Figure()
                     for i,(_, row) in enumerate(df_sel.iterrows()):
                         vals=[float(row.get(c,0)) for c in criterios_ok]
                         fig_r.add_trace(go.Scatterpolar(r=vals+[vals[0]],theta=cats+[cats[0]],fill='toself',
                             name=str(row.get("nombre","Proveedor")),line_color=colores[i%len(colores)],
                             fillcolor=colores[i%len(colores)],opacity=0.3))
-                    fig_r.update_layout(polar=dict(radialaxis=dict(visible=True,range=[0,10],color="#7EC8E3"),
-                        bgcolor="#111927",angularaxis=dict(color="#7EC8E3")),
-                        paper_bgcolor="rgba(0,0,0,0)",font_color="#E8F4F8",
-                        legend=dict(bgcolor="#111927",bordercolor="#2E6B8A",borderwidth=1),height=450)
+                    fig_r.update_layout(polar=dict(radialaxis=dict(visible=True,range=[0,10],color="#3A7CA5"),
+                        bgcolor="#FFFFFF",angularaxis=dict(color="#3A7CA5")),
+                        paper_bgcolor="rgba(0,0,0,0)",font_color="#2E3A45",
+                        legend=dict(bgcolor="#FFFFFF",bordercolor="#4A90B8",borderwidth=1),height=450)
                     st.plotly_chart(fig_r,use_container_width=True)
                 st.markdown("#### Tabla Comparativa Detallada")
                 cols_tabla=["nombre","cobertura","anos_experiencia","certificaciones","rango_precio","contacto","sitio_web","fortalezas","puntaje_recomendacion","nivel_recomendacion"]
@@ -842,7 +842,7 @@ else:
             with col1:
                 if "cobertura" in df_p.columns:
                     cob=df_p["cobertura"].value_counts().reset_index(); cob.columns=["Cobertura","Cantidad"]
-                    fig_c=px.pie(cob,values="Cantidad",names="Cobertura",title="Distribucion por Cobertura",hole=0.4,color_discrete_sequence=VERDE)
+                    fig_c=px.pie(cob,values="Cantidad",names="Cobertura",title="Distribuci\u00f3n por Cobertura",hole=0.4,color_discrete_sequence=VERDE)
                     fig_c.update_layout(**LAYOUT); st.plotly_chart(fig_c,use_container_width=True)
             with col2:
                 if "nivel_recomendacion" in df_p.columns:
@@ -873,7 +873,7 @@ else:
             if "nombre" not in df_p.columns and "nombre_empresa" in df_p.columns: df_p["nombre"]=df_p["nombre_empresa"]
             if "puntaje_recomendacion" in df_p.columns:
                 df_p["puntaje_recomendacion"]=pd.to_numeric(df_p["puntaje_recomendacion"],errors="coerce").fillna(0)
-            op_p=st.radio("Que exportar?",["Todos los proveedores","Solo Muy Recomendados","Solo Recomendados","Top 5"])
+            op_p=st.radio("\u00bfQu\u00e9 exportar?",["Todos los proveedores","Solo Muy Recomendados","Solo Recomendados","Top 5"])
             df_exp_p=df_p.copy()
             if "nivel_recomendacion" in df_p.columns:
                 if op_p=="Solo Muy Recomendados": df_exp_p=df_p[df_p["nivel_recomendacion"].str.contains("Muy",na=False)]
