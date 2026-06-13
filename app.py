@@ -442,31 +442,34 @@ if st.session_state.modulo_activo == "cvs":
                 f'Formato JSON requerido:\n'
                 f'{{"Nombre":"","Correo":"","Telefono":"","Educacion_Maxima":"","Universidad":"","Carrera":"",'
                 f'"Ultimo_Cargo":"","Ultima_Empresa":"","Experiencia_Anos":0,"Habilidades_Tecnicas":"",'
-                f'"Habilidades_Blandas":"","Idiomas":"","Certificaciones":"","Puntaje":0,'
-                f'"Nivel_Potencial":"","Justificacion":"","Cumple_Requisitos":false,'
+                f'"Habilidades_Blandas":"","Idiomas":"","Certificaciones":"","Calculo_Interno":"",'
+                f'"Puntaje":0,"Nivel_Potencial":"","Justificacion":"","Cumple_Requisitos":false,'
                 f'"Requisitos_Cumplidos":"","Requisitos_Faltantes":""}}\n\n'
                 f'Instrucciones:\n'
-                f'- Puntaje 1-10: experiencia ({peso_exp}%), educacion ({peso_edu}%), '
+                f'- Calcula el Puntaje del 1 al 10 ponderando: experiencia ({peso_exp}%), educacion ({peso_edu}%), '
                 f'habilidades: {", ".join(habilidades_lista) or "no especificadas"} ({peso_hab}%), '
                 f'idiomas: {idioma_req} ({peso_idi}%)\n'
-                f'- Nivel_Potencial: "Alto" si >= 7, "Medio" si >= 4, "Bajo" si < 4\n'
-                f'- Cumple_Requisitos: true si experiencia >= {experiencia_min} y puntaje >= 6\n'
+                f'- Calculo_Interno: muestra aqui el desglose matematico completo del calculo del puntaje '
+                f'(formula, porcentajes, suma). Este campo es solo para verificacion interna, no se muestra al usuario.\n'
+                f'- Nivel_Potencial: "Alto" si Puntaje >= 7, "Medio" si >= 4, "Bajo" si < 4\n'
+                f'- Cumple_Requisitos: true si experiencia >= {experiencia_min} y Puntaje >= 6\n'
                 f'- Experiencia_Anos: solo numero entero\n'
                 f'- Habilidades_Tecnicas: maximo 6, separadas por coma\n'
                 f'- Si un dato no existe: "No especifica"\n'
-                f'- Justificacion: maximo 2 oraciones cortas (menos de 200 caracteres). '
-                f'NO incluyas formulas, calculos matematicos, porcentajes ni la suma del puntaje. '
-                f'Solo menciona la fortaleza y debilidad principal del candidato de forma breve.\n\n'
+                f'- Justificacion: maximo 2 oraciones cortas (menos de 200 caracteres) explicando '
+                f'la fortaleza y debilidad principal del candidato. NO incluyas numeros, formulas, '
+                f'porcentajes ni el valor del puntaje en este campo (eso ya va en Calculo_Interno).\n\n'
                 f'CV:\n{texto[:4000]}'
             )
             try:
                 msg   = client.messages.create(model="claude-haiku-4-5-20251001", max_tokens=1200,
                             messages=[{"role":"user","content":prompt}])
                 datos = limpiar_json(msg.content[0].text)
-                # Limitar longitud de Justificacion para evitar desbordes en Excel
+                # Quitar el campo de calculo interno (solo se usaba para que Claude razone el puntaje)
+                datos.pop("Calculo_Interno", None)
+                # Seguridad adicional: si Justificacion aun contiene restos de formulas, cortarlos
                 if "Justificacion" in datos and isinstance(datos["Justificacion"], str):
                     just = datos["Justificacion"]
-                    # Si contiene calculos o formulas, cortar antes de "Puntaje calculado" o similar
                     for marcador in ["Puntaje calculado", "calculo:", "C\u00e1lculo:", "= ", "+ (", "\u00d7"]:
                         if marcador in just:
                             just = just.split(marcador)[0].strip()
