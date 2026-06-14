@@ -615,54 +615,40 @@ else:
             else:
                 contexto=(f"Pais: {pais_busqueda or 'no especificado'} | Rubro: {rubro_busqueda or 'no especificado'} | "
                           f"Presupuesto: {presupuesto_ref} | Cobertura: {cobertura_req}")
-                st.info("Paso 1/3: Identificando empresas relevantes en internet...")
-                prompt_paso1=(f"Busca en internet empresas reales que ofrezcan: {query_usuario}\nContexto: {contexto}\n\n"
-                              f"Lista exactamente {num_resultados} empresas reales y verificadas.\n"
-                              f'Responde SOLO con JSON valido:\n{{"empresas":[{{"nombre":"Nombre","descripcion_breve":"que hace","sitio_web":"https://..."}}]}}')
-                empresas_encontradas=[]
-                try:
-                    msg1=client.messages.create(model="claude-sonnet-4-6",max_tokens=2000,
-                        tools=[{"type":"web_search_20250305","name":"web_search"}],
-                        messages=[{"role":"user","content":prompt_paso1}])
-                    texto1="".join(b.text for b in msg1.content if hasattr(b,"text"))
-                    datos1=limpiar_json(texto1)
-                    empresas_encontradas=datos1.get("empresas",[])
-                    st.success(f"Paso 1 completado: {len(empresas_encontradas)} empresas identificadas.")
-                except Exception as e:
-                    st.error(f"Error en paso 1: {e}")
 
-                if empresas_encontradas:
-                    st.info(f"Paso 2/3: Analizando cada empresa en detalle...")
-                    proveedores_detallados=[]; pb=st.progress(0)
-                    for i,empresa in enumerate(empresas_encontradas):
-                        nombre_emp=empresa.get("nombre",""); desc_emp=empresa.get("descripcion_breve",""); web_emp=empresa.get("sitio_web","")
-                        prompt_paso2=(f'Analiza "{nombre_emp}" (web: {web_emp}) como proveedor para: {query_usuario}\nContexto: {contexto}\n\n'
-                                      f'Responde SOLO con JSON valido:\n{{"nombre":"{nombre_emp}","descripcion":"descripcion completa","sitio_web":"{web_emp}",'
-                                      f'"pais_sede":"pais","cobertura":"Local o Nacional o Regional o Internacional","anos_experiencia":"numero",'
-                                      f'"certificaciones":"lista o No especifica","rango_precio":"rango o No publico","contacto":"email o telefono",'
-                                      f'"fortalezas":"f1, f2, f3","clientes_referencia":"clientes o No publico",'
-                                      f'"puntaje_recomendacion":8,"nivel_recomendacion":"Muy recomendado","razon_recomendacion":"razon especifica"}}')
-                        try:
-                            msg2=client.messages.create(model="claude-sonnet-4-6",max_tokens=1000,
-                                tools=[{"type":"web_search_20250305","name":"web_search"}],
-                                messages=[{"role":"user","content":prompt_paso2}])
-                            texto2="".join(b.text for b in msg2.content if hasattr(b,"text"))
-                            datos2=limpiar_json(texto2); proveedores_detallados.append(datos2)
-                        except:
-                            proveedores_detallados.append({"nombre":nombre_emp,"descripcion":desc_emp,"sitio_web":web_emp,
-                                "pais_sede":"No especifica","cobertura":"No especifica","anos_experiencia":"No especifica",
-                                "certificaciones":"No especifica","rango_precio":"No especifica","contacto":"No especifica",
-                                "fortalezas":"Ver sitio web","clientes_referencia":"No publico",
-                                "puntaje_recomendacion":7,"nivel_recomendacion":"Recomendado",
-                                "razon_recomendacion":"Empresa identificada como relevante"})
-                        pb.progress((i+1)/len(empresas_encontradas))
+                with st.spinner(f"Buscando y analizando {num_resultados} proveedores en internet..."):
+                    prompt_busqueda=(
+                        f"Busca en internet empresas reales y verificadas que ofrezcan: {query_usuario}\n"
+                        f"Contexto: {contexto}\n\n"
+                        f"Encuentra exactamente {num_resultados} empresas reales (con sitio web verificable) "
+                        f"y para CADA UNA devuelve la informacion completa que se pide abajo, "
+                        f"basandote en lo que encuentres en internet sobre cada empresa.\n\n"
+                        f"Responde SOLO con JSON valido, sin texto adicional ni markdown:\n"
+                        f'{{"proveedores":[{{"nombre":"Nombre real","descripcion":"descripcion completa de la empresa",'
+                        f'"sitio_web":"https://...","pais_sede":"pais","cobertura":"Local o Nacional o Regional o Internacional",'
+                        f'"anos_experiencia":"numero o rango","certificaciones":"lista o No especifica",'
+                        f'"rango_precio":"rango estimado o No publico","contacto":"email o telefono real",'
+                        f'"fortalezas":"f1, f2, f3","clientes_referencia":"clientes conocidos o No publico",'
+                        f'"puntaje_recomendacion":8,"nivel_recomendacion":"Muy recomendado",'
+                        f'"razon_recomendacion":"razon especifica para este caso"}}],'
+                        f'"resumen_mercado":"resumen ejecutivo breve (2-3 oraciones) del mercado de proveedores encontrado"}}'
+                    )
+                    proveedores_detallados=[]
+                    resumen_mercado=""
                     try:
-                        nombres_lista=", ".join([p.get("nombre","") for p in proveedores_detallados])
-                        msg3=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=300,
-                            messages=[{"role":"user","content":f"Resumen ejecutivo breve (2-3 oraciones) del mercado de proveedores para: {query_usuario}\nEmpresas: {nombres_lista}\nResponde SOLO: {{\"resumen\":\"texto\"}}"}])
-                        datos3=limpiar_json(msg3.content[0].text)
-                        if datos3.get("resumen"): st.info(f"An\u00e1lisis del mercado: {datos3['resumen']}")
-                    except: pass
+                        msg=client.messages.create(model="claude-sonnet-4-6",max_tokens=4096,
+                            tools=[{"type":"web_search_20250305","name":"web_search"}],
+                            messages=[{"role":"user","content":prompt_busqueda}])
+                        texto_resp="".join(b.text for b in msg.content if hasattr(b,"text"))
+                        datos=limpiar_json(texto_resp)
+                        proveedores_detallados=datos.get("proveedores",[])
+                        resumen_mercado=datos.get("resumen_mercado","")
+                    except Exception as e:
+                        st.error(f"Error en la busqueda: {e}")
+
+                if proveedores_detallados:
+                    if resumen_mercado:
+                        st.info(f"An\u00e1lisis del mercado: {resumen_mercado}")
                     st.session_state.proveedores_web=proveedores_detallados
                     st.success(f"Busqueda completada: {len(proveedores_detallados)} proveedores analizados.")
 
