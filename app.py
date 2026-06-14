@@ -616,11 +616,31 @@ else:
                 contexto=(f"Pais: {pais_busqueda or 'no especificado'} | Rubro: {rubro_busqueda or 'no especificado'} | "
                           f"Presupuesto: {presupuesto_ref} | Cobertura: {cobertura_req}")
 
-                with st.spinner(f"Buscando y analizando {num_resultados} proveedores en internet..."):
+                TAMANO_LOTE = 4
+                lotes = []
+                restante = num_resultados
+                while restante > 0:
+                    lotes.append(min(TAMANO_LOTE, restante))
+                    restante -= TAMANO_LOTE
+
+                proveedores_detallados=[]
+                resumen_mercado=""
+                nombres_ya_encontrados=[]
+                pb = st.progress(0)
+                status = st.empty()
+
+                for idx_lote, cantidad_lote in enumerate(lotes):
+                    status.markdown(f"Buscando lote {idx_lote+1}/{len(lotes)} ({cantidad_lote} proveedores)...")
+
+                    exclusion = ""
+                    if nombres_ya_encontrados:
+                        exclusion = (f"\nNO incluyas estas empresas que ya fueron encontradas: "
+                                      f"{', '.join(nombres_ya_encontrados)}.")
+
                     prompt_busqueda=(
                         f"Busca en internet empresas reales y verificadas que ofrezcan: {query_usuario}\n"
-                        f"Contexto: {contexto}\n\n"
-                        f"Encuentra exactamente {num_resultados} empresas reales (con sitio web verificable) "
+                        f"Contexto: {contexto}{exclusion}\n\n"
+                        f"Encuentra exactamente {cantidad_lote} empresas reales (con sitio web verificable) "
                         f"y para CADA UNA devuelve la informacion completa que se pide abajo, "
                         f"basandote en lo que encuentres en internet sobre cada empresa.\n\n"
                         f"Responde SOLO con JSON valido, sin texto adicional ni markdown:\n"
@@ -633,24 +653,33 @@ else:
                         f'"razon_recomendacion":"razon especifica para este caso"}}],'
                         f'"resumen_mercado":"resumen ejecutivo breve (2-3 oraciones) del mercado de proveedores encontrado"}}'
                     )
-                    proveedores_detallados=[]
-                    resumen_mercado=""
+
                     try:
                         msg=client.messages.create(model="claude-sonnet-4-6",max_tokens=4096,
                             tools=[{"type":"web_search_20250305","name":"web_search"}],
                             messages=[{"role":"user","content":prompt_busqueda}])
                         texto_resp="".join(b.text for b in msg.content if hasattr(b,"text"))
                         datos=limpiar_json(texto_resp)
-                        proveedores_detallados=datos.get("proveedores",[])
-                        resumen_mercado=datos.get("resumen_mercado","")
+                        nuevos = datos.get("proveedores",[])
+                        proveedores_detallados.extend(nuevos)
+                        nombres_ya_encontrados.extend([p.get("nombre","") for p in nuevos if p.get("nombre")])
+                        if not resumen_mercado:
+                            resumen_mercado = datos.get("resumen_mercado","")
                     except Exception as e:
-                        st.error(f"Error en la busqueda: {e}")
+                        st.warning(f"Lote {idx_lote+1} fallo: {e}")
+
+                    pb.progress((idx_lote+1)/len(lotes))
+
+                status.empty()
+                pb.empty()
 
                 if proveedores_detallados:
                     if resumen_mercado:
                         st.info(f"An\u00e1lisis del mercado: {resumen_mercado}")
                     st.session_state.proveedores_web=proveedores_detallados
                     st.success(f"Busqueda completada: {len(proveedores_detallados)} proveedores analizados.")
+                else:
+                    st.error("No se pudo completar la busqueda. Intenta de nuevo o reduce la cantidad de proveedores.")
 
         if st.session_state.proveedores_web:
             provs=st.session_state.proveedores_web
