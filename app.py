@@ -8,6 +8,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from collections import Counter
 import streamlit_authenticator as stauth
+from supabase import create_client
+from datetime import datetime, timezone
 
 st.set_page_config(page_title="Nexora", page_icon="N", layout="wide")
 
@@ -70,6 +72,26 @@ st.markdown("""
   .stMultiSelect > div > div {
     background-color: #ffffff !important; border: 1.5px solid #D8CFC0 !important;
     border-radius: 8px !important; color: #2E3A45 !important; }
+
+  /* ── Historial: items tipo lista de chats ──────────────────────────────── */
+  .nx-hist-item { display:flex; align-items:center; gap:8px; padding:6px 8px;
+    border-radius:6px; border-left:2px solid transparent; cursor:pointer;
+    transition:background 0.15s; margin-bottom:1px; }
+  .nx-hist-item:hover { background:#FFFFFF; }
+  .nx-hist-item.activo { background:#FFFFFF; border-left-color:#4A90B8; }
+  .nx-hist-titulo { flex:1; font-size:11.5px; color:#5F5E5A; line-height:1.3;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .nx-hist-item.activo .nx-hist-titulo { color:#2E3A45; font-weight:500; }
+  .nx-hist-fecha { font-family:var(--nx-mono); font-size:9px; color:#B4B2A9;
+    letter-spacing:0.5px; flex-shrink:0; white-space:nowrap; }
+  .nx-hist-empty { font-size:11px; color:#B4B2A9; padding:6px 8px; font-style:italic; }
+
+  /* Botones de historial (cargar/borrar): minimos, sin caja */
+  div[data-testid="stSidebar"] .nx-hist-btn button {
+    border:none !important; background:transparent !important; padding:2px 4px !important;
+    min-height:0 !important; height:auto !important; color:#B4B2A9 !important;
+    font-size:10px !important; letter-spacing:0 !important; text-transform:none !important; }
+  div[data-testid="stSidebar"] .nx-hist-btn button:hover { color:#4A90B8 !important; background:transparent !important; }
 
   /* Radio "modulo activo": tarjeta con borde izquierdo de acento */
   .stRadio [role="radiogroup"] { gap: 4px !important; }
@@ -227,12 +249,114 @@ except Exception:
     st.error("No se encontr\u00f3 la API Key en los Secrets de Streamlit Cloud."); st.stop()
 client = anthropic.Anthropic(api_key=api_key_segura)
 
+# ── SUPABASE (HISTORIAL) ───────────────────────────────────────────────────────
+try:
+    supabase = create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
+    SUPABASE_OK = True
+except Exception:
+    supabase = None
+    SUPABASE_OK = False
+
+TABLAS_HISTORIAL = {
+    "cvs": "historial_cvs",
+    "proveedores": "historial_proveedores",
+    "propuestas": "historial_propuestas",
+}
+
+def guardar_historial(modulo, titulo, datos_json):
+    """Guarda un registro de historial para el usuario actual.
+    modulo: 'cvs' | 'proveedores' | 'propuestas'
+    titulo: texto corto descriptivo (ej. '24 CVs - Analista de Datos')
+    datos_json: dict serializable a JSON con todo lo necesario para restaurar la vista."""
+    if not SUPABASE_OK:
+        return
+    tabla = TABLAS_HISTORIAL.get(modulo)
+    if not tabla:
+        return
+    try:
+        supabase.table(tabla).insert({
+            "usuario": username,
+            "titulo": titulo,
+            "datos_json": datos_json,
+        }).execute()
+    except Exception as e:
+        st.toast(f"No se pudo guardar en el historial: {e}", icon="\u26a0\ufe0f")
+
+def listar_historial(modulo):
+    """Devuelve la lista de registros de historial del usuario actual para un modulo,
+    ordenados del mas reciente al mas antiguo. Cada item es un dict con id, fecha, titulo."""
+    if not SUPABASE_OK:
+        return []
+    tabla = TABLAS_HISTORIAL.get(modulo)
+    if not tabla:
+        return []
+    try:
+        res = (supabase.table(tabla)
+               .select("id, fecha, titulo")
+               .eq("usuario", username)
+               .order("fecha", desc=True)
+               .execute())
+        return res.data or []
+    except Exception:
+        return []
+
+def cargar_historial_item(modulo, item_id):
+    """Recupera el datos_json completo de un item especifico del historial."""
+    if not SUPABASE_OK:
+        return None
+    tabla = TABLAS_HISTORIAL.get(modulo)
+    if not tabla:
+        return None
+    try:
+        res = (supabase.table(tabla)
+               .select("datos_json")
+               .eq("id", item_id)
+               .eq("usuario", username)
+               .single()
+               .execute())
+        return res.data.get("datos_json") if res.data else None
+    except Exception:
+        return None
+
+def borrar_historial_item(modulo, item_id):
+    """Elimina un item del historial del usuario actual."""
+    if not SUPABASE_OK:
+        return
+    tabla = TABLAS_HISTORIAL.get(modulo)
+    if not tabla:
+        return
+    try:
+        supabase.table(tabla).delete().eq("id", item_id).eq("usuario", username).execute()
+    except Exception as e:
+        st.toast(f"No se pudo eliminar: {e}", icon="\u26a0\ufe0f")
+
+def df_a_json_seguro(df):
+    """Convierte un DataFrame a lista de dicts apta para jsonb de Supabase.
+    Usa to_json/from_json para que NaN -> null y tipos numpy -> tipos nativos."""
+    import json as _json
+    return _json.loads(df.to_json(orient="records"))
+
+def fecha_relativa(fecha_iso):
+    """Convierte un timestamp ISO de Supabase a texto relativo corto: 'hoy', 'ayer', '12 jun'."""
+    try:
+        fecha = datetime.fromisoformat(fecha_iso.replace("Z", "+00:00"))
+        ahora = datetime.now(timezone.utc)
+        dias = (ahora.date() - fecha.date()).days
+        if dias == 0: return "hoy"
+        if dias == 1: return "ayer"
+        if dias < 7:  return f"hace {dias}d"
+        meses = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"]
+        return f"{fecha.day} {meses[fecha.month-1]}"
+    except Exception:
+        return ""
+
 # ── SESSION STATE ─────────────────────────────────────────────────────────────
 if "df_candidatos"   not in st.session_state: st.session_state.df_candidatos   = None
 if "df_proveedores"  not in st.session_state: st.session_state.df_proveedores  = None
 if "df_propuestas"   not in st.session_state: st.session_state.df_propuestas   = None
 if "proveedores_web" not in st.session_state: st.session_state.proveedores_web = []
 if "modulo_activo"   not in st.session_state: st.session_state.modulo_activo   = "cvs"
+if "historial_item_activo" not in st.session_state: st.session_state.historial_item_activo = None
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -253,12 +377,76 @@ with st.sidebar:
     </div>""", unsafe_allow_html=True)
     st.divider()
 
+    SIDEBAR_LABEL = "font-family:var(--nx-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9CA8B0;margin-bottom:10px;"
+
     modulo = st.radio("M\u00f3dulo activo", ["An\u00e1lisis de CVs", "An\u00e1lisis de Proveedores"],
                       index=0 if st.session_state.modulo_activo == "cvs" else 1)
     st.session_state.modulo_activo = "cvs" if "CVs" in modulo else "proveedores"
     st.divider()
 
-    SIDEBAR_LABEL = "font-family:var(--nx-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9CA8B0;margin-bottom:10px;"
+    # ── HISTORIAL ────────────────────────────────────────────────────────────
+    if st.session_state.modulo_activo == "cvs":
+        modulos_historial = [("cvs", "CVs")]
+    else:
+        modulos_historial = [("proveedores", "B\u00fasquedas"), ("propuestas", "Propuestas")]
+
+    st.markdown(f"<p style='{SIDEBAR_LABEL}'>Historial</p>", unsafe_allow_html=True)
+
+    if not SUPABASE_OK:
+        st.markdown('<div class="nx-hist-empty">Historial no disponible</div>', unsafe_allow_html=True)
+    else:
+        hist_total = 0
+        for mod_key, mod_label in modulos_historial:
+            items = listar_historial(mod_key)
+            hist_total += len(items)
+            if not items:
+                continue
+            if len(modulos_historial) > 1:
+                st.markdown(f'<div style="font-family:var(--nx-mono);font-size:9px;letter-spacing:1px;color:#B4B2A9;margin:6px 0 2px;text-transform:uppercase;">{mod_label}</div>', unsafe_allow_html=True)
+            for item in items:
+                item_id = item["id"]
+                titulo  = item.get("titulo", "Sin t\u00edtulo")
+                fecha_r = fecha_relativa(item.get("fecha", ""))
+                es_activo = (st.session_state.historial_item_activo == (mod_key, item_id))
+                clase = "nx-hist-item activo" if es_activo else "nx-hist-item"
+
+                c1, c2 = st.columns([10, 1], gap="small")
+                with c1:
+                    st.markdown(f'<div class="{clase}"><span class="nx-hist-titulo">{titulo}</span><span class="nx-hist-fecha">{fecha_r}</span></div>', unsafe_allow_html=True)
+                    if st.button("abrir", key=f"hist_open_{mod_key}_{item_id}", help=titulo):
+                        datos = cargar_historial_item(mod_key, item_id)
+                        if datos is not None:
+                            if mod_key == "cvs":
+                                st.session_state.df_candidatos = pd.DataFrame(datos)
+                                st.session_state.modulo_activo = "cvs"
+                            elif mod_key == "proveedores":
+                                st.session_state.proveedores_web = datos.get("proveedores_web", [])
+                                if datos.get("df_proveedores") is not None:
+                                    st.session_state.df_proveedores = pd.DataFrame(datos["df_proveedores"])
+                                st.session_state.modulo_activo = "proveedores"
+                            elif mod_key == "propuestas":
+                                st.session_state.df_propuestas = pd.DataFrame(datos)
+                                if st.session_state.df_proveedores is None:
+                                    st.session_state.df_proveedores = pd.DataFrame(datos)
+                                else:
+                                    st.session_state.df_proveedores = pd.concat(
+                                        [st.session_state.df_proveedores, pd.DataFrame(datos)], ignore_index=True)
+                                st.session_state.modulo_activo = "proveedores"
+                            st.session_state.historial_item_activo = (mod_key, item_id)
+                            st.rerun()
+                with c2:
+                    st.markdown('<div class="nx-hist-btn" style="margin-top:2px;">', unsafe_allow_html=True)
+                    if st.button("\u00d7", key=f"hist_del_{mod_key}_{item_id}", help="Eliminar del historial"):
+                        borrar_historial_item(mod_key, item_id)
+                        if st.session_state.historial_item_activo == (mod_key, item_id):
+                            st.session_state.historial_item_activo = None
+                        st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+        if hist_total == 0:
+            st.markdown('<div class="nx-hist-empty">A\u00fan no hay b\u00fasquedas guardadas</div>', unsafe_allow_html=True)
+
+    st.divider()
+
     if st.session_state.modulo_activo == "cvs":
         st.markdown(f"<p style='{SIDEBAR_LABEL}'>Configurar puesto</p>", unsafe_allow_html=True)
         puesto          = st.text_input("Nombre del puesto", placeholder="Ej: Analista de Datos")
@@ -743,6 +931,12 @@ if st.session_state.modulo_activo == "cvs":
             st.session_state.df_candidatos = df
             stxt.success(f"{len(resultados)} CVs procesados correctamente.")
 
+            titulo_hist = f"{len(df)} CVs"
+            if puesto.strip():
+                titulo_hist += f" \u00b7 {puesto.strip()}"
+            guardar_historial("cvs", titulo_hist, df_a_json_seguro(df))
+            st.session_state.historial_item_activo = None
+
     if st.session_state.df_candidatos is not None:
         df = st.session_state.df_candidatos.copy()
         tab1, tab2, tab3, tab4 = st.tabs(["Ranking","Dashboards","Filtros","Exportar"])
@@ -937,6 +1131,16 @@ else:
                         st.info(f"An\u00e1lisis del mercado: {resumen_mercado}")
                     st.session_state.proveedores_web=proveedores_detallados
                     st.success(f"Busqueda completada: {len(proveedores_detallados)} proveedores analizados.")
+
+                    resumen_query = query_usuario.strip()[:50]
+                    if len(query_usuario.strip()) > 50:
+                        resumen_query += "\u2026"
+                    titulo_hist = f"{len(proveedores_detallados)} proveedores \u00b7 {resumen_query}"
+                    guardar_historial("proveedores", titulo_hist, {
+                        "proveedores_web": proveedores_detallados,
+                        "df_proveedores": None,
+                    })
+                    st.session_state.historial_item_activo = None
                 else:
                     st.error("No se pudo completar la busqueda. Intenta de nuevo o reduce la cantidad de proveedores.")
 
@@ -1031,6 +1235,15 @@ else:
                 else: st.session_state.df_proveedores=pd.concat([st.session_state.df_proveedores,df_new],ignore_index=True)
                 st.session_state.df_propuestas=df_new
                 stx2.success(f"{len(resultados_prov)} documentos analizados y agregados al comparador.")
+
+                col_nombre_hist = "nombre" if "nombre" in df_new.columns else None
+                if col_nombre_hist:
+                    nombres_prop = ", ".join(df_new[col_nombre_hist].dropna().astype(str).head(3).tolist())
+                else:
+                    nombres_prop = ", ".join(df_new["Archivo"].dropna().astype(str).head(3).tolist())
+                titulo_hist = f"{len(resultados_prov)} propuestas \u00b7 {nombres_prop}"
+                guardar_historial("propuestas", titulo_hist, resultados_prov)
+                st.session_state.historial_item_activo = None
 
         if st.session_state.get("df_propuestas") is not None and len(st.session_state.df_propuestas)>0:
             st.divider()
