@@ -473,6 +473,10 @@ with st.sidebar:
         ppeso_cert   = st.slider("Certificaciones",    0, 100, 25)
         ppeso_rep    = st.slider("Reputaci\u00f3n",         0, 100, 25)
         ppeso_cob    = st.slider("Cobertura",          0, 100, 20)
+        st.divider()
+        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Matriz econ\u00f3mica</p>", unsafe_allow_html=True)
+        peso_matriz_costo = st.slider("Costos de la propuesta", 0, 100, 70)
+        peso_matriz_pago  = st.slider("Condici\u00f3n de pago",   0, 100, 30)
 
     st.divider()
     authenticator.logout("Cerrar sesi\u00f3n", "sidebar")
@@ -854,6 +858,457 @@ def exportar_excel_propuestas(df_exp):
     return output.getvalue()
 
 
+
+def exportar_excel_matriz_economica(df_propuestas, peso_costo, peso_pago, username,
+                                      descripcion_compra="", comprador=""):
+    """Genera un Excel estilo 'Matriz de Evaluacion Economica' (formato Yanbal),
+    comparando hasta 5 proveedores lado a lado con formulas reales de Excel.
+
+    df_propuestas: DataFrame con las propuestas analizadas (resultados_prov),
+                    debe incluir columnas: nombre, item_descripcion, item_cantidad,
+                    moneda, costo_unitario_num, costo_total_num, garantia,
+                    tiempo_entrega, condiciones_pago, Archivo.
+    peso_costo, peso_pago: enteros 0-100 (porcentajes) desde el sidebar.
+    username: usuario logueado actual (campo "Usuario" del encabezado).
+    descripcion_compra, comprador: textos opcionales para el encabezado.
+    """
+    from openpyxl import Workbook
+    from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+    from openpyxl.worksheet.properties import PageSetupProperties
+
+    NARANJA      = "E8703A"
+    NARANJA_TXT  = "FFFFFF"
+    GRIS_LABEL   = "2E3A45"
+    AMARILLO     = "FFF2A6"
+    VERDE_CLARO  = "D6EAD7"
+    ROSADO       = "F4D6D6"
+    AZUL_LINK    = "1F5C8B"
+    BORDE_COLOR  = "D9D2C4"
+
+    borde = Border(
+        left=Side(style="thin", color=BORDE_COLOR), right=Side(style="thin", color=BORDE_COLOR),
+        top=Side(style="thin", color=BORDE_COLOR), bottom=Side(style="thin", color=BORDE_COLOR),
+    )
+    fill_header  = PatternFill(start_color=NARANJA, end_color=NARANJA, fill_type="solid")
+    fill_amarillo = PatternFill(start_color=AMARILLO, end_color=AMARILLO, fill_type="solid")
+    fill_verde   = PatternFill(start_color=VERDE_CLARO, end_color=VERDE_CLARO, fill_type="solid")
+    fill_rosado  = PatternFill(start_color=ROSADO, end_color=ROSADO, fill_type="solid")
+    font_header  = Font(bold=True, color=NARANJA_TXT, size=11, name="Calibri")
+    font_label   = Font(bold=True, color=GRIS_LABEL, size=10, name="Calibri")
+    font_normal  = Font(size=10, name="Calibri", color=GRIS_LABEL)
+    font_bold    = Font(bold=True, size=10, name="Calibri", color=GRIS_LABEL)
+
+    df = df_propuestas.copy()
+    # Maximo 5 proveedores (como en la plantilla Yanbal)
+    df = df.head(5).reset_index(drop=True)
+    n_prov = len(df)
+    n_cols_total_max = 5  # columnas-grupo de proveedor disponibles en la plantilla
+
+    col_nombre = "nombre" if "nombre" in df.columns else "Archivo"
+
+    def gv(row, campo, default=""):
+        val = row.get(campo, default)
+        if val in [None, "", "No especifica"]:
+            return default
+        return val
+
+    def gnum(row, campo, default=0.0):
+        val = row.get(campo, default)
+        try:
+            f = float(val)
+            if f != f:  # NaN check
+                return default
+            return f
+        except (TypeError, ValueError):
+            return default
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Matriz Economica"
+
+    # Ancho de columnas: A=labels de encabezado / Cant, B=Item, luego 3 columnas por proveedor
+    ws.column_dimensions["A"].width = 30
+    ws.column_dimensions["B"].width = 30
+    col_idx = 3  # columna C en adelante
+    grupo_cols = []  # lista de (col_unitario, col_total, col_ofertas) por proveedor
+    for i in range(n_cols_total_max):
+        c_uni, c_tot, c_ofe = col_idx, col_idx + 1, col_idx + 2
+        ws.column_dimensions[get_column_letter(c_uni)].width = 16
+        ws.column_dimensions[get_column_letter(c_tot)].width = 16
+        ws.column_dimensions[get_column_letter(c_ofe)].width = 14
+        grupo_cols.append((c_uni, c_tot, c_ofe))
+        col_idx += 3
+    total_cols = col_idx - 1
+
+    # ── ENCABEZADO ──────────────────────────────────────────────────────────
+    fila = 1
+    ws.cell(row=fila, column=1, value="MATRIZ EVALUACION ECONOMICA").font = Font(bold=True, size=13, color=GRIS_LABEL, name="Calibri")
+    fila += 1
+    fila += 1
+
+    # Banda naranja "Proceso" -- merge sobre TODAS las columnas
+    ws.merge_cells(start_row=fila, start_column=1, end_row=fila, end_column=total_cols)
+    cell_proceso = ws.cell(row=fila, column=1, value="Proceso: A4 GESTION DE ADQUISICIONES")
+    cell_proceso.fill = fill_header
+    cell_proceso.font = font_header
+    cell_proceso.alignment = Alignment(horizontal="center")
+    for c in range(1, total_cols + 1):
+        ws.cell(row=fila, column=c).fill = fill_header
+    fila += 1
+    fila += 1
+
+    encabezado_items = [
+        ("Descripcion de compra", descripcion_compra or "Analisis de propuestas de proveedores"),
+        ("Usuario", username),
+        ("Comprador", comprador or username),
+        ("N\u00b0 PR", "-"),
+        ("Fecha de solicitud de compra", datetime.now().strftime("%d/%m/%Y")),
+        ("Fecha de entrega", "-"),
+        ("Vigencia de la contrataci\u00f3n", "-"),
+    ]
+    fila_inicio_encabezado = fila
+    for label, valor in encabezado_items:
+        ws.cell(row=fila, column=1, value=label).font = font_label
+        ws.cell(row=fila, column=2, value=str(valor)).font = font_normal
+        fila += 1
+
+    # "Proveedores invitados" lista hacia abajo en columna B
+    ws.cell(row=fila, column=1, value="Proveedores invitados").font = font_label
+    for i in range(n_prov):
+        nombre_p = gv(df.iloc[i], col_nombre, f"Proveedor {i+1}")
+        ws.cell(row=fila, column=2, value=str(nombre_p)).font = font_normal
+        fila += 1
+    fila += 1
+
+    # ── TABLA "PROVEEDORES" ─────────────────────────────────────────────────
+    fila_banda_prov = fila
+    ws.cell(row=fila, column=1, value="Proveedores")
+    for c in range(1, total_cols + 1):
+        cell = ws.cell(row=fila, column=c)
+        cell.fill = fill_header
+        cell.font = font_header
+    ws.merge_cells(start_row=fila, start_column=1, end_row=fila, end_column=total_cols)
+    ws.cell(row=fila, column=1).alignment = Alignment(horizontal="center")
+    fila += 1
+
+    # Fila de nombres de proveedor (merge de 3 columnas cada uno)
+    fila_nombres_prov = fila
+    for i, (c_uni, c_tot, c_ofe) in enumerate(grupo_cols):
+        nombre_p = gv(df.iloc[i], col_nombre, f"Proveedor {i+1}") if i < n_prov else "0"
+        ws.merge_cells(start_row=fila, start_column=c_uni, end_row=fila, end_column=c_ofe)
+        cell = ws.cell(row=fila, column=c_uni, value=str(nombre_p))
+        cell.font = font_bold
+        cell.alignment = Alignment(horizontal="center")
+        cell.fill = PatternFill(start_color="FBE5D6", end_color="FBE5D6", fill_type="solid")
+        for cc in range(c_uni, c_ofe + 1):
+            ws.cell(row=fila, column=cc).border = borde
+    fila += 1
+
+    # Encabezados de columna: Cant | Item | Costo unitario | Costo total | Ofertas Adjuntas (x5)
+    fila_header_cols = fila
+    h_cant = ws.cell(row=fila, column=1, value="Cant")
+    h_item = ws.cell(row=fila, column=2, value="Item")
+    for cell in (h_cant, h_item):
+        cell.font = font_bold
+        cell.fill = PatternFill(start_color="FBE5D6", end_color="FBE5D6", fill_type="solid")
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.border = borde
+    for (c_uni, c_tot, c_ofe) in grupo_cols:
+        for c, txt in ((c_uni, "Costo unitario"), (c_tot, "Costo total"), (c_ofe, "Ofertas Adjuntas")):
+            cell = ws.cell(row=fila, column=c, value=txt)
+            cell.font = font_bold
+            cell.fill = PatternFill(start_color="FBE5D6", end_color="FBE5D6", fill_type="solid")
+            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            cell.border = borde
+    fila += 1
+
+    # Fila de Item (1 sola fila de producto, como en el ejemplo Yanbal)
+    fila_item = fila
+    item_desc = ""
+    item_cant = 1
+    for i in range(n_prov):
+        d = gv(df.iloc[i], "item_descripcion", "")
+        if d:
+            item_desc = str(d)
+            item_cant = int(gnum(df.iloc[i], "item_cantidad", 1)) or 1
+            break
+    if not item_desc:
+        item_desc = "Producto/servicio cotizado"
+
+    ws.cell(row=fila, column=1, value=item_cant).alignment = Alignment(horizontal="center")
+    ws.cell(row=fila, column=1).font = font_normal
+    ws.cell(row=fila, column=1).border = borde
+    ws.cell(row=fila, column=2, value=item_desc).font = font_normal
+    ws.cell(row=fila, column=2).border = borde
+    ws.cell(row=fila, column=2).alignment = Alignment(wrap_text=True, vertical="center")
+
+    costo_total_refs = []  # celdas de Costo total por proveedor, para la formula de TOTAL y de puntuacion
+    for i, (c_uni, c_tot, c_ofe) in enumerate(grupo_cols):
+        if i < n_prov:
+            moneda = gv(df.iloc[i], "moneda", "S/.")
+            simbolo = "$" if str(moneda).upper() == "USD" else "S/."
+            costo_uni = gnum(df.iloc[i], "costo_unitario_num", 0.0)
+            costo_tot = gnum(df.iloc[i], "costo_total_num", 0.0) or costo_uni
+
+            cell_uni = ws.cell(row=fila, column=c_uni, value=costo_uni)
+            cell_uni.number_format = f'"{simbolo}" #,##0.00'
+            cell_uni.font = font_normal
+            cell_uni.border = borde
+
+            cell_tot = ws.cell(row=fila, column=c_tot)
+            cell_tot.value = f"=+{get_column_letter(c_uni)}{fila}"
+            cell_tot.number_format = f'"{simbolo}" #,##0.00'
+            cell_tot.font = font_normal
+            cell_tot.border = borde
+            costo_total_refs.append((get_column_letter(c_tot), fila, costo_tot))
+
+            archivo = gv(df.iloc[i], "Archivo", "")
+            cell_ofe = ws.cell(row=fila, column=c_ofe, value=str(archivo))
+            cell_ofe.font = Font(size=9, name="Calibri", color=AZUL_LINK)
+            cell_ofe.border = borde
+        else:
+            cell_uni = ws.cell(row=fila, column=c_uni, value=0)
+            cell_uni.number_format = '"S/." #,##0.00'
+            cell_uni.font = font_normal
+            cell_uni.border = borde
+            cell_tot = ws.cell(row=fila, column=c_tot)
+            cell_tot.value = f"=+{get_column_letter(c_uni)}{fila}"
+            cell_tot.number_format = '"S/." #,##0.00'
+            cell_tot.font = font_normal
+            cell_tot.border = borde
+            costo_total_refs.append((get_column_letter(c_tot), fila, 0.0))
+            ws.cell(row=fila, column=c_ofe).border = borde
+    fila += 1
+
+    # 2 filas vacias adicionales (como en la plantilla, para items extra manuales)
+    filas_vacias_inicio = fila
+    for _ in range(2):
+        ws.cell(row=fila, column=1).border = borde
+        ws.cell(row=fila, column=2).border = borde
+        for (c_uni, c_tot, c_ofe) in grupo_cols:
+            for c in (c_uni, c_tot, c_ofe):
+                cell = ws.cell(row=fila, column=c)
+                cell.border = borde
+                if c in [g[1] for g in grupo_cols]:
+                    cell.number_format = '"S/." #,##0.00'
+        fila += 1
+    filas_vacias_fin = fila - 1
+
+    # Fila TOTAL = SUMA(rango) por proveedor
+    fila_total = fila
+    cell_total_label = ws.cell(row=fila, column=2, value="TOTAL")
+    cell_total_label.font = font_bold
+    cell_total_label.border = borde
+    ws.cell(row=fila, column=1).border = borde
+
+    colores_total = [fill_rosado, fill_amarillo, fill_verde, fill_amarillo, fill_verde]
+    formula_total_refs = []
+    for i, (c_uni, c_tot, c_ofe) in enumerate(grupo_cols):
+        moneda = gv(df.iloc[i], "moneda", "S/.") if i < n_prov else "S/."
+        simbolo = "$" if str(moneda).upper() == "USD" else "S/."
+        letra_tot = get_column_letter(c_tot)
+        formula = f"=SUM({letra_tot}{fila_item}:{letra_tot}{filas_vacias_fin})"
+        cell = ws.cell(row=fila, column=c_tot, value=formula)
+        cell.number_format = f'"{simbolo}" #,##0.00'
+        cell.font = font_bold
+        cell.fill = colores_total[i % len(colores_total)]
+        cell.border = borde
+        ws.cell(row=fila, column=c_uni).border = borde
+        ws.cell(row=fila, column=c_ofe).border = borde
+        formula_total_refs.append((letra_tot, fila))
+    fila += 2
+
+    # ── TABLA "EVALUACION COMERCIAL" ────────────────────────────────────────
+    # Layout: columna B = Criterio, columna C = Peso, columnas D.. = Puntuacion por proveedor
+    fila_banda_eval = fila
+    ancho_eval = 2 + n_cols_total_max  # B(criterio)+C(peso) + 1 col por proveedor
+    ws.cell(row=fila, column=2, value="Evaluaci\u00f3n Comercial")
+    ws.merge_cells(start_row=fila, start_column=2, end_row=fila, end_column=2 + ancho_eval - 1)
+    cell = ws.cell(row=fila, column=2)
+    cell.fill = fill_header
+    cell.font = font_header
+    cell.alignment = Alignment(horizontal="center")
+    for c in range(2, 2 + ancho_eval):
+        ws.cell(row=fila, column=c).fill = fill_header
+    fila += 1
+
+    fila_header_eval = fila
+    h_crit = ws.cell(row=fila, column=2, value="Criterio de selecci\u00f3n")
+    h_peso = ws.cell(row=fila, column=3, value="Peso")
+    for cell in (h_crit, h_peso):
+        cell.font = font_bold
+        cell.fill = PatternFill(start_color="FBE5D6", end_color="FBE5D6", fill_type="solid")
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.border = borde
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        nombre_p = gv(df.iloc[i], col_nombre, f"Proveedor {i+1}") if i < n_prov else "0"
+        cell = ws.cell(row=fila, column=col_punt, value=str(nombre_p))
+        cell.font = font_bold
+        cell.fill = PatternFill(start_color="FBE5D6", end_color="FBE5D6", fill_type="solid")
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.border = borde
+    fila += 1
+
+    # Subfila "Puntuacion"
+    fila_subheader = fila
+    for c in (2, 3):
+        ws.cell(row=fila, column=c).border = borde
+        ws.cell(row=fila, column=c).fill = PatternFill(start_color="FDF1E8", end_color="FDF1E8", fill_type="solid")
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        cell = ws.cell(row=fila, column=col_punt, value="Puntuaci\u00f3n")
+        cell.font = font_bold
+        cell.alignment = Alignment(horizontal="center")
+        cell.fill = PatternFill(start_color="FDF1E8", end_color="FDF1E8", fill_type="solid")
+        cell.border = borde
+    fila += 1
+
+    # Fila "Costos de la propuesta" -- formula =mejor_costo/este_costo*5
+    fila_costos = fila
+    ws.cell(row=fila, column=2, value="Costos de la propuesta").font = font_normal
+    ws.cell(row=fila, column=2).border = borde
+    cell_peso_costo = ws.cell(row=fila, column=3, value=peso_costo / 100)
+    cell_peso_costo.number_format = "0%"
+    cell_peso_costo.font = font_normal
+    cell_peso_costo.alignment = Alignment(horizontal="center")
+    cell_peso_costo.border = borde
+
+    # Determinar el mejor (menor) costo total entre los proveedores con costo > 0.
+    # costo_total_refs trae el valor numerico real (para comparar); formula_total_refs
+    # trae la celda (letra, fila_total) donde vive la formula SUMA correspondiente.
+    costos_validos = [
+        (formula_total_refs[i][0], formula_total_refs[i][1], costo_total_refs[i][2])
+        for i in range(min(len(formula_total_refs), len(costo_total_refs)))
+        if costo_total_refs[i][2] > 0
+    ]
+    if costos_validos:
+        mejor_letra, mejor_fila, _ = min(costos_validos, key=lambda x: x[2])
+        celda_mejor = f"${mejor_letra}${mejor_fila}"
+    else:
+        celda_mejor = None
+
+    celdas_punt_costo = []
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        letra_tot, fila_tot_ref = formula_total_refs[i]
+        cell = ws.cell(row=fila, column=col_punt)
+        if celda_mejor and i < n_prov:
+            cell.value = f"=+{celda_mejor}/{letra_tot}{fila_tot_ref}*5"
+        else:
+            cell.value = 0
+        cell.number_format = "0.00"
+        cell.font = font_normal
+        cell.alignment = Alignment(horizontal="center")
+        cell.border = borde
+        if i == 0:
+            cell.fill = fill_rosado
+        celdas_punt_costo.append((get_column_letter(col_punt), fila))
+    fila += 1
+
+    # Fila "Condicion de pago" -- EN BLANCO (manual)
+    fila_pago = fila
+    ws.cell(row=fila, column=2, value="Condici\u00f3n de pago").font = font_normal
+    ws.cell(row=fila, column=2).border = borde
+    cell_peso_pago = ws.cell(row=fila, column=3, value=peso_pago / 100)
+    cell_peso_pago.number_format = "0%"
+    cell_peso_pago.font = font_normal
+    cell_peso_pago.alignment = Alignment(horizontal="center")
+    cell_peso_pago.border = borde
+    celdas_punt_pago = []
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        cell = ws.cell(row=fila, column=col_punt)
+        cell.border = borde
+        cell.alignment = Alignment(horizontal="center")
+        cell.font = font_normal
+        cell.number_format = "0.00"
+        if i == 1:
+            cell.fill = fill_verde
+        celdas_punt_pago.append((get_column_letter(col_punt), fila))
+    fila += 1
+
+    # Fila PROMEDIO = (peso_costo*punt_costo)+(peso_pago*punt_pago)
+    fila_promedio = fila
+    ws.cell(row=fila, column=2, value="PROMEDIO").font = font_bold
+    ws.cell(row=fila, column=2).border = borde
+    cell_peso_total = ws.cell(row=fila, column=3, value=(peso_costo + peso_pago) / 100)
+    cell_peso_total.number_format = "0%"
+    cell_peso_total.font = font_bold
+    cell_peso_total.alignment = Alignment(horizontal="center")
+    cell_peso_total.border = borde
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        letra_c, fila_c = celdas_punt_costo[i]
+        letra_p, fila_p = celdas_punt_pago[i]
+        formula = f"=($C${fila_costos}*{letra_c}{fila_c})+($C${fila_pago}*{letra_p}{fila_p})"
+        cell = ws.cell(row=fila, column=col_punt, value=formula)
+        cell.number_format = "0.00"
+        cell.font = font_bold
+        cell.alignment = Alignment(horizontal="center")
+        cell.border = borde
+        if i == 0:
+            cell.fill = fill_rosado
+        elif i == 1:
+            cell.fill = fill_verde
+    fila += 1
+
+    # Fila Garantia (texto informativo)
+    ws.cell(row=fila, column=2, value="Garant\u00eda").font = Font(size=10, name="Calibri", color=AZUL_LINK, italic=True)
+    ws.cell(row=fila, column=2).border = borde
+    ws.cell(row=fila, column=3).border = borde
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        garantia = gv(df.iloc[i], "garantia", "-") if i < n_prov else "-"
+        cell = ws.cell(row=fila, column=col_punt, value=str(garantia))
+        cell.font = Font(size=9, name="Calibri", color=AZUL_LINK)
+        cell.alignment = Alignment(horizontal="center", wrap_text=True)
+        cell.border = borde
+    fila += 1
+
+    # Fila Tiempo de entrega (texto informativo)
+    ws.cell(row=fila, column=2, value="Tiempo de entrega").font = Font(size=10, name="Calibri", color=AZUL_LINK, italic=True)
+    ws.cell(row=fila, column=2).border = borde
+    ws.cell(row=fila, column=3).border = borde
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        tiempo = gv(df.iloc[i], "tiempo_entrega", "-") if i < n_prov else "-"
+        cell = ws.cell(row=fila, column=col_punt, value=str(tiempo))
+        cell.font = Font(size=9, name="Calibri", color=AZUL_LINK)
+        cell.alignment = Alignment(horizontal="center", wrap_text=True)
+        cell.border = borde
+    fila += 1
+
+    # Fila Condiciones de pago extraidas (texto informativo, referencia para llenar la puntuacion manual)
+    ws.cell(row=fila, column=2, value="Condiciones de pago (referencia)").font = Font(size=10, name="Calibri", color=AZUL_LINK, italic=True)
+    ws.cell(row=fila, column=2).border = borde
+    ws.cell(row=fila, column=3).border = borde
+    for i in range(n_cols_total_max):
+        col_punt = 4 + i
+        cond = gv(df.iloc[i], "condiciones_pago", "-") if i < n_prov else "-"
+        cell = ws.cell(row=fila, column=col_punt, value=str(cond))
+        cell.font = Font(size=9, name="Calibri", color=AZUL_LINK)
+        cell.alignment = Alignment(horizontal="center", wrap_text=True)
+        cell.border = borde
+    fila += 1
+
+    ws.freeze_panes = "C1"
+
+    ws.page_setup.orientation = "landscape"
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 0
+    ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
+    ws.page_margins.left = 0.3
+    ws.page_margins.right = 0.3
+    ws.page_margins.top = 0.4
+    ws.page_margins.bottom = 0.4
+
+    output = io.BytesIO()
+    wb.save(output)
+    return output.getvalue()
+
+
 CYAN   = ["#FFFFFF","#FFFFFF","#E5DFD3","#4A90B8","#3A7CA5","#2E3A45"]
 VERDE  = ["#2E5E3D","#3D7A4D","#5C9C6E","#8AB89A","#B5D4C0","#E6F4E9"]
 LAYOUT = dict(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="#2E3A45")
@@ -1210,17 +1665,24 @@ else:
                             f'"rango_precio":"","precio_sin_igv":"","precio_con_igv":"",'
                             f'"condiciones_pago":"","tiempo_entrega":"","garantia":"",'
                             f'"condiciones_comerciales":"","clientes_referencia":"","fortalezas":"","debilidades":"",'
+                            f'"item_descripcion":"","item_cantidad":1,"moneda":"","costo_unitario_num":0,"costo_total_num":0,'
                             f'"puntaje_precio":0,"puntaje_certificaciones":0,"puntaje_reputacion":0,"puntaje_cobertura":0,'
                             f'"puntaje_recomendacion":0,"nivel_recomendacion":"","justificacion":"",'
                             f'"cumple_certificaciones":false,"certificaciones_faltantes":""}}\n\n'
-                            f'Presta ESPECIAL ATENCION a extraer con precision estos 4 puntos si aparecen en el documento:\n'
+                            f'Presta ESPECIAL ATENCION a extraer con precision estos puntos si aparecen en el documento:\n'
                             f'- garantia: duracion y cobertura de la garantia ofrecida (ej: "12 meses contra defectos de fabricacion")\n'
                             f'- tiempo_entrega: plazo de entrega del producto/servicio (ej: "15 dias habiles")\n'
                             f'- precio_sin_igv: precio del producto/servicio SIN IGV/IVA, incluye moneda (ej: "S/ 8,500.00")\n'
                             f'- precio_con_igv: precio del producto/servicio CON IGV/IVA, incluye moneda (ej: "S/ 10,030.00")\n'
-                            f'- condiciones_pago: forma y plazos de pago (ej: "50% adelanto, 50% contra entrega")\n\n'
+                            f'- condiciones_pago: forma y plazos de pago (ej: "50% adelanto, 50% contra entrega")\n'
+                            f'- item_descripcion: nombre/descripcion breve (max 80 caracteres) del producto o servicio principal cotizado\n'
+                            f'- item_cantidad: cantidad cotizada del item principal, solo numero entero (default 1 si no se especifica)\n'
+                            f'- moneda: codigo de moneda detectado (PEN, USD, etc). Usa PEN si ves S/. o Soles, USD si ves $ o Dolares\n'
+                            f'- costo_unitario_num: el precio_sin_igv como NUMERO puro (sin simbolos, sin comas de miles, usa punto decimal). '
+                            f'Ejemplo: si precio_sin_igv es "S/.41,000.00", costo_unitario_num debe ser 41000.00\n'
+                            f'- costo_total_num: costo_unitario_num multiplicado por item_cantidad (si cantidad es 1, son iguales)\n\n'
                             f'- nivel_recomendacion: "Muy recomendado">=8, "Recomendado">=6, "Opcion viable">=4, "No recomendado"<4\n'
-                            f"- Si un dato no aparece en el documento, escribe: No especifica\n\nDocumento:\n{preparar_texto_documento(texto)}")
+                            f"- Si un dato no aparece en el documento, escribe: No especifica (para campos numericos usa 0)\n\nDocumento:\n{preparar_texto_documento(texto)}")
                 try:
                     msg=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=1500,
                             messages=[{"role":"user","content":prompt_doc}])
@@ -1264,11 +1726,29 @@ else:
             if col_nombre != "nombre":
                 df_excel_prop = df_excel_prop.rename(columns={col_nombre:"nombre"})
 
-            st.download_button("Descargar Excel de Condiciones Comerciales",
-                data=exportar_excel_propuestas(df_excel_prop),
-                file_name="Nexora_Condiciones_Comerciales.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True)
+            with st.expander("Datos opcionales para el encabezado de la Matriz Econ\u00f3mica"):
+                desc_matriz = st.text_input("Descripci\u00f3n de compra", key="desc_matriz_input",
+                    placeholder="Ej: Reemplazo l\u00ednea de gases del laboratorio - PR209244").strip()
+                comprador_matriz = st.text_input("Comprador", key="comprador_matriz_input",
+                    placeholder="Nombre del comprador responsable").strip()
+
+            col_dl1, col_dl2 = st.columns(2)
+            with col_dl1:
+                st.download_button("Descargar Excel de Condiciones Comerciales",
+                    data=exportar_excel_propuestas(df_excel_prop),
+                    file_name="Nexora_Condiciones_Comerciales.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True)
+            with col_dl2:
+                df_matriz = df_prop.copy()
+                if col_nombre != "nombre":
+                    df_matriz = df_matriz.rename(columns={col_nombre:"nombre"})
+                st.download_button("Descargar Matriz Econ\u00f3mica",
+                    data=exportar_excel_matriz_economica(df_matriz, peso_matriz_costo, peso_matriz_pago,
+                        username, descripcion_compra=desc_matriz, comprador=comprador_matriz),
+                    file_name="Nexora_Matriz_Economica.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True)
 
     with tab_comparar:
         st.markdown("### Comparaci\u00f3n de Proveedores")
