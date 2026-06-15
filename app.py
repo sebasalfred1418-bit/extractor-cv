@@ -31,7 +31,8 @@ authenticator = stauth.Authenticate(
 # ── CSS SUNLIT SLATE (clara y calida) ────────────────────────────────────────
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root { --nx-serif: 'Source Serif 4', serif; --nx-mono: 'IBM Plex Mono', monospace; }
   html, body, [class*="css"] { font-family: 'Inter', sans-serif !important; }
 
   .stApp, .stApp > div,
@@ -104,21 +105,36 @@ st.markdown("""
 
   .stProgress > div > div { background: linear-gradient(90deg, #4A90B8, #7AA9C7) !important; }
 
-  .metric-card { background: #FFFFFF; border: 1px solid #E5DFD3;
-    padding: 20px; border-radius: 14px; text-align: center; }
-  .metric-card h2 { font-size: 2rem; margin: 0; font-weight: 700; color: #2E3A45 !important; }
-  .metric-card p  { margin: 4px 0 0; font-size: 13px; color: #9CA8B0 !important; }
+  .metric-card { background: #FFFFFF; border: 1px solid #E5DFD3; border-top: 2px solid #B4B2A9;
+    padding: 14px 16px; border-radius: 10px; text-align: left; }
+  .metric-card h2 { font-family: var(--nx-serif); font-size: 1.7rem; margin: 0; font-weight: 600;
+    color: #2E3A45 !important; font-variant-numeric: tabular-nums; }
+  .metric-card p  { margin: 0 0 6px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    font-family: var(--nx-mono); color: #9CA8B0 !important; }
 
-  .candidate-card, .proveedor-card { background: #FFFFFF; border: 1px solid #E5DFD3;
-    border-radius: 12px; padding: 16px; margin: 8px 0; }
-  .proveedor-card { border-color: #C9E4D5; }
+  /* ── Sistema "expediente": fila con dial, serif y mono ─────────────────── */
+  .nx-row { display:flex; align-items:flex-start; gap:16px; padding:18px 6px;
+    border-bottom:1px solid #E5DFD3; border-radius:8px; transition:background 0.15s; }
+  .nx-row:last-child { border-bottom:none; }
+  .nx-row:hover { background:#FBFAF7; }
+  .nx-row:hover .nx-chev { color:#3A7CA5; }
+  .nx-rank { font-family:var(--nx-mono); font-size:12px; color:#B4B2A9; padding-top:8px; min-width:20px; flex-shrink:0; }
+  .nx-name { font-family:var(--nx-serif); font-size:17px; font-weight:600; color:#2E3A45; }
+  .nx-meta { font-family:var(--nx-mono); font-size:11px; color:#9CA8B0; letter-spacing:0.3px; margin-bottom:8px; }
+  .nx-desc { font-size:13px; color:#5F5E5A; line-height:1.5; }
+  .nx-chev { padding-top:10px; color:#D8CFC0; transition:color 0.15s; flex-shrink:0; }
+  .nx-section-label { display:flex; align-items:center; gap:14px; margin:8px 0 6px; }
+  .nx-section-label span { font-family:var(--nx-mono); font-size:11px; letter-spacing:2px;
+    text-transform:uppercase; color:#9CA8B0; white-space:nowrap; }
+  .nx-section-label .nx-rule { flex:1; height:1px; background:#E5DFD3; }
 
-  .badge-alto   { background:#E6F4E9; color:#3D7A4D; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-medio  { background:#FBF1DD; color:#A8762E; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-bajo   { background:#FAE6E6; color:#B3504F; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-prov-a { background:#E6F4E9; color:#3D7A4D; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-prov-b { background:#EAF3DE; color:#5E7D3C; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
-  .badge-prov-c { background:#FBF1DD; color:#A8762E; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .badge-alto, .badge-prov-a   { background:#E6F4E9; color:#3D7A4D; }
+  .badge-medio, .badge-prov-c  { background:#FBF1DD; color:#A8762E; }
+  .badge-bajo                  { background:#FAE6E6; color:#B3504F; }
+  .badge-prov-b                { background:#EAF3DE; color:#5E7D3C; }
+  .badge-alto, .badge-medio, .badge-bajo, .badge-prov-a, .badge-prov-b, .badge-prov-c {
+    font-family:var(--nx-mono); font-size:10px; letter-spacing:1px; text-transform:uppercase;
+    padding:2px 8px; border-radius:4px; font-weight:500; }
 
   hr { border-color: #E5DFD3 !important; }
   h1, h2, h3, h4 { color: #2E3A45 !important; }
@@ -142,8 +158,8 @@ def mostrar_login():
                background:#4A90B8;
                display:inline-flex;align-items:center;justify-content:center;
                font-size:24px;font-weight:800;color:#FFFFFF;margin-bottom:16px;">NX</div>
-          <h2 style="color:#2E3A45;margin:0;font-size:1.8rem;font-weight:700;">Nexora</h2>
-          <p style="color:#3A7CA5;margin:4px 0 0;font-size:14px;letter-spacing:2px;">ANALIZA. DECIDE. AVANZA.</p>
+          <h2 style="color:#2E3A45;margin:0;font-size:1.8rem;font-weight:600;font-family:'Source Serif 4',serif;">Nexora</h2>
+          <p style="color:#3A7CA5;margin:4px 0 0;font-size:12px;letter-spacing:3px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;">Analiza &middot; Decide &middot; Avanza</p>
           <p style="color:#9CA8B0;margin:4px 0 0;font-size:11px;letter-spacing:1px;">POWERED BY CLAUDE AI</p>
         </div>""", unsafe_allow_html=True)
 
@@ -179,7 +195,7 @@ with st.sidebar:
              font-size:14px;font-weight:800;color:#FFFFFF;">NX</div>
         <div>
           <div style="color:#2E3A45;font-weight:700;font-size:15px;">Nexora</div>
-          <div style="color:#9CA8B0;font-size:10px;letter-spacing:1.5px;">ANALIZA. DECIDE. AVANZA.</div>
+          <div style="color:#9CA8B0;font-size:9px;letter-spacing:2px;font-family:var(--nx-mono);text-transform:uppercase;">Analiza &middot; Decide &middot; Avanza</div>
         </div>
       </div>
       <div style="color:#7A8590;font-size:12px;margin-top:8px;">
@@ -225,15 +241,15 @@ with st.sidebar:
 
 # ── HEADER ────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="logo-header">
-  <div class="logo-icon">NX</div>
-  <div>
-    <h1 style="margin:0;font-size:1.9rem;font-weight:700;color:#2E3A45 !important;">Nexora</h1>
-    <p style="margin:0;color:#7AA9C7;font-size:13px;letter-spacing:2px;">ANALIZA. DECIDE. AVANZA.</p>
+<div style="display:flex;align-items:baseline;justify-content:space-between;
+     padding-bottom:14px;border-bottom:1px solid #E5DFD3;margin-bottom:8px;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="logo-icon" style="width:40px;height:40px;font-size:15px;">NX</div>
+    <span style="font-family:var(--nx-serif);font-size:1.6rem;font-weight:600;color:#2E3A45;">Nexora</span>
   </div>
+  <span style="font-family:var(--nx-mono);font-size:10px;letter-spacing:2.5px;color:#9CA8B0;text-transform:uppercase;">Analiza &middot; Decide &middot; Avanza</span>
 </div>
 """, unsafe_allow_html=True)
-st.divider()
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
 def limpiar_json(texto):
@@ -251,6 +267,42 @@ def limpiar_json(texto):
 def safe_float(val):
     try: return float(str(val).replace(",", "."))
     except: return 0.0
+
+def render_dial(puntaje, track_color, arc_color, size=56):
+    """Genera un dial circular SVG que representa un puntaje 0-10.
+    track_color: color del fondo del anillo (claro)
+    arc_color: color del arco que representa el puntaje (oscuro)"""
+    try:
+        p = max(0.0, min(10.0, float(puntaje)))
+    except (TypeError, ValueError):
+        p = 0.0
+    r = 22
+    circunferencia = 2 * 3.14159265 * r
+    relleno = round(circunferencia * (p / 10), 1)
+    label = str(int(p)) if p == int(p) else f"{round(p,1):.1f}"
+    return (
+        f'<svg width="{size}" height="{size}" viewBox="0 0 56 56" style="flex-shrink:0;">'
+        f'<circle cx="28" cy="28" r="{r}" fill="none" stroke="{track_color}" stroke-width="4"/>'
+        f'<circle cx="28" cy="28" r="{r}" fill="none" stroke="{arc_color}" stroke-width="4" '
+        f'stroke-linecap="round" stroke-dasharray="{relleno} {circunferencia:.1f}" '
+        f'transform="rotate(-90 28 28)"/>'
+        f'<text x="28" y="33" text-anchor="middle" font-family="\'Source Serif 4\',serif" '
+        f'font-size="18" font-weight="600" fill="#2E3A45">{label}</text>'
+        f'</svg>'
+    )
+
+def dial_colores_cv(nivel):
+    """Devuelve (track_color, arc_color) segun el nivel de potencial de un CV."""
+    if nivel == "Alto":  return "#E6F4E9", "#3D7A4D"
+    if nivel == "Medio": return "#FBF1DD", "#A8762E"
+    return "#FAE6E6", "#B3504F"
+
+def dial_colores_prov(puntaje):
+    """Devuelve (track_color, arc_color) segun el puntaje de recomendacion de un proveedor."""
+    p = safe_float(puntaje)
+    if p >= 8: return "#E1F5EE", "#0F6E56"
+    if p >= 6: return "#EAF3DE", "#5E7D3C"
+    return "#FBF1DD", "#A8762E"
 
 def preparar_texto_documento(texto, limite=18000):
     """Prepara el texto del documento para enviarlo a Claude.
@@ -621,28 +673,31 @@ if st.session_state.modulo_activo == "cvs":
         with tab1:
             st.markdown("## Ranking de Candidatos")
             c1,c2,c3,c4 = st.columns(4)
-            with c1: st.markdown(f'<div class="metric-card"><h2>{len(df)}</h2><p>Total CVs</p></div>', unsafe_allow_html=True)
-            with c2: st.markdown(f'<div class="metric-card"><h2 style="color:#4ade80">{len(df[df["Nivel_Potencial"]=="Alto"])}</h2><p>Alto Potencial</p></div>', unsafe_allow_html=True)
-            with c3: st.markdown(f'<div class="metric-card"><h2 style="color:#fbbf24">{len(df[df["Nivel_Potencial"]=="Medio"])}</h2><p>Potencial Medio</p></div>', unsafe_allow_html=True)
-            with c4: st.markdown(f'<div class="metric-card"><h2 style="color:#3A7CA5">{len(df[df["Cumple_Requisitos"]==True])}</h2><p>Cumplen Requisitos</p></div>', unsafe_allow_html=True)
-            st.markdown("### Top Candidatos")
+            with c1: st.markdown(f'<div class="metric-card"><p>Total CVs</p><h2>{len(df)}</h2></div>', unsafe_allow_html=True)
+            with c2: st.markdown(f'<div class="metric-card" style="border-top-color:#3D7A4D;"><p>Alto Potencial</p><h2>{len(df[df["Nivel_Potencial"]=="Alto"])}</h2></div>', unsafe_allow_html=True)
+            with c3: st.markdown(f'<div class="metric-card" style="border-top-color:#A8762E;"><p>Potencial Medio</p><h2>{len(df[df["Nivel_Potencial"]=="Medio"])}</h2></div>', unsafe_allow_html=True)
+            with c4: st.markdown(f'<div class="metric-card" style="border-top-color:#4A90B8;"><p>Cumplen Requisitos</p><h2>{len(df[df["Cumple_Requisitos"]==True])}</h2></div>', unsafe_allow_html=True)
+            st.markdown('<div class="nx-section-label"><span>Ranking de candidatos</span><div class="nx-rule"></div></div>', unsafe_allow_html=True)
             for _, row in df.head(20).iterrows():
                 nivel  = row.get("Nivel_Potencial","Bajo")
                 badge  = "badge-alto" if nivel=="Alto" else "badge-medio" if nivel=="Medio" else "badge-bajo"
                 cumple = "Cumple requisitos" if row.get("Cumple_Requisitos") else "No cumple"
-                st.markdown(f"""<div class="candidate-card">
-                  <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><strong style="font-size:16px;color:#2E3A45;">#{row['Ranking']} {row.get('Nombre','N/A')}</strong>
-                      &nbsp;<span class="{badge}">{nivel}</span>
-                      &nbsp;<small style="color:#3A7CA5;">{cumple}</small></div>
-                    <span style="font-size:26px;font-weight:700;color:#3A7CA5;">{row.get('Puntaje',0)}/10</span>
+                track_c, arc_c = dial_colores_cv(nivel)
+                dial = render_dial(row.get("Puntaje",0), track_c, arc_c)
+                rank_num = f"{int(row['Ranking']):02d}"
+                st.markdown(f"""<div class="nx-row">
+                  <div class="nx-rank">{rank_num}</div>
+                  {dial}
+                  <div style="flex:1;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap;">
+                      <span class="nx-name">{row.get('Nombre','N/A')}</span>
+                      <span class="{badge}">{nivel}</span>
+                      <span style="font-family:var(--nx-mono);font-size:10px;color:#9CA8B0;text-transform:uppercase;letter-spacing:1px;">{cumple}</span>
+                    </div>
+                    <div class="nx-meta">{row.get('Ultimo_Cargo','N/A')} &middot; {row.get('Ultima_Empresa','N/A')} &nbsp;/&nbsp; {row.get('Experiencia_Anos',0)} a\u00f1os exp &nbsp;/&nbsp; {row.get('Educacion_Maxima','N/A')}</div>
+                    <div class="nx-desc">{row.get('Justificacion','')}</div>
                   </div>
-                  <div style="margin-top:8px;color:#9CA8B0;font-size:13px;">
-                    {row.get('Ultimo_Cargo','N/A')} en {row.get('Ultima_Empresa','N/A')}
-                    &nbsp;|&nbsp;{row.get('Experiencia_Anos',0)} a\u00f1os
-                    &nbsp;|&nbsp;{row.get('Educacion_Maxima','N/A')}
-                  </div>
-                  <div style="margin-top:6px;color:#4A90B8;font-size:12px;font-style:italic;">{row.get('Justificacion','')}</div>
+                  <div class="nx-chev"><i class="ti ti-chevron-right" style="font-size:18px;"></i></div>
                 </div>""", unsafe_allow_html=True)
 
         with tab2:
@@ -782,7 +837,7 @@ else:
                     )
 
                     try:
-                        msg=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=4096,
+                        msg=client.messages.create(model="claude-sonnet-4-6",max_tokens=4096,
                             tools=[{"type":"web_search_20250305","name":"web_search"}],
                             messages=[{"role":"user","content":prompt_busqueda}])
                         texto_resp="".join(b.text for b in msg.content if hasattr(b,"text"))
@@ -811,33 +866,33 @@ else:
         if st.session_state.proveedores_web:
             provs=st.session_state.proveedores_web
             provs_sorted=sorted(provs,key=lambda x:safe_float(x.get("puntaje_recomendacion",0)),reverse=True)
-            st.markdown(f"### {len(provs_sorted)} Proveedores Encontrados")
+            st.markdown(f'<div class="nx-section-label"><span>{len(provs_sorted)} proveedores encontrados</span><div class="nx-rule"></div></div>', unsafe_allow_html=True)
             for i,prov in enumerate(provs_sorted,1):
                 puntaje_num=safe_float(prov.get("puntaje_recomendacion",0))
                 nivel_texto=prov.get("nivel_recomendacion","Recomendado")
                 badge_c="badge-prov-a" if puntaje_num>=8 else "badge-prov-b" if puntaje_num>=6 else "badge-prov-c"
-                st.markdown(f"""<div class="proveedor-card">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div style="flex:1;">
-                      <strong style="font-size:16px;color:#2E3A45;">#{i} {prov.get('nombre','N/A')}</strong>
-                      &nbsp;<span class="{badge_c}">{nivel_texto}</span>
-                      <div style="margin-top:6px;color:#9CA8B0;font-size:13px;">{prov.get('descripcion','')}</div>
+                track_c, arc_c = dial_colores_prov(puntaje_num)
+                dial = render_dial(puntaje_num, track_c, arc_c)
+                rank_num = f"{i:02d}"
+                st.markdown(f"""<div class="nx-row">
+                  <div class="nx-rank">{rank_num}</div>
+                  {dial}
+                  <div style="flex:1;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap;">
+                      <span class="nx-name">{prov.get('nombre','N/A')}</span>
+                      <span class="{badge_c}">{nivel_texto}</span>
                     </div>
-                    <span style="font-size:26px;font-weight:700;color:#3A7CA5;min-width:70px;text-align:right;">{prov.get('puntaje_recomendacion',0)}/10</span>
+                    <div class="nx-meta">{prov.get('pais_sede','N/A')} &middot; Cobertura {prov.get('cobertura','N/A')} &nbsp;/&nbsp; {prov.get('anos_experiencia','N/A')} a\u00f1os exp &nbsp;/&nbsp; {prov.get('certificaciones','N/A')}</div>
+                    <div class="nx-desc">{prov.get('descripcion','')}</div>
+                    <div style="margin-top:8px;font-family:var(--nx-mono);font-size:11px;color:#9CA8B0;display:flex;flex-wrap:wrap;gap:14px;">
+                      <span>Precio: {prov.get('rango_precio','N/A')}</span>
+                      <span>Web: <a href="{prov.get('sitio_web','#')}" target="_blank" style="color:#3A7CA5;">{prov.get('sitio_web','N/A')}</a></span>
+                      <span>Contacto: {prov.get('contacto','N/A')}</span>
+                    </div>
+                    <div style="margin-top:6px;font-size:12px;color:#3D7A4D;">{prov.get('fortalezas','')}</div>
+                    <div style="margin-top:4px;font-size:11px;color:#4A90B8;font-style:italic;">{prov.get('razon_recomendacion','')}</div>
                   </div>
-                  <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#3A7CA5;">
-                    <span>Pa\u00eds: {prov.get('pais_sede','N/A')}</span>
-                    <span>Cobertura: {prov.get('cobertura','N/A')}</span>
-                    <span>Exp: {prov.get('anos_experiencia','N/A')} a\u00f1os</span>
-                    <span>Precio: {prov.get('rango_precio','N/A')}</span>
-                    <span>Certif: {prov.get('certificaciones','N/A')}</span>
-                  </div>
-                  <div style="margin-top:8px;font-size:12px;color:#3A7CA5;">
-                    Web: <a href="{prov.get('sitio_web','#')}" target="_blank" style="color:#3A7CA5;">{prov.get('sitio_web','N/A')}</a>
-                    &nbsp;|&nbsp;Contacto: {prov.get('contacto','N/A')}
-                  </div>
-                  <div style="margin-top:6px;font-size:12px;color:#4ade80;">{prov.get('fortalezas','')}</div>
-                  <div style="margin-top:4px;font-size:11px;color:#4A90B8;font-style:italic;">{prov.get('razon_recomendacion','')}</div>
+                  <div class="nx-chev"><i class="ti ti-chevron-right" style="font-size:18px;"></i></div>
                 </div>""", unsafe_allow_html=True)
             if st.button("Agregar al comparador",use_container_width=True):
                 df_web=pd.DataFrame(provs_sorted)
@@ -942,38 +997,48 @@ else:
                 if "puntaje_recomendacion" in df_sel.columns:
                     df_sel=df_sel.sort_values("puntaje_recomendacion",ascending=False).reset_index(drop=True)
                     df_sel["Ranking"]=df_sel.index+1
-                st.markdown("#### Ranking General")
+                st.markdown('<div class="nx-section-label"><span>Ranking general</span><div class="nx-rule"></div></div>', unsafe_allow_html=True)
                 for _,row in df_sel.iterrows():
                     puntaje=row.get("puntaje_recomendacion",0)
                     nivel=row.get("nivel_recomendacion","Recomendado")
                     badge_c="badge-prov-a" if puntaje>=8 else "badge-prov-b" if puntaje>=6 else "badge-prov-c"
-                    desc=str(row.get("descripcion",row.get("productos_servicios","")))[:120]
+                    desc=str(row.get("descripcion",row.get("productos_servicios","")))[:160]
                     just=row.get("justificacion",row.get("razon_recomendacion",""))
                     tiene_puntajes=any(row.get(c,0) not in [0,"-",None,""] for c in ["puntaje_precio","puntaje_certificaciones","puntaje_reputacion","puntaje_cobertura"])
                     if tiene_puntajes:
-                        grid_html=(f'<div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#fbbf24;font-size:16px;font-weight:700;">{row.get("puntaje_precio","-")}</div><div style="color:#3A7CA5;font-size:11px;">Precio</div></div>'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#3A7CA5;font-size:16px;font-weight:700;">{row.get("puntaje_certificaciones","-")}</div><div style="color:#3A7CA5;font-size:11px;">Certif.</div></div>'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#f472b6;font-size:16px;font-weight:700;">{row.get("puntaje_reputacion","-")}</div><div style="color:#3A7CA5;font-size:11px;">Reput.</div></div>'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#34d399;font-size:16px;font-weight:700;">{row.get("puntaje_cobertura","-")}</div><div style="color:#3A7CA5;font-size:11px;">Cobert.</div></div>'
-                                   f'</div>')
+                        sub_items = [
+                            ("Precio", row.get("puntaje_precio","-")),
+                            ("Certif.", row.get("puntaje_certificaciones","-")),
+                            ("Reput.", row.get("puntaje_reputacion","-")),
+                            ("Cobert.", row.get("puntaje_cobertura","-")),
+                        ]
                     else:
-                        cv=row.get("cobertura","N/A"); av=row.get("anos_experiencia","N/A")
-                        pv=row.get("rango_precio","N/A"); cerv=str(row.get("certificaciones","N/A"))[:30]
-                        grid_html=(f'<div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#fbbf24;font-size:13px;font-weight:600;">{cv}</div><div style="color:#3A7CA5;font-size:11px;">Cobertura</div></div>'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#3A7CA5;font-size:13px;font-weight:600;">{av} a\u00f1os</div><div style="color:#3A7CA5;font-size:11px;">Experiencia</div></div>'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#f472b6;font-size:13px;font-weight:600;">{pv}</div><div style="color:#3A7CA5;font-size:11px;">Precio</div></div>'
-                                   f'<div style="background:#FFFFFF;border-radius:8px;padding:8px;"><div style="color:#34d399;font-size:11px;font-weight:600;">{cerv}</div><div style="color:#3A7CA5;font-size:11px;">Certif.</div></div>'
-                                   f'</div>')
-                    st.markdown(f"""<div class="proveedor-card">
-                      <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <div><strong style="color:#2E3A45;font-size:15px;">#{row.get('Ranking','?')} {row.get('nombre','N/A')}</strong>
-                          &nbsp;<span class="{badge_c}">{nivel}</span>
-                          <div style="color:#3A7CA5;font-size:12px;margin-top:4px;">{desc}</div></div>
-                        <span style="font-size:24px;font-weight:700;color:#3A7CA5;">{puntaje}/10</span>
-                      </div>{grid_html}
-                      <div style="margin-top:8px;font-size:12px;color:#4A90B8;font-style:italic;">{just}</div>
+                        sub_items = [
+                            ("Cobertura", row.get("cobertura","N/A")),
+                            ("Experiencia", f'{row.get("anos_experiencia","N/A")} a\u00f1os'),
+                            ("Precio", row.get("rango_precio","N/A")),
+                            ("Certif.", str(row.get("certificaciones","N/A"))[:24]),
+                        ]
+                    sub_html = "".join(
+                        f'<span style="margin-right:16px;"><span style="color:#B4B2A9;">{lbl}</span> {val}</span>'
+                        for lbl, val in sub_items
+                    )
+                    track_c, arc_c = dial_colores_prov(puntaje)
+                    dial = render_dial(puntaje, track_c, arc_c)
+                    rank_num = f"{int(row.get('Ranking',0)):02d}"
+                    st.markdown(f"""<div class="nx-row">
+                      <div class="nx-rank">{rank_num}</div>
+                      {dial}
+                      <div style="flex:1;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px;flex-wrap:wrap;">
+                          <span class="nx-name">{row.get('nombre','N/A')}</span>
+                          <span class="{badge_c}">{nivel}</span>
+                        </div>
+                        <div class="nx-desc" style="margin-bottom:8px;">{desc}</div>
+                        <div style="font-family:var(--nx-mono);font-size:11px;color:#9CA8B0;">{sub_html}</div>
+                        <div style="margin-top:6px;font-size:11px;color:#4A90B8;font-style:italic;">{just}</div>
+                      </div>
+                      <div class="nx-chev"><i class="ti ti-chevron-right" style="font-size:18px;"></i></div>
                     </div>""", unsafe_allow_html=True)
                 criterios_all=["puntaje_precio","puntaje_certificaciones","puntaje_reputacion","puntaje_cobertura"]
                 criterios_ok=[c for c in criterios_all if c in df_sel.columns and df_sel[c].sum()>0]
