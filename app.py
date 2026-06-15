@@ -165,6 +165,7 @@ client = anthropic.Anthropic(api_key=api_key_segura)
 # ── SESSION STATE ─────────────────────────────────────────────────────────────
 if "df_candidatos"   not in st.session_state: st.session_state.df_candidatos   = None
 if "df_proveedores"  not in st.session_state: st.session_state.df_proveedores  = None
+if "df_propuestas"   not in st.session_state: st.session_state.df_propuestas   = None
 if "proveedores_web" not in st.session_state: st.session_state.proveedores_web = []
 if "modulo_activo"   not in st.session_state: st.session_state.modulo_activo   = "cvs"
 
@@ -411,6 +412,87 @@ def exportar_excel_proveedores(df_exp):
             ws.row_dimensions[rn].height = max(40, min(max_lineas * 16, 280))
         ws.freeze_panes = "A2"
     return output.getvalue()
+
+def exportar_excel_propuestas(df_exp):
+    """Excel enfocado en condiciones comerciales de propuestas: garantia,
+    tiempo de entrega, precios con/sin IGV y condiciones de pago."""
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        df_exp.to_excel(writer, index=False, sheet_name="Propuestas")
+        ws = writer.sheets["Propuestas"]
+        from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
+
+        header_fill = PatternFill(start_color="2E3A45", end_color="2E3A45", fill_type="solid")
+        par_fill    = PatternFill(start_color="F0F6FB", end_color="F0F6FB", fill_type="solid")
+        blanco_fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
+        destaca_fill= PatternFill(start_color="EAF3E6", end_color="EAF3E6", fill_type="solid")
+        borde = Border(
+            left=Side(style="thin", color="CCCCCC"), right=Side(style="thin", color="CCCCCC"),
+            top=Side(style="thin",  color="CCCCCC"), bottom=Side(style="thin", color="CCCCCC")
+        )
+
+        anchos = {
+            "nombre": 26, "Archivo": 30,
+            "garantia": 32, "tiempo_entrega": 24,
+            "precio_sin_igv": 18, "precio_con_igv": 18,
+            "condiciones_pago": 36, "rango_precio": 20,
+            "condiciones_comerciales": 30,
+        }
+        nombres_col = {
+            "nombre": "Proveedor", "Archivo": "Archivo",
+            "garantia": "Garant\u00eda",
+            "tiempo_entrega": "Tiempo de Entrega",
+            "precio_sin_igv": "Precio sin IGV",
+            "precio_con_igv": "Precio con IGV",
+            "condiciones_pago": "Condiciones de Pago",
+            "rango_precio": "Rango de Precio",
+            "condiciones_comerciales": "Condiciones Comerciales",
+        }
+
+        # Encabezados
+        for cn, col in enumerate(df_exp.columns, 1):
+            c = ws.cell(row=1, column=cn)
+            c.value     = nombres_col.get(col, col.replace("_", " ").title())
+            c.font      = Font(bold=True, color="FFFFFF", size=11, name="Calibri")
+            c.fill      = header_fill
+            c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            c.border    = borde
+            ws.column_dimensions[c.column_letter].width = anchos.get(col, 22)
+        ws.row_dimensions[1].height = 36
+
+        # Columnas que se resaltan (las 4 solicitadas)
+        cols_destacadas = {"garantia", "tiempo_entrega", "precio_sin_igv", "precio_con_igv", "condiciones_pago"}
+
+        for rn, (_, row_data) in enumerate(df_exp.iterrows(), 2):
+            fila_fill = par_fill if rn % 2 == 0 else blanco_fill
+            for cn in range(1, len(df_exp.columns) + 1):
+                col_name = df_exp.columns[cn-1]
+                c = ws.cell(row=rn, column=cn)
+                c.alignment = Alignment(horizontal="left", vertical="center", wrap_text=True)
+                c.border    = borde
+                if col_name in cols_destacadas:
+                    c.fill = destaca_fill
+                    c.font = Font(size=10, name="Calibri", bold=True, color="2E5E3D")
+                else:
+                    c.fill = fila_fill
+                    c.font = Font(size=10, name="Calibri", color="2E3A45")
+                if col_name == "nombre":
+                    c.font = Font(size=11, name="Calibri", bold=True, color="2E3A45")
+
+            max_lineas = 1
+            for cn2 in range(1, len(df_exp.columns) + 1):
+                valor = str(ws.cell(row=rn, column=cn2).value or "")
+                col_name2 = df_exp.columns[cn2-1]
+                ancho_col = anchos.get(col_name2, 22)
+                chars_por_linea = max(int(ancho_col * 1.15), 12)
+                lineas = max(1, -(-len(valor) // chars_por_linea))
+                if lineas > max_lineas:
+                    max_lineas = lineas
+            ws.row_dimensions[rn].height = max(40, min(max_lineas * 16, 200))
+
+        ws.freeze_panes = "A2"
+    return output.getvalue()
+
 
 CYAN   = ["#FFFFFF","#FFFFFF","#E5DFD3","#4A90B8","#3A7CA5","#2E3A45"]
 VERDE  = ["#2E5E3D","#3D7A4D","#5C9C6E","#8AB89A","#B5D4C0","#E6F4E9"]
@@ -735,20 +817,27 @@ else:
                     reader=PdfReader(doc); texto="".join(p.extract_text() or "" for p in reader.pages)
                 except Exception as e:
                     st.error(f"Error leyendo {doc.name}: {e}"); continue
-                prompt_doc=(f"Eres un experto en procurement. Analiza este documento.\n"
-                            f"Responde EXCLUSIVAMENTE con JSON valido.\n\n"
+                prompt_doc=(f"Eres un experto en procurement. Analiza este documento de propuesta de proveedor.\n"
+                            f"Responde EXCLUSIVAMENTE con JSON valido, sin texto adicional ni markdown.\n\n"
                             f"Contexto: pais={pais_busqueda or 'no especificado'}, presupuesto={presupuesto_ref}, cobertura={cobertura_req}\n"
                             f"Certificaciones requeridas: {', '.join(cert_lista) or 'ninguna'}\n"
                             f"Pesos: Precio {ppeso_precio}%, Cert {ppeso_cert}%, Rep {ppeso_rep}%, Cob {ppeso_cob}%\n\n"
                             f'{{"nombre":"","descripcion":"","sitio_web":"","pais_sede":"","cobertura":"",'
                             f'"anos_experiencia":"","certificaciones":"","productos_servicios":"",'
-                            f'"rango_precio":"","condiciones_comerciales":"","tiempo_entrega":"",'
-                            f'"clientes_referencia":"","fortalezas":"","debilidades":"",'
+                            f'"rango_precio":"","precio_sin_igv":"","precio_con_igv":"",'
+                            f'"condiciones_pago":"","tiempo_entrega":"","garantia":"",'
+                            f'"condiciones_comerciales":"","clientes_referencia":"","fortalezas":"","debilidades":"",'
                             f'"puntaje_precio":0,"puntaje_certificaciones":0,"puntaje_reputacion":0,"puntaje_cobertura":0,'
                             f'"puntaje_recomendacion":0,"nivel_recomendacion":"","justificacion":"",'
                             f'"cumple_certificaciones":false,"certificaciones_faltantes":""}}\n\n'
+                            f'Presta ESPECIAL ATENCION a extraer con precision estos 4 puntos si aparecen en el documento:\n'
+                            f'- garantia: duracion y cobertura de la garantia ofrecida (ej: "12 meses contra defectos de fabricacion")\n'
+                            f'- tiempo_entrega: plazo de entrega del producto/servicio (ej: "15 dias habiles")\n'
+                            f'- precio_sin_igv: precio del producto/servicio SIN IGV/IVA, incluye moneda (ej: "S/ 8,500.00")\n'
+                            f'- precio_con_igv: precio del producto/servicio CON IGV/IVA, incluye moneda (ej: "S/ 10,030.00")\n'
+                            f'- condiciones_pago: forma y plazos de pago (ej: "50% adelanto, 50% contra entrega")\n\n'
                             f'- nivel_recomendacion: "Muy recomendado">=8, "Recomendado">=6, "Opcion viable">=4, "No recomendado"<4\n'
-                            f"- Si no esta en el doc: No especifica\n\nDocumento:\n{texto[:4000]}")
+                            f"- Si un dato no aparece en el documento, escribe: No especifica\n\nDocumento:\n{texto[:4000]}")
                 try:
                     msg=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=1500,
                             messages=[{"role":"user","content":prompt_doc}])
@@ -761,7 +850,33 @@ else:
                 df_new=pd.DataFrame(resultados_prov)
                 if st.session_state.df_proveedores is None: st.session_state.df_proveedores=df_new
                 else: st.session_state.df_proveedores=pd.concat([st.session_state.df_proveedores,df_new],ignore_index=True)
+                st.session_state.df_propuestas=df_new
                 stx2.success(f"{len(resultados_prov)} documentos analizados y agregados al comparador.")
+
+        if st.session_state.get("df_propuestas") is not None and len(st.session_state.df_propuestas)>0:
+            st.divider()
+            st.markdown("#### Condiciones Comerciales Extraidas")
+            st.markdown("<p style='color:#3A7CA5;font-size:13px;'>Garant\u00eda, tiempo de entrega, precios con/sin IGV y condiciones de pago detectados en cada propuesta.</p>", unsafe_allow_html=True)
+
+            df_prop = st.session_state.df_propuestas.copy()
+            col_nombre = "nombre" if "nombre" in df_prop.columns else "nombre_empresa"
+            cols_resumen = [col_nombre,"Archivo","garantia","tiempo_entrega","precio_sin_igv","precio_con_igv","condiciones_pago"]
+            cols_resumen_ok = [c for c in cols_resumen if c in df_prop.columns]
+            rename_resumen = {col_nombre:"Proveedor","Archivo":"Archivo","garantia":"Garant\u00eda",
+                "tiempo_entrega":"Tiempo de Entrega","precio_sin_igv":"Precio sin IGV",
+                "precio_con_igv":"Precio con IGV","condiciones_pago":"Condiciones de Pago"}
+            st.dataframe(df_prop[cols_resumen_ok].rename(columns=rename_resumen), use_container_width=True, height=250)
+
+            cols_excel = [c for c in [col_nombre,"Archivo","garantia","tiempo_entrega","precio_sin_igv","precio_con_igv","condiciones_pago","rango_precio","condiciones_comerciales"] if c in df_prop.columns]
+            df_excel_prop = df_prop[cols_excel].copy()
+            if col_nombre != "nombre":
+                df_excel_prop = df_excel_prop.rename(columns={col_nombre:"nombre"})
+
+            st.download_button("Descargar Excel de Condiciones Comerciales",
+                data=exportar_excel_propuestas(df_excel_prop),
+                file_name="Nexora_Condiciones_Comerciales.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True)
 
     with tab_comparar:
         st.markdown("### Comparaci\u00f3n de Proveedores")
