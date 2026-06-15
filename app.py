@@ -70,26 +70,59 @@ st.markdown("""
   .stMultiSelect > div > div {
     background-color: #ffffff !important; border: 1.5px solid #D8CFC0 !important;
     border-radius: 8px !important; color: #2E3A45 !important; }
+
+  /* Radio "modulo activo": tarjeta con borde izquierdo de acento */
+  .stRadio [role="radiogroup"] { gap: 4px !important; }
+  .stRadio label {
+    background: transparent !important; border: 1px solid transparent !important;
+    border-left: 2px solid transparent !important; border-radius: 6px !important;
+    padding: 8px 10px !important; margin: 0 !important; transition: background 0.15s; }
+  .stRadio label:has(input:checked) {
+    background: #FFFFFF !important; border-color: #D8CFC0 !important; border-left-color: #4A90B8 !important; }
+  .stRadio label > div:first-child { display: none !important; }
+  .stRadio label p { font-size: 12px !important; color: #9CA8B0 !important; font-weight: 400 !important; }
+  .stRadio label:has(input:checked) p { color: #2E3A45 !important; font-weight: 500 !important; }
   .stTextArea textarea {
     background-color: #ffffff !important; color: #2E3A45 !important;
     border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
 
   .stButton > button[kind="primary"] {
-    background: #4A90B8 !important; border: none !important;
-    border-radius: 10px !important; color: #FFFFFF !important;
-    font-weight: 600 !important; font-size: 15px !important; }
+    background: #2E3A45 !important; border: none !important;
+    border-radius: 8px !important; color: #F4F1EB !important;
+    font-family: var(--nx-mono) !important; font-weight: 500 !important;
+    font-size: 11px !important; letter-spacing: 1.5px !important; text-transform: uppercase !important; }
   .stButton > button[kind="primary"]:hover {
-    background: #3A7CA5 !important; color: #FFFFFF !important; }
+    background: #1E2730 !important; color: #F4F1EB !important; }
   .stButton > button {
-    border-radius: 8px !important; border: 1.5px solid #B8CBD6 !important;
-    color: #3A7CA5 !important; background: #FFFFFF !important; }
-  .stButton > button:hover { background: #DCEEFA !important; }
+    border-radius: 8px !important; border: 1.5px solid #D8CFC0 !important;
+    color: #5F5E5A !important; background: #FFFFFF !important;
+    font-family: var(--nx-mono) !important; font-size: 11px !important;
+    letter-spacing: 1px !important; text-transform: uppercase !important; }
+  .stButton > button:hover { background: #F4F1EB !important; border-color: #B8CBD6 !important; }
+  .stDownloadButton > button {
+    background: #2E3A45 !important; border: none !important; border-radius: 8px !important;
+    color: #F4F1EB !important; font-family: var(--nx-mono) !important; font-weight: 500 !important;
+    font-size: 11px !important; letter-spacing: 1.5px !important; text-transform: uppercase !important; }
+  .stDownloadButton > button:hover { background: #1E2730 !important; color: #F4F1EB !important; }
 
   [data-testid="stFileUploader"] {
-    background: #FFFFFF !important; border: 2px dashed #B8CBD6 !important; border-radius: 12px !important; }
-  [data-testid="stFileUploader"] label,
+    background: #FFFFFF !important; border: 1px dashed #B8CBD6 !important; border-radius: 10px !important; }
+  [data-testid="stFileUploader"] label {
+    color: #9CA8B0 !important; font-family: var(--nx-mono) !important; font-size: 10px !important;
+    letter-spacing: 1.5px !important; text-transform: uppercase !important; }
   [data-testid="stFileUploader"] span,
   [data-testid="stFileUploader"] p { color: #2E3A45 !important; }
+  [data-testid="stFileUploader"] section {
+    background: #FFFFFF !important; border: none !important; }
+  [data-testid="stFileUploaderDropzone"] button {
+    background: #F4F1EB !important; border: 1px solid #D8CFC0 !important; border-radius: 6px !important;
+    color: #5F5E5A !important; font-family: var(--nx-mono) !important; font-size: 10px !important;
+    letter-spacing: 1px !important; text-transform: uppercase !important; }
+  [data-testid="stFileUploaderFile"] {
+    background: #F4F1EB !important; border: 1px solid #E5DFD3 !important; border-radius: 6px !important; }
+  [data-testid="stFileUploaderFileName"] { color: #2E3A45 !important; font-size: 12px !important; }
+  [data-testid="stFileUploaderFileData"] {
+    color: #B4B2A9 !important; font-family: var(--nx-mono) !important; font-size: 10px !important; }
 
   .stTabs [data-baseweb="tab-list"] {
     background: #FFFFFF !important; border-radius: 10px !important;
@@ -103,7 +136,8 @@ st.markdown("""
   .stForm input { background: #ffffff !important; color: #2E3A45 !important;
     border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
 
-  .stProgress > div > div { background: linear-gradient(90deg, #4A90B8, #7AA9C7) !important; }
+  .stProgress > div > div { background: #4A90B8 !important; }
+  .stProgress { background: #E5DFD3 !important; border-radius: 2px !important; }
 
   .metric-card { background: #FFFFFF; border: 1px solid #E5DFD3; border-top: 2px solid #B4B2A9;
     padding: 14px 16px; border-radius: 10px; text-align: left; }
@@ -139,6 +173,21 @@ st.markdown("""
   hr { border-color: #E5DFD3 !important; }
   h1, h2, h3, h4 { color: #2E3A45 !important; }
   [data-testid="stDataFrame"] { border: 1px solid #B8CBD6 !important; border-radius: 8px !important; }
+
+  /* Alerts: tarjeta blanca con borde izquierdo de acento, sin fondos saturados */
+  [data-testid="stAlertContainer"] {
+    background: #FFFFFF !important; border: 1px solid #E5DFD3 !important;
+    border-radius: 8px !important; padding: 10px 14px !important; }
+  [data-testid="stAlertContainer"] p { color: #5F5E5A !important; font-size: 13px !important; }
+  div[data-testid="stAlertContainer"]:has(svg[data-testid="stIconMaterial"][title="info"]),
+  div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentInfo"]) {
+    border-left: 2px solid #4A90B8 !important; }
+  div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentSuccess"]) {
+    border-left: 2px solid #3D7A4D !important; }
+  div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentWarning"]) {
+    border-left: 2px solid #A8762E !important; }
+  div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentError"]) {
+    border-left: 2px solid #B3504F !important; }
 
   .logo-header { display: flex; align-items: center; gap: 14px; padding: 0 0 1rem 0; }
   .logo-icon { width: 48px; height: 48px; border-radius: 12px;
@@ -209,28 +258,29 @@ with st.sidebar:
     st.session_state.modulo_activo = "cvs" if "CVs" in modulo else "proveedores"
     st.divider()
 
+    SIDEBAR_LABEL = "font-family:var(--nx-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9CA8B0;margin-bottom:10px;"
     if st.session_state.modulo_activo == "cvs":
-        st.markdown("<p style='color:#2E3A45;font-size:15px;font-weight:700;margin-bottom:12px;'>Configurar Puesto</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Configurar puesto</p>", unsafe_allow_html=True)
         puesto          = st.text_input("Nombre del puesto", placeholder="Ej: Analista de Datos")
         experiencia_min = st.slider("\U0001f4c5 A\u00f1os m\u00ednimos de experiencia", 0, 20, 2)
         educacion_req   = st.selectbox("Educaci\u00f3n m\u00ednima", ["Cualquiera","T\u00e9cnico","Bachiller","Licenciatura","Maestr\u00eda","Doctorado"])
         habilidades_req = st.text_area("Habilidades requeridas (una por l\u00ednea)", placeholder="Python\nExcel\nSQL")
         idioma_req      = st.selectbox("Idioma requerido", ["No requerido","Ingl\u00e9s","Ingl\u00e9s avanzado","Portugu\u00e9s","Franc\u00e9s"])
         st.divider()
-        st.markdown("<p style='color:#2E3A45;font-weight:700;margin-bottom:4px;'>Pesos de puntuaci\u00f3n</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Pesos de puntuaci\u00f3n</p>", unsafe_allow_html=True)
         peso_exp = st.slider("Experiencia", 0, 100, 35)
         peso_edu = st.slider("Educaci\u00f3n",   0, 100, 25)
         peso_hab = st.slider("Habilidades", 0, 100, 30)
         peso_idi = st.slider("Idiomas",     0, 100, 10)
     else:
-        st.markdown("<p style='color:#2E3A45;font-size:15px;font-weight:700;margin-bottom:12px;'>Configurar B\u00fasqueda</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Configurar b\u00fasqueda</p>", unsafe_allow_html=True)
         pais_busqueda   = st.text_input("Pa\u00eds o regi\u00f3n", placeholder="Ej: Per\u00fa, LATAM, Espa\u00f1a")
         rubro_busqueda  = st.text_input("Rubro o industria", placeholder="Ej: Software, Log\u00edstica")
         presupuesto_ref = st.selectbox("Presupuesto referencial", ["No especificado","< $10,000","$10,000 - $50,000","$50,000 - $200,000","> $200,000"])
         cert_requeridas = st.text_area("Certificaciones requeridas (una por l\u00ednea)", placeholder="ISO 9001\nAWS Certified")
         cobertura_req   = st.selectbox("Cobertura geogr\u00e1fica m\u00ednima", ["Local","Nacional","Regional LATAM","Internacional"])
         st.divider()
-        st.markdown("<p style='color:#2E3A45;font-weight:700;margin-bottom:4px;'>Pesos de evaluaci\u00f3n</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Pesos de evaluaci\u00f3n</p>", unsafe_allow_html=True)
         ppeso_precio = st.slider("Precio/Condiciones", 0, 100, 30)
         ppeso_cert   = st.slider("Certificaciones",    0, 100, 25)
         ppeso_rep    = st.slider("Reputaci\u00f3n",         0, 100, 25)
@@ -303,6 +353,31 @@ def dial_colores_prov(puntaje):
     if p >= 8: return "#E1F5EE", "#0F6E56"
     if p >= 6: return "#EAF3DE", "#5E7D3C"
     return "#FBF1DD", "#A8762E"
+
+def banner_archivos(cantidad, texto):
+    """Banner de archivos cargados con numero en serif a la derecha."""
+    n = f"{cantidad:02d}"
+    st.markdown(f"""<div style="display:flex;align-items:center;gap:10px;background:#FFFFFF;
+      border:1px solid #E5DFD3;border-left:2px solid #4A90B8;border-radius:8px;
+      padding:10px 14px;margin-bottom:14px;">
+      <i class="ti ti-info-circle" style="font-size:15px;color:#4A90B8;"></i>
+      <span style="font-size:12px;color:#5F5E5A;">{texto}</span>
+      <span style="margin-left:auto;font-family:var(--nx-serif);font-size:14px;font-weight:600;color:#2E3A45;">{n}</span>
+    </div>""", unsafe_allow_html=True)
+
+def progreso_label(label, actual, total):
+    """Render 'label ---- actual/total' al estilo nx-section-label, con contador en serif."""
+    st.markdown(f"""<div class="nx-section-label" style="margin-top:14px;">
+      <span>{label}</span><div class="nx-rule"></div>
+      <span style="font-family:var(--nx-serif);font-size:13px;font-weight:600;color:#4A90B8;white-space:nowrap;">{actual:02d} / {total:02d}</span>
+    </div>""", unsafe_allow_html=True)
+
+def titulo_modulo(titulo, subtitulo):
+    """Titulo de modulo: serif grande + label mono debajo, estilo masthead."""
+    st.markdown(f"""<div style="margin-bottom:18px;">
+      <div style="font-family:var(--nx-serif);font-size:1.6rem;font-weight:600;color:#2E3A45;">{titulo}</div>
+      <div style="font-family:var(--nx-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#9CA8B0;margin-top:2px;">{subtitulo}</div>
+    </div>""", unsafe_allow_html=True)
 
 def preparar_texto_documento(texto, limite=18000):
     """Prepara el texto del documento para enviarlo a Claude.
@@ -599,17 +674,19 @@ LAYOUT = dict(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_
 # MODULO 1: CVs
 # ══════════════════════════════════════════════════════════════════════════════
 if st.session_state.modulo_activo == "cvs":
-    st.markdown("## M\u00f3dulo de An\u00e1lisis de CVs")
+    titulo_modulo("M\u00f3dulo de an\u00e1lisis de CVs", "Carga &amp; clasificaci\u00f3n por lotes")
     uploaded_files = st.file_uploader("Sube los CVs en PDF", type=["pdf"], accept_multiple_files=True)
     if uploaded_files:
-        st.info(f"{len(uploaded_files)} archivo(s) cargado(s) y listo(s) para procesar.")
+        banner_archivos(len(uploaded_files), "archivos cargados, listos para procesar")
 
-    if uploaded_files and st.button("Procesar y Clasificar Candidatos", type="primary", use_container_width=True):
+    if uploaded_files and st.button("Procesar y clasificar candidatos", type="primary", use_container_width=True):
         resultados = []
-        pb = st.progress(0); stxt = st.empty()
+        progreso_holder = st.empty(); pb = st.progress(0); stxt = st.empty()
         habilidades_lista = [h.strip().lower() for h in habilidades_req.split("\n") if h.strip()]
         for idx, file in enumerate(uploaded_files):
-            stxt.markdown(f"Analizando **{idx+1}/{len(uploaded_files)}**: {file.name}")
+            with progreso_holder.container():
+                progreso_label("Procesando", idx+1, len(uploaded_files))
+            stxt.markdown(f'<div style="font-family:var(--nx-mono);font-size:11px;color:#9CA8B0;margin-top:4px;">{file.name}</div>', unsafe_allow_html=True)
             try:
                 reader = PdfReader(file)
                 texto  = "".join(p.extract_text() or "" for p in reader.pages)
@@ -774,7 +851,7 @@ if st.session_state.modulo_activo == "cvs":
 # MODULO 2: PROVEEDORES
 # ══════════════════════════════════════════════════════════════════════════════
 else:
-    st.markdown("## Modulo de An\u00e1lisis de Proveedores")
+    titulo_modulo("M\u00f3dulo de an\u00e1lisis de proveedores", "B\u00fasqueda, documentos &amp; comparaci\u00f3n")
     tab_buscar,tab_subir,tab_comparar,tab_dash,tab_export = st.tabs([
         "Buscar en Internet","Analizar Documentos","Comparar Proveedores","Dashboards","Exportar"
     ])
@@ -837,7 +914,7 @@ else:
                     )
 
                     try:
-                        msg=client.messages.create(model="claude-sonnet-4-6",max_tokens=4096,
+                        msg=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=4096,
                             tools=[{"type":"web_search_20250305","name":"web_search"}],
                             messages=[{"role":"user","content":prompt_busqueda}])
                         texto_resp="".join(b.text for b in msg.content if hasattr(b,"text"))
@@ -907,12 +984,14 @@ else:
         st.markdown("### Analizar Documentos de Proveedores")
         st.markdown("<p style='color:#3A7CA5;'>Sube propuestas, RFPs o fichas tecnicas en PDF.</p>", unsafe_allow_html=True)
         docs=st.file_uploader("Sube documentos PDF",type=["pdf"],accept_multiple_files=True,key="docs_prov")
-        if docs: st.info(f"{len(docs)} documento(s) cargado(s).")
-        if docs and st.button("Analizar Documentos",type="primary",use_container_width=True):
-            resultados_prov=[]; pb2=st.progress(0); stx2=st.empty()
+        if docs: banner_archivos(len(docs), "documentos cargados, listos para analizar")
+        if docs and st.button("Analizar documentos",type="primary",use_container_width=True):
+            resultados_prov=[]; progreso_holder2=st.empty(); pb2=st.progress(0); stx2=st.empty()
             cert_lista=[c.strip() for c in cert_requeridas.split("\n") if c.strip()]
             for idx,doc in enumerate(docs):
-                stx2.markdown(f"Analizando **{idx+1}/{len(docs)}**: {doc.name}")
+                with progreso_holder2.container():
+                    progreso_label("Analizando", idx+1, len(docs))
+                stx2.markdown(f'<div style="font-family:var(--nx-mono);font-size:11px;color:#9CA8B0;margin-top:4px;">{doc.name}</div>', unsafe_allow_html=True)
                 try:
                     reader=PdfReader(doc); texto="".join(p.extract_text() or "" for p in reader.pages)
                 except Exception as e:
