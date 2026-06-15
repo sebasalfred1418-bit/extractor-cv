@@ -252,6 +252,51 @@ def safe_float(val):
     try: return float(str(val).replace(",", "."))
     except: return 0.0
 
+def preparar_texto_documento(texto, limite=18000):
+    """Prepara el texto del documento para enviarlo a Claude.
+    Si el documento es largo, antepone las secciones que contienen
+    palabras clave criticas (garantia, tiempo de entrega, IGV, condiciones
+    de pago, totales) para garantizar que no se pierdan por el limite
+    de caracteres, sin sobrepasar nunca el limite total."""
+    if len(texto) <= limite:
+        return texto
+
+    palabras_clave = [
+        "GARANT", "TIEMPO DE ENTREGA", "PLAZO DE ENTREGA", "ENTREGA:",
+        " IGV", "I.G.V", "IVA", "SUBTOTAL", "SUB TOTAL", " TOTAL",
+        "CONDICION", "FORMA DE PAGO", "CREDITO", "CR\u00c9DITO",
+        "VALIDEZ", "VIGENCIA", "PRECIO UNITARIO", "S/.", "$",
+    ]
+
+    lineas = texto.split("\n")
+    indices_clave = set()
+    for i, linea in enumerate(lineas):
+        linea_upper = linea.upper()
+        if any(pk in linea_upper for pk in palabras_clave):
+            for j in range(max(0, i - 1), min(len(lineas), i + 3)):
+                indices_clave.add(j)
+
+    lineas_clave = [lineas[i] for i in sorted(indices_clave)]
+    seccion_clave = "\n".join(lineas_clave)
+
+    encabezado = (
+        "\n\n--- INFORMACION ADICIONAL DETECTADA EN EL DOCUMENTO "
+        "(condiciones comerciales, garantia, plazos, precios) ---\n"
+    )
+
+    # Reservar espacio fijo para la seccion clave (maximo 40% del limite)
+    max_seccion = min(len(seccion_clave), int(limite * 0.4))
+    seccion_clave = seccion_clave[:max_seccion]
+
+    espacio_para_principal = limite - len(encabezado) - len(seccion_clave)
+    espacio_para_principal = max(500, espacio_para_principal)
+
+    texto_principal = texto[:espacio_para_principal]
+
+    if seccion_clave:
+        return texto_principal + encabezado + seccion_clave
+    return texto[:limite]
+
 def exportar_excel_cvs(df_exp):
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
@@ -837,7 +882,7 @@ else:
                             f'- precio_con_igv: precio del producto/servicio CON IGV/IVA, incluye moneda (ej: "S/ 10,030.00")\n'
                             f'- condiciones_pago: forma y plazos de pago (ej: "50% adelanto, 50% contra entrega")\n\n'
                             f'- nivel_recomendacion: "Muy recomendado">=8, "Recomendado">=6, "Opcion viable">=4, "No recomendado"<4\n'
-                            f"- Si un dato no aparece en el documento, escribe: No especifica\n\nDocumento:\n{texto[:4000]}")
+                            f"- Si un dato no aparece en el documento, escribe: No especifica\n\nDocumento:\n{preparar_texto_documento(texto)}")
                 try:
                     msg=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=1500,
                             messages=[{"role":"user","content":prompt_doc}])
