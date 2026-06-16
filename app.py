@@ -903,7 +903,7 @@ def exportar_excel_matriz_economica(df_propuestas, peso_costo, peso_pago, userna
     # Maximo 5 proveedores (como en la plantilla Yanbal)
     df = df.head(5).reset_index(drop=True)
     n_prov = len(df)
-    n_cols_total_max = 5  # columnas-grupo de proveedor disponibles en la plantilla
+    n_cols_total_max = n_prov  # columnas dinamicas: solo los proveedores reales
 
     col_nombre = "nombre" if "nombre" in df.columns else "Archivo"
 
@@ -1254,46 +1254,68 @@ def exportar_excel_matriz_economica(df_propuestas, peso_costo, peso_pago, userna
             cell.fill = fill_verde
     fila += 1
 
-    # Fila Garantia (texto informativo)
-    ws.cell(row=fila, column=2, value="Garant\u00eda").font = Font(size=10, name="Calibri", color=AZUL_LINK, italic=True)
-    ws.cell(row=fila, column=2).border = borde
-    ws.cell(row=fila, column=3).border = borde
-    for i in range(n_cols_total_max):
-        col_punt = 4 + i
-        garantia = gv(df.iloc[i], "garantia", "-") if i < n_prov else "-"
-        cell = ws.cell(row=fila, column=col_punt, value=str(garantia))
-        cell.font = Font(size=9, name="Calibri", color=AZUL_LINK)
-        cell.alignment = Alignment(horizontal="center", wrap_text=True)
-        cell.border = borde
-    fila += 1
-
-    # Fila Tiempo de entrega (texto informativo)
-    ws.cell(row=fila, column=2, value="Tiempo de entrega").font = Font(size=10, name="Calibri", color=AZUL_LINK, italic=True)
-    ws.cell(row=fila, column=2).border = borde
-    ws.cell(row=fila, column=3).border = borde
-    for i in range(n_cols_total_max):
-        col_punt = 4 + i
-        tiempo = gv(df.iloc[i], "tiempo_entrega", "-") if i < n_prov else "-"
-        cell = ws.cell(row=fila, column=col_punt, value=str(tiempo))
-        cell.font = Font(size=9, name="Calibri", color=AZUL_LINK)
-        cell.alignment = Alignment(horizontal="center", wrap_text=True)
-        cell.border = borde
-    fila += 1
-
-    # Fila Condiciones de pago extraidas (texto informativo, referencia para llenar la puntuacion manual)
-    ws.cell(row=fila, column=2, value="Condiciones de pago (referencia)").font = Font(size=10, name="Calibri", color=AZUL_LINK, italic=True)
-    ws.cell(row=fila, column=2).border = borde
-    ws.cell(row=fila, column=3).border = borde
-    for i in range(n_cols_total_max):
-        col_punt = 4 + i
-        cond = gv(df.iloc[i], "condiciones_pago", "-") if i < n_prov else "-"
-        cell = ws.cell(row=fila, column=col_punt, value=str(cond))
-        cell.font = Font(size=9, name="Calibri", color=AZUL_LINK)
-        cell.alignment = Alignment(horizontal="center", wrap_text=True)
-        cell.border = borde
-    fila += 1
-
     ws.freeze_panes = "C1"
+
+    # ── SEGUNDA HOJA: Condiciones Comerciales ────────────────────────────────
+    ws2 = wb.create_sheet(title="Condiciones")
+    ws2.column_dimensions["A"].width = 32
+    for i in range(n_prov):
+        col_prov = 2 + i
+        ws2.column_dimensions[get_column_letter(col_prov)].width = 30
+
+    # Header banda naranja
+    ws2.merge_cells(start_row=1, start_column=1, end_row=1, end_column=1 + n_prov)
+    cell_h = ws2.cell(row=1, column=1, value="Condiciones Comerciales por Proveedor")
+    cell_h.fill = fill_header
+    cell_h.font = font_header
+    cell_h.alignment = Alignment(horizontal="center")
+    for c in range(1, 2 + n_prov):
+        ws2.cell(row=1, column=c).fill = fill_header
+
+    # Sub-header con nombres de proveedor
+    ws2.cell(row=2, column=1, value="Criterio").font = font_bold
+    ws2.cell(row=2, column=1).fill = PatternFill(start_color="FBE5D6", end_color="FBE5D6", fill_type="solid")
+    ws2.cell(row=2, column=1).border = borde
+    for i in range(n_prov):
+        nombre_p = gv(df.iloc[i], col_nombre, f"Proveedor {i+1}")
+        cell = ws2.cell(row=2, column=2 + i, value=str(nombre_p))
+        cell.font = font_bold
+        cell.fill = PatternFill(start_color="FBE5D6", end_color="FBE5D6", fill_type="solid")
+        cell.alignment = Alignment(horizontal="center", wrap_text=True)
+        cell.border = borde
+    ws2.row_dimensions[2].height = 36
+
+    # Filas de condiciones
+    filas_cond = [
+        ("Garant\u00eda", "garantia"),
+        ("Tiempo de entrega", "tiempo_entrega"),
+        ("Condiciones de pago", "condiciones_pago"),
+        ("Precio sin IGV", "precio_sin_igv"),
+        ("Precio con IGV", "precio_con_igv"),
+    ]
+    fill_par  = PatternFill(start_color="FEF9F5", end_color="FEF9F5", fill_type="solid")
+    fill_impar = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
+
+    for fila_c, (label, campo) in enumerate(filas_cond, 3):
+        ws2.cell(row=fila_c, column=1, value=label).font = font_bold
+        ws2.cell(row=fila_c, column=1).border = borde
+        ws2.cell(row=fila_c, column=1).fill = fill_par if fila_c % 2 == 0 else fill_impar
+        max_h = 1
+        for i in range(n_prov):
+            valor = gv(df.iloc[i], campo, "No especifica")
+            cell = ws2.cell(row=fila_c, column=2 + i, value=str(valor))
+            cell.font = Font(size=10, name="Calibri", color=GRIS_LABEL)
+            cell.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
+            cell.border = borde
+            cell.fill = fill_par if fila_c % 2 == 0 else fill_impar
+            lineas = max(1, len(str(valor)) // 28 + 1)
+            if lineas > max_h:
+                max_h = lineas
+        ws2.row_dimensions[fila_c].height = max(20, min(max_h * 15, 90))
+
+    ws2.freeze_panes = "B3"
+    ws2.page_setup.orientation = "landscape"
+    ws2.page_setup.fitToWidth = 1
 
     ws.page_setup.orientation = "landscape"
     ws.page_setup.fitToWidth = 1
