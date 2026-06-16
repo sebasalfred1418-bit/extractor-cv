@@ -1655,7 +1655,6 @@ else:
             st.markdown("#### Condiciones Comerciales Extraidas")
             st.markdown("<p style='color:#3A7CA5;font-size:13px;'>Garantía, tiempo de entrega, precios con/sin IGV y condiciones de pago detectados en cada propuesta.</p>", unsafe_allow_html=True)
 
-            df_prop = st.session_state.df_propues
             df_prop = st.session_state.df_propuestas.copy()
             col_nombre = "nombre" if "nombre" in df_prop.columns else "nombre_empresa"
             cols_resumen = [col_nombre,"Archivo","garantia","tiempo_entrega","precio_sin_igv","precio_con_igv","condiciones_pago"]
