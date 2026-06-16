@@ -499,9 +499,7 @@ with st.sidebar:
         puesto          = st.text_input("Nombre del puesto", placeholder="Ej: Analista de Datos")
         experiencia_min = st.slider("\U0001f4c5 A\u00f1os m\u00ednimos de experiencia", 0, 20, 2)
         educacion_req   = st.selectbox("Educaci\u00f3n m\u00ednima", ["Cualquiera","T\u00e9cnico","Bachiller","Licenciatura","Maestr\u00eda","Doctorado"])
-        habilidades_req = st.text_area("Habilidades requeridas (una por l\u00ednea)", placeholder="Python
-Excel
-SQL")
+        habilidades_req = st.text_area("Habilidades requeridas (una por l\u00ednea)", placeholder="Python\nExcel\nSQL")
         idioma_req      = st.selectbox("Idioma requerido", ["No requerido","Ingl\u00e9s","Ingl\u00e9s avanzado","Portugu\u00e9s","Franc\u00e9s"])
         st.divider()
         st.markdown(f"<p style='{SIDEBAR_LABEL}'>Pesos de puntuaci\u00f3n</p>", unsafe_allow_html=True)
@@ -514,8 +512,7 @@ SQL")
         pais_busqueda   = st.text_input("Pa\u00eds o regi\u00f3n", placeholder="Ej: Per\u00fa, LATAM, Espa\u00f1a")
         rubro_busqueda  = st.text_input("Rubro o industria", placeholder="Ej: Software, Log\u00edstica")
         presupuesto_ref = st.selectbox("Presupuesto referencial", ["No especificado","< $10,000","$10,000 - $50,000","$50,000 - $200,000","> $200,000"])
-        cert_requeridas = st.text_area("Certificaciones requeridas (una por l\u00ednea)", placeholder="ISO 9001
-AWS Certified")
+        cert_requeridas = st.text_area("Certificaciones requeridas (una por l\u00ednea)", placeholder="ISO 9001\nAWS Certified")
         cobertura_req   = st.selectbox("Cobertura geogr\u00e1fica m\u00ednima", ["Local","Nacional","Regional LATAM","Internacional"])
         st.divider()
         st.markdown(f"<p style='{SIDEBAR_LABEL}'>Pesos de evaluaci\u00f3n</p>", unsafe_allow_html=True)
@@ -637,8 +634,7 @@ def preparar_texto_documento(texto, limite=18000):
         "VALIDEZ", "VIGENCIA", "PRECIO UNITARIO", "S/.", "$",
     ]
 
-    lineas = texto.split("
-")
+    lineas = texto.split("\n")
     indices_clave = set()
     for i, linea in enumerate(lineas):
         linea_upper = linea.upper()
@@ -647,15 +643,11 @@ def preparar_texto_documento(texto, limite=18000):
                 indices_clave.add(j)
 
     lineas_clave = [lineas[i] for i in sorted(indices_clave)]
-    seccion_clave = "
-".join(lineas_clave)
+    seccion_clave = "\n".join(lineas_clave)
 
     encabezado = (
-        "
-
---- INFORMACION ADICIONAL DETECTADA EN EL DOCUMENTO "
-        "(condiciones comerciales, garantia, plazos, precios) ---
-"
+        "\n\n--- INFORMACION ADICIONAL DETECTADA EN EL DOCUMENTO "
+        "(condiciones comerciales, garantia, plazos, precios) ---\n"
     )
 
     # Reservar espacio fijo para la seccion clave (maximo 40% del limite)
@@ -1380,8 +1372,7 @@ if st.session_state.modulo_activo == "cvs":
     if uploaded_files and st.button("Procesar y clasificar candidatos", type="primary", use_container_width=True):
         resultados = []
         progreso_holder = st.empty(); pb = st.progress(0); stxt = st.empty()
-        habilidades_lista = [h.strip().lower() for h in habilidades_req.split("
-") if h.strip()]
+        habilidades_lista = [h.strip().lower() for h in habilidades_req.split("\n") if h.strip()]
         for idx, file in enumerate(uploaded_files):
             with progreso_holder.container():
                 progreso_label("Procesando", idx+1, len(uploaded_files))
@@ -1392,46 +1383,29 @@ if st.session_state.modulo_activo == "cvs":
             except Exception as e:
                 st.error(f"Error leyendo {file.name}: {e}"); continue
             prompt = (
-                f'Eres un reclutador experto. Analiza este CV para el puesto de "{puesto or "No especificado"}".
-'
-                f'Responde EXCLUSIVAMENTE con un objeto JSON valido, sin texto adicional ni markdown.
-
-'
-                f'Formato JSON requerido:
-'
+                f'Eres un reclutador experto. Analiza este CV para el puesto de "{puesto or "No especificado"}".\n'
+                f'Responde EXCLUSIVAMENTE con un objeto JSON valido, sin texto adicional ni markdown.\n\n'
+                f'Formato JSON requerido:\n'
                 f'{{"Nombre":"","Correo":"","Telefono":"","Educacion_Maxima":"","Universidad":"","Carrera":"",'
                 f'"Ultimo_Cargo":"","Ultima_Empresa":"","Experiencia_Anos":0,"Habilidades_Tecnicas":"",'
                 f'"Habilidades_Blandas":"","Idiomas":"","Certificaciones":"","Calculo_Interno":"",'
                 f'"Puntaje":0,"Nivel_Potencial":"","Justificacion":"","Cumple_Requisitos":false,'
-                f'"Requisitos_Cumplidos":"","Requisitos_Faltantes":""}}
-
-'
-                f'Instrucciones:
-'
+                f'"Requisitos_Cumplidos":"","Requisitos_Faltantes":""}}\n\n'
+                f'Instrucciones:\n'
                 f'- Calcula el Puntaje del 1 al 10 ponderando: experiencia ({peso_exp}%), educacion ({peso_edu}%), '
                 f'habilidades: {", ".join(habilidades_lista) or "no especificadas"} ({peso_hab}%), '
-                f'idiomas: {idioma_req} ({peso_idi}%)
-'
+                f'idiomas: {idioma_req} ({peso_idi}%)\n'
                 f'- Calculo_Interno: muestra aqui el desglose matematico completo del calculo del puntaje '
-                f'(formula, porcentajes, suma). Este campo es solo para verificacion interna, no se muestra al usuario.
-'
-                f'- Nivel_Potencial: "Alto" si Puntaje >= 7, "Medio" si >= 4, "Bajo" si < 4
-'
-                f'- Cumple_Requisitos: true si experiencia >= {experiencia_min} y Puntaje >= 6
-'
-                f'- Experiencia_Anos: solo numero entero
-'
-                f'- Habilidades_Tecnicas: maximo 6, separadas por coma
-'
-                f'- Si un dato no existe: "No especifica"
-'
+                f'(formula, porcentajes, suma). Este campo es solo para verificacion interna, no se muestra al usuario.\n'
+                f'- Nivel_Potencial: "Alto" si Puntaje >= 7, "Medio" si >= 4, "Bajo" si < 4\n'
+                f'- Cumple_Requisitos: true si experiencia >= {experiencia_min} y Puntaje >= 6\n'
+                f'- Experiencia_Anos: solo numero entero\n'
+                f'- Habilidades_Tecnicas: maximo 6, separadas por coma\n'
+                f'- Si un dato no existe: "No especifica"\n'
                 f'- Justificacion: maximo 2 oraciones cortas (menos de 200 caracteres) explicando '
                 f'la fortaleza y debilidad principal del candidato. NO incluyas numeros, formulas, '
-                f'porcentajes ni el valor del puntaje en este campo (eso ya va en Calculo_Interno).
-
-'
-                f'CV:
-{texto[:4000]}'
+                f'porcentajes ni el valor del puntaje en este campo (eso ya va en Calculo_Interno).\n\n'
+                f'CV:\n{texto[:4000]}'
             )
             try:
                 msg   = client.messages.create(model="claude-haiku-4-5-20251001", max_tokens=1200,
@@ -1615,23 +1589,16 @@ else:
 
                     exclusion = ""
                     if nombres_ya_encontrados:
-                        exclusion = (f"
-NO incluyas estas empresas que ya fueron encontradas: "
+                        exclusion = (f"\nNO incluyas estas empresas que ya fueron encontradas: "
                                       f"{', '.join(nombres_ya_encontrados)}.")
 
                     prompt_busqueda=(
-                        f"Busca en internet empresas reales y verificadas que ofrezcan: {query_usuario}
-"
-                        f"Contexto: {contexto}{exclusion}
-
-"
+                        f"Busca en internet empresas reales y verificadas que ofrezcan: {query_usuario}\n"
+                        f"Contexto: {contexto}{exclusion}\n\n"
                         f"Encuentra exactamente {cantidad_lote} empresas reales (con sitio web verificable) "
                         f"y para CADA UNA devuelve la informacion completa que se pide abajo, "
-                        f"basandote en lo que encuentres en internet sobre cada empresa.
-
-"
-                        f"Responde SOLO con JSON valido, sin texto adicional ni markdown:
-"
+                        f"basandote en lo que encuentres en internet sobre cada empresa.\n\n"
+                        f"Responde SOLO con JSON valido, sin texto adicional ni markdown:\n"
                         f'{{"proveedores":[{{"nombre":"Nombre real","descripcion":"descripcion completa de la empresa",'
                         f'"sitio_web":"https://...","pais_sede":"pais","cobertura":"Local o Nacional o Regional o Internacional",'
                         f'"anos_experiencia":"numero o rango","certificaciones":"lista o No especifica",'
@@ -1726,8 +1693,7 @@ NO incluyas estas empresas que ya fueron encontradas: "
         if docs: banner_archivos(len(docs), "documentos cargados, listos para analizar")
         if docs and st.button("Analizar documentos",type="primary",use_container_width=True):
             resultados_prov=[]; progreso_holder2=st.empty(); pb2=st.progress(0); stx2=st.empty()
-            cert_lista=[c.strip() for c in cert_requeridas.split("
-") if c.strip()]
+            cert_lista=[c.strip() for c in cert_requeridas.split("\n") if c.strip()]
             for idx,doc in enumerate(docs):
                 with progreso_holder2.container():
                     progreso_label("Analizando", idx+1, len(docs))
@@ -1736,18 +1702,11 @@ NO incluyas estas empresas que ya fueron encontradas: "
                     reader=PdfReader(doc); texto="".join(p.extract_text() or "" for p in reader.pages)
                 except Exception as e:
                     st.error(f"Error leyendo {doc.name}: {e}"); continue
-                prompt_doc=(f"Eres un experto en procurement. Analiza este documento de propuesta de proveedor.
-"
-                            f"Responde EXCLUSIVAMENTE con JSON valido, sin texto adicional ni markdown.
-
-"
-                            f"Contexto: pais={pais_busqueda or 'no especificado'}, presupuesto={presupuesto_ref}, cobertura={cobertura_req}
-"
-                            f"Certificaciones requeridas: {', '.join(cert_lista) or 'ninguna'}
-"
-                            f"Pesos: Precio {ppeso_precio}%, Cert {ppeso_cert}%, Rep {ppeso_rep}%, Cob {ppeso_cob}%
-
-"
+                prompt_doc=(f"Eres un experto en procurement. Analiza este documento de propuesta de proveedor.\n"
+                            f"Responde EXCLUSIVAMENTE con JSON valido, sin texto adicional ni markdown.\n\n"
+                            f"Contexto: pais={pais_busqueda or 'no especificado'}, presupuesto={presupuesto_ref}, cobertura={cobertura_req}\n"
+                            f"Certificaciones requeridas: {', '.join(cert_lista) or 'ninguna'}\n"
+                            f"Pesos: Precio {ppeso_precio}%, Cert {ppeso_cert}%, Rep {ppeso_rep}%, Cob {ppeso_cob}%\n\n"
                             f'{{"nombre":"","descripcion":"","sitio_web":"","pais_sede":"","cobertura":"",'
                             f'"anos_experiencia":"","certificaciones":"","productos_servicios":"",'
                             f'"rango_precio":"","precio_sin_igv":"","precio_con_igv":"",'
@@ -1756,39 +1715,22 @@ NO incluyas estas empresas que ya fueron encontradas: "
                             f'"item_descripcion":"","item_cantidad":1,"moneda":"","costo_unitario_num":0,"costo_total_num":0,'
                             f'"puntaje_precio":0,"puntaje_certificaciones":0,"puntaje_reputacion":0,"puntaje_cobertura":0,'
                             f'"puntaje_recomendacion":0,"nivel_recomendacion":"","justificacion":"",'
-                            f'"cumple_certificaciones":false,"certificaciones_faltantes":""}}
-
-'
-                            f'Presta ESPECIAL ATENCION a extraer con precision estos puntos si aparecen en el documento:
-'
-                            f'- garantia: duracion y cobertura de la garantia ofrecida (ej: "12 meses contra defectos de fabricacion")
-'
-                            f'- tiempo_entrega: plazo de entrega del producto/servicio (ej: "15 dias habiles")
-'
-                            f'- precio_sin_igv: precio del producto/servicio SIN IGV/IVA, incluye moneda (ej: "S/ 8,500.00")
-'
-                            f'- precio_con_igv: precio del producto/servicio CON IGV/IVA, incluye moneda (ej: "S/ 10,030.00")
-'
-                            f'- condiciones_pago: forma y plazos de pago (ej: "50% adelanto, 50% contra entrega")
-'
-                            f'- item_descripcion: nombre/descripcion breve (max 80 caracteres) del producto o servicio principal cotizado
-'
-                            f'- item_cantidad: cantidad cotizada del item principal, solo numero entero (default 1 si no se especifica)
-'
-                            f'- moneda: codigo de moneda detectado (PEN, USD, etc). Usa PEN si ves S/. o Soles, USD si ves $ o Dolares
-'
+                            f'"cumple_certificaciones":false,"certificaciones_faltantes":""}}\n\n'
+                            f'Presta ESPECIAL ATENCION a extraer con precision estos puntos si aparecen en el documento:\n'
+                            f'- garantia: duracion y cobertura de la garantia ofrecida (ej: "12 meses contra defectos de fabricacion")\n'
+                            f'- tiempo_entrega: plazo de entrega del producto/servicio (ej: "15 dias habiles")\n'
+                            f'- precio_sin_igv: precio del producto/servicio SIN IGV/IVA, incluye moneda (ej: "S/ 8,500.00")\n'
+                            f'- precio_con_igv: precio del producto/servicio CON IGV/IVA, incluye moneda (ej: "S/ 10,030.00")\n'
+                            f'- condiciones_pago: forma y plazos de pago (ej: "50% adelanto, 50% contra entrega")\n'
+                            f'- item_descripcion: nombre/descripcion breve (max 80 caracteres) del producto o servicio principal cotizado\n'
+                            f'- item_cantidad: cantidad cotizada del item principal, solo numero entero (default 1 si no se especifica)\n'
+                            f'- moneda: codigo de moneda detectado (PEN, USD, etc). Usa PEN si ves S/. o Soles, USD si ves $ o Dolares\n'
                             f'- costo_unitario_num: el precio_sin_igv como NUMERO puro (sin simbolos, sin comas de miles, usa punto decimal). '
-                            f'Ejemplo: si precio_sin_igv es "S/.41,000.00", costo_unitario_num debe ser 41000.00
-'
-                            f'- costo_total_num: costo_unitario_num multiplicado por item_cantidad (si cantidad es 1, son iguales)
-
-'
-                            f'- nivel_recomendacion: "Muy recomendado">=8, "Recomendado">=6, "Opcion viable">=4, "No recomendado"<4
-'
-                            f"- Si un dato no aparece en el documento, escribe: No especifica (para campos numericos usa 0)
-
-Documento:
-{preparar_texto_documento(texto)}")
+                            f'Ejemplo: si precio_sin_igv es "S/.41,000.00", costo_unitario_num debe ser 41000.00\n'
+                            f'- costo_total_num: costo_unitario_num multiplicado por item_cantidad (si cantidad es 1, son iguales)\n\n'
+                            f'- nivel_recomendacion: "Muy recomendado">=8, "Recomendado">=6, "Opcion viable">=4, "No recomendado"<4\n'
+                            f"- Si un dato no aparece en el documento, escribe: No especifica (para campos numericos usa 0)\n\n"
+                            f"Documento:\n{preparar_texto_documento(texto)}")
                 try:
                     msg=client.messages.create(model="claude-haiku-4-5-20251001",max_tokens=1500,
                             messages=[{"role":"user","content":prompt_doc}])
