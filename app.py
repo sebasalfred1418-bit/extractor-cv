@@ -116,18 +116,31 @@ st.markdown("""
     -webkit-tap-highlight-color: transparent !important;
     touch-action: manipulation !important; }
 
-  /* ── SIDEBAR — todos los niveles de div anidados ── */
+  /* ── SIDEBAR — background en todos los niveles, sin excepcion ── */
   [data-testid="stSidebar"],
   [data-testid="stSidebar"]>div,
   [data-testid="stSidebar"]>div>div,
   [data-testid="stSidebar"]>div>div>div,
+  [data-testid="stSidebar"]>div>div>div>div,
+  [data-testid="stSidebar"]>div>div>div>div>div,
   section[data-testid="stSidebar"],
   [data-testid="stSidebarContent"],
   [data-testid="stSidebarUserContent"] {
     background-color: var(--sidebar) !important; }
+  /* Todos los containers/bloques internos del sidebar — transparentes
+     para que no sobreescriban el fondo oscuro del sidebar */
+  [data-testid="stSidebar"] .block-container,
+  [data-testid="stSidebar"] .stMainBlockContainer,
+  [data-testid="stSidebar"] [data-testid="stVerticalBlock"],
+  [data-testid="stSidebar"] [data-testid="stHorizontalBlock"],
+  [data-testid="stSidebar"] .element-container,
+  [data-testid="stSidebar"] .stMarkdown,
+  [data-testid="stSidebar"] section {
+    background: transparent !important;
+    background-color: transparent !important; }
   [data-testid="stSidebar"] {
-    border-right: 1px solid rgba(255,255,255,0.05) !important;
-    box-shadow: 8px 0 40px rgba(0,0,0,0.28), inset -1px 0 0 rgba(255,255,255,0.04) !important; }
+    border-right: none !important;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.32) !important; }
   /* Padding interior del sidebar — evita q widgets queden pegados al borde */
   [data-testid="stSidebarUserContent"],
   [data-testid="stSidebarUserContent"] > div,
@@ -795,16 +808,8 @@ with st.sidebar:
         presupuesto_ref = st.selectbox("Presupuesto referencial", ["No especificado","< $10,000","$10,000 - $50,000","$50,000 - $200,000","> $200,000"])
         cert_requeridas = st.text_area("Certificaciones requeridas (una por l\u00ednea)", placeholder="ISO 9001\nAWS Certified")
         cobertura_req   = st.selectbox("Cobertura geogr\u00e1fica m\u00ednima", ["Local","Nacional","Regional LATAM","Internacional"])
-        st.divider()
-        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Pesos de evaluaci\u00f3n</p>", unsafe_allow_html=True)
-        ppeso_precio = st.slider("Precio/Condiciones", 0, 100, 30)
-        ppeso_cert   = st.slider("Certificaciones",    0, 100, 25)
-        ppeso_rep    = st.slider("Reputaci\u00f3n",         0, 100, 25)
-        ppeso_cob    = st.slider("Cobertura",          0, 100, 20)
-        st.divider()
-        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Matriz econ\u00f3mica</p>", unsafe_allow_html=True)
-        peso_matriz_costo = st.slider("Costos de la propuesta", 0, 100, 70)
-        peso_matriz_pago  = st.slider("Condici\u00f3n de pago",   0, 100, 30)
+        peso_matriz_costo = 70
+        peso_matriz_pago  = 30
 
     st.divider()
     authenticator.logout("Cerrar sesi\u00f3n", "sidebar")
@@ -1991,7 +1996,9 @@ elif st.session_state.modulo_activo == "proveedores":
                             f"Responde EXCLUSIVAMENTE con JSON valido, sin texto adicional ni markdown.\n\n"
                             f"Contexto: pais={pais_busqueda or 'no especificado'}, presupuesto={presupuesto_ref}, cobertura={cobertura_req}\n"
                             f"Certificaciones requeridas: {', '.join(cert_lista) or 'ninguna'}\n"
-                            f"Pesos: Precio {ppeso_precio}%, Cert {ppeso_cert}%, Rep {ppeso_rep}%, Cob {ppeso_cob}%\n\n"
+                            f"Usa tu propio criterio para ponderar: Precio/Condiciones, Certificaciones, Reputacion, Cobertura"
+                            f" (deben sumar 100%). Adapta los pesos al contexto: si el presupuesto es {presupuesto_ref}"
+                            f" y la cobertura requerida es {cobertura_req}, ajusta los pesos acordemente.\n\n"
                             f'{{"nombre":"","descripcion":"","sitio_web":"","pais_sede":"","cobertura":"",'
                             f'"anos_experiencia":"","certificaciones":"","productos_servicios":"",'
                             f'"rango_precio":"","precio_sin_igv":"","precio_con_igv":"",'
