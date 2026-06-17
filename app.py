@@ -134,12 +134,29 @@ st.markdown("""
   [data-testid="stSidebarContent"] > div > div:last-child {
     padding-left: 10px !important;
     padding-right: 10px !important; }
+  /* Sidebar: texto claro — incluye div y strong para neutralizar .stApp div !important */
   [data-testid="stSidebar"] label,
-  [data-testid="stSidebar"] p { color: rgba(240,246,252,0.75) !important; font-weight: 400 !important; }
-  [data-testid="stSidebar"] span { color: rgba(240,246,252,0.75) !important; }
+  [data-testid="stSidebar"] p,
+  [data-testid="stSidebar"] div,
+  [data-testid="stSidebar"] span,
+  [data-testid="stSidebar"] strong { color: rgba(240,246,252,0.72) !important; }
+  [data-testid="stSidebar"] label { font-weight: 400 !important; }
   [data-testid="stSidebar"] h1,[data-testid="stSidebar"] h2,
   [data-testid="stSidebar"] h3 { color: #F0F6FC !important; }
-  [data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.07) !important; }
+  /* Brand hierarchy: clases nx-sb-* tienen mayor especificidad → vencen al div generico */
+  [data-testid="stSidebar"] .nx-sb-primary { color: #F0F6FC !important; font-weight: 700 !important; }
+  [data-testid="stSidebar"] .nx-sb-sub     { color: rgba(240,246,252,0.48) !important; }
+  [data-testid="stSidebar"] .nx-sb-muted   { color: rgba(240,246,252,0.48) !important; }
+  [data-testid="stSidebar"] .nx-sb-name    { color: rgba(240,246,252,0.90) !important; font-weight: 600 !important; }
+  /* Dividers — ultra-sutiles, solo 1px con 6% blanco */
+  [data-testid="stSidebar"] hr,
+  [data-testid="stSidebar"] [data-testid="stDivider"] {
+    background-color: rgba(255,255,255,0.06) !important;
+    border: none !important; border-top: none !important;
+    height: 1px !important; margin: 4px 0 !important; }
+  [data-testid="stSidebar"] [data-testid="stDivider"] > * {
+    background-color: rgba(255,255,255,0.06) !important;
+    border: none !important; }
 
   /* ── NAV — oculta el label "Módulo activo" del radio ── */
   [data-testid="stSidebar"] .stRadio > label {
@@ -657,19 +674,18 @@ with st.sidebar:
     st.markdown(f"""
     <div style="padding:16px 0 10px;">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-        <div style="width:44px;height:44px;border-radius:11px;
+        <div style="width:44px;height:44px;border-radius:11px;flex-shrink:0;
              background:linear-gradient(135deg,#5B9EC9 0%,#2E6B9E 100%);
              display:flex;align-items:center;justify-content:center;
-             font-size:15px;font-weight:800;color:#FFFFFF;flex-shrink:0;
+             font-size:15px;font-weight:800;color:#FFFFFF;
              box-shadow:0 0 0 2px rgba(91,158,201,0.35),0 4px 14px rgba(0,0,0,0.40);">NX</div>
         <div>
-          <div style="color:#F0F6FC;font-weight:700;font-size:16px;line-height:1.2;letter-spacing:-0.2px;">Nexora</div>
-          <div style="color:rgba(240,246,252,0.55);font-size:9px;letter-spacing:2.5px;
-               font-family:var(--nx-mono);text-transform:uppercase;margin-top:2px;">Analiza &middot; Decide &middot; Avanza</div>
+          <div class="nx-sb-primary" style="font-size:16px;line-height:1.2;letter-spacing:-0.2px;">Nexora</div>
+          <div class="nx-sb-sub" style="font-size:9px;letter-spacing:2.5px;font-family:monospace;text-transform:uppercase;margin-top:3px;">Analiza &middot; Decide &middot; Avanza</div>
         </div>
       </div>
-      <div style="color:rgba(240,246,252,0.52);font-size:11.5px;margin-top:6px;padding-left:2px;">
-        Bienvenido, <strong style="color:rgba(240,246,252,0.88);font-weight:600;">{name}</strong>
+      <div class="nx-sb-muted" style="font-size:11.5px;margin-top:6px;padding-left:2px;">
+        Bienvenido, <strong class="nx-sb-name">{name}</strong>
       </div>
     </div>""", unsafe_allow_html=True)
     st.divider()
