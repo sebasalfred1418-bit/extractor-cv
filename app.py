@@ -140,7 +140,16 @@ st.markdown("""
     background-color: transparent !important; }
   [data-testid="stSidebar"] {
     border-right: none !important;
-    box-shadow: 4px 0 24px rgba(0,0,0,0.32) !important; }
+    box-shadow: 4px 0 24px rgba(0,0,0,0.32) !important;
+    min-height: 100vh !important; }
+  /* Sidebar content fill 100% height — evita el fondo celeste debajo del contenido */
+  [data-testid="stSidebarContent"],
+  [data-testid="stSidebarUserContent"],
+  [data-testid="stSidebar"] > div {
+    min-height: 100vh !important;
+    height: 100% !important; }
+  /* Logo icon en area principal: forzar color blanco para neutralizar .stApp div !important */
+  .logo-icon { color: #F0F6FC !important; }
   /* Padding interior del sidebar — evita q widgets queden pegados al borde */
   [data-testid="stSidebarUserContent"],
   [data-testid="stSidebarUserContent"] > div,
@@ -558,11 +567,7 @@ def mostrar_login():
     with col2:
         st.markdown("""
         <div style="text-align:center;padding:2rem 0 1.5rem;">
-          <div style="width:64px;height:64px;border-radius:16px;
-               background:linear-gradient(135deg,#4A90B8,#2E3A45);
-               display:inline-flex;align-items:center;justify-content:center;
-               font-size:24px;font-weight:800;color:#FFFFFF;margin-bottom:16px;
-               box-shadow:0 6px 20px rgba(46,58,69,0.25);">NX</div>
+          <svg width="64" height="64" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:16px;filter:drop-shadow(0 6px 18px rgba(13,27,42,0.35));display:inline-block;"><rect width="44" height="44" rx="22" fill="#0D1B2A"/><polygon points="22,9 33,22 22,35 11,22" fill="none" stroke="#5B9EC9" stroke-width="1.6"/><polygon points="22,15 28,22 22,29 16,22" fill="#3574A8" opacity="0.75"/><line x1="22" y1="9" x2="22" y2="35" stroke="#5B9EC9" stroke-width="0.8" opacity="0.35"/><line x1="11" y1="22" x2="33" y2="22" stroke="#5B9EC9" stroke-width="0.8" opacity="0.35"/></svg>
           <h2 style="color:#2E3A45;margin:0;font-size:1.8rem;font-weight:600;font-family:'Source Serif 4',serif;">Nexora</h2>
           <p style="color:#3A7CA5;margin:4px 0 0;font-size:12px;letter-spacing:3px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;">Analiza &middot; Decide &middot; Avanza</p>
           <p style="color:#9CA8B0;margin:4px 0 0;font-size:11px;letter-spacing:1px;">POWERED BY CLAUDE AI</p>
@@ -697,11 +702,7 @@ with st.sidebar:
     st.markdown(f"""
     <div style="padding:16px 0 10px;">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-        <div style="width:44px;height:44px;border-radius:11px;flex-shrink:0;
-             background:linear-gradient(135deg,#5B9EC9 0%,#2E6B9E 100%);
-             display:flex;align-items:center;justify-content:center;
-             font-size:15px;font-weight:800;color:#FFFFFF;
-             box-shadow:0 0 0 2px rgba(91,158,201,0.35),0 4px 14px rgba(0,0,0,0.40);">NX</div>
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;filter:drop-shadow(0 4px 14px rgba(0,0,0,0.45));"><rect width="44" height="44" rx="22" fill="#0D1B2A"/><polygon points="22,9 33,22 22,35 11,22" fill="none" stroke="#5B9EC9" stroke-width="1.6"/><polygon points="22,15 28,22 22,29 16,22" fill="#3574A8" opacity="0.75"/><line x1="22" y1="9" x2="22" y2="35" stroke="#5B9EC9" stroke-width="0.8" opacity="0.35"/><line x1="11" y1="22" x2="33" y2="22" stroke="#5B9EC9" stroke-width="0.8" opacity="0.35"/></svg>
         <div>
           <div class="nx-sb-primary" style="font-size:16px;line-height:1.2;letter-spacing:-0.2px;">Nexora</div>
           <div class="nx-sb-sub" style="font-size:9px;letter-spacing:2.5px;font-family:monospace;text-transform:uppercase;margin-top:3px;">Analiza &middot; Decide &middot; Avanza</div>
@@ -808,8 +809,9 @@ with st.sidebar:
         presupuesto_ref = st.selectbox("Presupuesto referencial", ["No especificado","< $10,000","$10,000 - $50,000","$50,000 - $200,000","> $200,000"])
         cert_requeridas = st.text_area("Certificaciones requeridas (una por l\u00ednea)", placeholder="ISO 9001\nAWS Certified")
         cobertura_req   = st.selectbox("Cobertura geogr\u00e1fica m\u00ednima", ["Local","Nacional","Regional LATAM","Internacional"])
-        peso_matriz_costo = 70
-        peso_matriz_pago  = 30
+        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Matriz econ\u00f3mica</p>", unsafe_allow_html=True)
+        peso_matriz_costo = st.slider("Costos de la propuesta", 0, 100, 70)
+        peso_matriz_pago  = st.slider("Condici\u00f3n de pago", 0, 100, 30)
 
     st.divider()
     authenticator.logout("Cerrar sesi\u00f3n", "sidebar")
@@ -819,10 +821,10 @@ st.markdown("""
 <div style="display:flex;align-items:baseline;justify-content:space-between;
      padding-bottom:14px;border-bottom:1px solid #E5DFD3;margin-bottom:8px;">
   <div style="display:flex;align-items:center;gap:12px;">
-    <div class="logo-icon" style="width:40px;height:40px;font-size:15px;">NX</div>
-    <span style="font-family:var(--nx-serif);font-size:1.6rem;font-weight:600;color:#2E3A45;">Nexora</span>
+    <svg width="40" height="40" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;"><rect width="44" height="44" rx="22" fill="#0D1B2A"/><polygon points="22,9 33,22 22,35 11,22" fill="none" stroke="#5B9EC9" stroke-width="1.6"/><polygon points="22,15 28,22 22,29 16,22" fill="#3574A8" opacity="0.75"/><line x1="22" y1="9" x2="22" y2="35" stroke="#5B9EC9" stroke-width="0.8" opacity="0.35"/><line x1="11" y1="22" x2="33" y2="22" stroke="#5B9EC9" stroke-width="0.8" opacity="0.35"/></svg>
+    <span style="font-family:var(--nx-sans);font-size:1.55rem;font-weight:600;color:var(--text-primary);">Nexora</span>
   </div>
-  <span style="font-family:var(--nx-mono);font-size:10px;letter-spacing:2.5px;color:#9CA8B0;text-transform:uppercase;">Analiza &middot; Decide &middot; Avanza</span>
+  <span style="font-family:var(--nx-mono);font-size:9.5px;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;">Analiza &middot; Decide &middot; Avanza</span>
 </div>
 """, unsafe_allow_html=True)
 
