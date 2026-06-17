@@ -116,9 +116,16 @@ st.markdown("""
     -webkit-tap-highlight-color: transparent !important;
     touch-action: manipulation !important; }
 
-  /* ── SIDEBAR ── */
-  [data-testid="stSidebar"],[data-testid="stSidebar"]>div {
-    background-color: var(--sidebar) !important;
+  /* ── SIDEBAR — todos los niveles de div anidados ── */
+  [data-testid="stSidebar"],
+  [data-testid="stSidebar"]>div,
+  [data-testid="stSidebar"]>div>div,
+  [data-testid="stSidebar"]>div>div>div,
+  section[data-testid="stSidebar"],
+  [data-testid="stSidebarContent"],
+  [data-testid="stSidebarUserContent"] {
+    background-color: var(--sidebar) !important; }
+  [data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.05) !important;
     box-shadow: 8px 0 40px rgba(0,0,0,0.28), inset -1px 0 0 rgba(255,255,255,0.04) !important; }
   [data-testid="stSidebar"] label,
@@ -1751,7 +1758,7 @@ if st.session_state.modulo_activo == "cvs":
 # MODULO 2: PROVEEDORES
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 elif st.session_state.modulo_activo == "proveedores":
-    titulo_moduloo("M\u00f3dulo de an\u00e1lisis de proveedores", "B\u00fasqueda, documentos &amp; comparaci\u00f3n")
+    titulo_modulo("M\u00f3dulo de an\u00e1lisis de proveedores", "B\u00fasqueda, documentos &amp; comparaci\u00f3n")
     tab_buscar,tab_subir,tab_comparar,tab_dash,tab_export = st.tabs([
         "Buscar en Internet","Analizar Documentos","Comparar Proveedores","Dashboards","Exportar"
     ])
@@ -2153,7 +2160,7 @@ elif st.session_state.modulo_activo == "proveedores":
 # ── MODULO 3: ANÁLISIS DE CONTRATOS ─────────────────────────────────────────
 elif st.session_state.modulo_activo == "contratos":
     titulo_modulo("Análisis de Contratos", "Extrae fechas, penalidades y riesgos con IA")
-    client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+    client = anthropic.Anthropic(api_key=st.secrets["CLAUDE_API_KEY"])
 
     if "contrato_resultado" not in st.session_state:
         st.session_state.contrato_resultado = None
@@ -2340,7 +2347,7 @@ JUSTIFICACIÓN DEL RIESGO
 # ── MODULO 4: GENERADOR DE RFQ ───────────────────────────────────────────────
 elif st.session_state.modulo_activo == "rfq":
     titulo_modulo("Generador de RFQ", "Solicitudes de cotización profesionales en segundos")
-    client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+    client = anthropic.Anthropic(api_key=st.secrets["CLAUDE_API_KEY"])
 
     if "rfq_generado" not in st.session_state:
         st.session_state.rfq_generado = None
@@ -2451,7 +2458,7 @@ elif st.session_state.modulo_activo == "rfq":
 # ── MODULO 5: ANÁLISIS DE FACTURAS ──────────────────────────────────────────
 elif st.session_state.modulo_activo == "facturas":
     titulo_modulo("Análisis de Facturas", "Extrae datos de facturas y exporta a Excel")
-    client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+    client = anthropic.Anthropic(api_key=st.secrets["CLAUDE_API_KEY"])
 
     if "facturas_df" not in st.session_state:
         st.session_state.facturas_df = None
