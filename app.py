@@ -49,218 +49,412 @@ authenticator = stauth.Authenticate(
 # â”€â”€ CSS SUNLIT SLATE (clara y calida) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-  :root { --nx-serif: 'Source Serif 4', serif; --nx-mono: 'IBM Plex Mono', monospace; }
-  html, body, [class*="css"] { font-family: 'Inter', sans-serif !important; }
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-  .stApp, .stApp > div,
-  [data-testid="stAppViewContainer"],
-  [data-testid="stAppViewContainer"] > section,
-  [data-testid="stAppViewContainer"] > section > div,
-  .main, .block-container { background-color: #F4F1EB !important; }
-  [data-testid="stVerticalBlock"], [data-testid="stHorizontalBlock"] { background-color: transparent !important; }
+  /*
+   * SKILLS APPLIED (11 total):
+   * tasteskill · emilkowalski · ihlamury/linear · ihlamury/stripe
+   * ihlamury/vercel · ihlamury/notion · anthropics/frontend-design
+   * nextlevelbuilder/ui-ux-pro-max · delphi-ai/animate
+   * kylezantos/design-motion-principles · vercel-labs/web-design-guidelines
+   */
 
-  .stApp, .stApp p, .stApp span, .stApp div, .stApp label,
-  .stMarkdown, .stMarkdown p { color: #2E3A45 !important; }
+  :root {
+    --nx-sans: 'Outfit', sans-serif;
+    --nx-mono: 'IBM Plex Mono', monospace;
 
-  [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
-    background-color: #EDE8DE !important;
-    border-right: 1px solid #D8CFC0 !important;
-    box-shadow: 4px 0 24px rgba(46,58,69,0.10) !important;
+    /* Stripe bg, Vercel surfaces */
+    --bg:      #F2F6F9;
+    --surface: #FFFFFF;
+    --sidebar: #1A2736;
+    --accent:  #3574A8;
+    --accent-lt: #EBF4FB;
+
+    /* Text hierarchy — Vercel 3-level */
+    --text-primary:   #0D1B2A;
+    --text-secondary: #4A5568;
+    --text-muted:     #8896A4;
+
+    /* Borders — Notion 1px subtlety */
+    --border:    #E2E8F0;
+    --border-md: #CBD5E1;
+
+    /* animate-skill: 3 easing curves for 3 motion types */
+    --ease-out:        cubic-bezier(0.23, 1, 0.32, 1);    /* entrances */
+    --ease-out-cubic:  cubic-bezier(0.33, 1, 0.68, 1);    /* snappier entrances */
+    --ease-in-out:     cubic-bezier(0.645, 0.045, 0.355, 1); /* elements moving on screen */
+    --ease-in:         cubic-bezier(0.55, 0, 1, 0.45);    /* exits */
+
+    /* Focus ring — Linear/web-design-guidelines: 2px, accent-color */
+    --focus-ring: 0 0 0 2px rgba(53,116,168,0.2);
+
+    /* Linear: 4px grid, strict 6/8/12 radius scale */
+    --r-sm: 6px;
+    --r-md: 8px;
+    --r-lg: 12px;
+
+    /* Slate 3D multi-layer shadows */
+    --sh-card: 0 0 0 0.5px rgba(13,27,42,0.04), 0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(13,27,42,0.06);
+    --sh-card-up: 0 0 0 1px rgba(13,27,42,0.06), 0 4px 14px rgba(13,27,42,0.08), 0 18px 40px rgba(13,27,42,0.1);
+    --sh-btn: 0 1px 2px rgba(13,27,42,0.14), 0 4px 12px rgba(13,27,42,0.12), 0 0 0 0.5px rgba(13,27,42,0.06);
+    --sh-btn-up: 0 2px 6px rgba(13,27,42,0.18), 0 10px 28px rgba(13,27,42,0.14), 0 0 0 0.5px rgba(13,27,42,0.06);
   }
+
+  html,body,[class*="css"] { font-family: var(--nx-sans) !important; }
+
+  /* ── APP BACKGROUND ── */
+  .stApp,.stApp>div,[data-testid="stAppViewContainer"],
+  [data-testid="stAppViewContainer"]>section,
+  [data-testid="stAppViewContainer"]>section>div,
+  .main,.block-container { background-color: var(--bg) !important; overflow-x: hidden !important; }
+  [data-testid="stVerticalBlock"],[data-testid="stHorizontalBlock"] { background: transparent !important; }
+  .stApp,.stApp p,.stApp span,.stApp div,.stApp label,
+  .stMarkdown,.stMarkdown p { color: var(--text-primary) !important; }
+
+  /* web-design-guidelines: tap highlight for mobile */
+  button,a,[role="button"],.stButton>button,.stDownloadButton>button {
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important; }
+
+  /* ── SIDEBAR ── */
+  [data-testid="stSidebar"],[data-testid="stSidebar"]>div {
+    background-color: var(--sidebar) !important;
+    border-right: 1px solid rgba(255,255,255,0.05) !important;
+    box-shadow: 8px 0 40px rgba(0,0,0,0.28), inset -1px 0 0 rgba(255,255,255,0.04) !important; }
   [data-testid="stSidebar"] label,
-  [data-testid="stSidebar"] p,
-  [data-testid="stSidebar"] span { color: #2E3A45 !important; font-weight: 500 !important; }
+  [data-testid="stSidebar"] p { color: rgba(240,246,252,0.75) !important; font-weight: 400 !important; }
+  [data-testid="stSidebar"] span { color: rgba(240,246,252,0.75) !important; }
+  [data-testid="stSidebar"] h1,[data-testid="stSidebar"] h2,
+  [data-testid="stSidebar"] h3 { color: #F0F6FC !important; }
+  [data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.07) !important; }
 
-  input[type="text"], input[type="password"], .stTextInput input, .stTextArea textarea {
-    background-color: #ffffff !important; color: #2E3A45 !important;
-    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; font-size: 14px !important; }
-  input::placeholder, textarea::placeholder { color: #9CA8B0 !important; }
-
-  .stSelectbox > div > div, .stSelectbox [data-baseweb="select"] > div {
-    background-color: #ffffff !important; color: #2E3A45 !important;
-    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
-  .stSelectbox [data-baseweb="select"] span,
-  .stSelectbox [data-baseweb="select"] div { color: #2E3A45 !important; }
-  [data-baseweb="popover"] ul, [data-baseweb="popover"] li, [data-baseweb="menu"] {
-    background-color: #ffffff !important; color: #2E3A45 !important; }
-  [data-baseweb="option"]:hover { background-color: #DCEEFA !important; }
-
-  .stMultiSelect > div > div {
-    background-color: #ffffff !important; border: 1.5px solid #D8CFC0 !important;
-    border-radius: 8px !important; color: #2E3A45 !important; }
-
-  /* â”€â”€ Historial: items tipo lista de chats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .nx-hist-item { display:flex; align-items:center; gap:8px; padding:6px 8px;
-    border-radius:6px; border-left:2px solid transparent; cursor:pointer;
-    transition:background 0.15s; margin-bottom:1px; }
-  .nx-hist-item:hover { background:#FFFFFF; }
-  .nx-hist-item.activo { background:#FFFFFF; border-left-color:#4A90B8; }
-  .nx-hist-titulo { flex:1; font-size:11.5px; color:#5F5E5A; line-height:1.3;
-    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .nx-hist-item.activo .nx-hist-titulo { color:#2E3A45; font-weight:500; }
-  .nx-hist-fecha { font-family:var(--nx-mono); font-size:9px; color:#B4B2A9;
-    letter-spacing:0.5px; flex-shrink:0; white-space:nowrap; }
-  .nx-hist-empty { font-size:11px; color:#B4B2A9; padding:6px 8px; font-style:italic; }
-
-  /* Botones de historial (cargar/borrar): minimos, sin caja */
-  div[data-testid="stSidebar"] .nx-hist-btn button {
-    border:none !important; background:transparent !important; padding:2px 4px !important;
-    min-height:0 !important; height:auto !important; color:#B4B2A9 !important;
-    font-size:10px !important; letter-spacing:0 !important; text-transform:none !important; }
-  div[data-testid="stSidebar"] .nx-hist-btn button:hover { color:#4A90B8 !important; background:transparent !important; }
-
-  /* Radio "modulo activo": tarjeta con borde izquierdo de acento */
-  .stRadio [role="radiogroup"] { gap: 4px !important; }
+  /* ── NAV — motion-principles: nav is high-freq → keep transitions minimal ── */
+  .stRadio [role="radiogroup"] { gap: 1px !important; }
   .stRadio label {
-    background: transparent !important; border: 1px solid transparent !important;
-    border-left: 2px solid transparent !important; border-radius: 6px !important;
-    padding: 8px 10px !important; margin: 0 !important; transition: background 0.15s; }
+    background: transparent !important; border: none !important;
+    border-left: 2px solid transparent !important;
+    border-radius: 0 var(--r-sm) var(--r-sm) 0 !important;
+    padding: 7px 12px !important; margin: 0 !important;
+    transition: background 120ms var(--ease-out), border-color 120ms var(--ease-out) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    .stRadio label:hover { background: rgba(255,255,255,0.07) !important; } }
   .stRadio label:has(input:checked) {
-    background: #FFFFFF !important; border-color: #D8CFC0 !important; border-left-color: #4A90B8 !important; }
-  .stRadio label > div:first-child { display: none !important; }
-  .stRadio label p { font-size: 12px !important; color: #9CA8B0 !important; font-weight: 400 !important; }
-  .stRadio label:has(input:checked) p { color: #2E3A45 !important; font-weight: 500 !important; }
-  .stTextArea textarea {
-    background-color: #ffffff !important; color: #2E3A45 !important;
-    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
+    background: rgba(53,116,168,0.22) !important; border-left-color: #5B9EC9 !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06) !important; }
+  .stRadio label>div:first-child { display: none !important; }
+  .stRadio label p {
+    font-size: 12px !important; color: rgba(240,246,252,0.88) !important;
+    font-weight: 400 !important; white-space: nowrap !important;
+    overflow: hidden !important; text-overflow: ellipsis !important;
+    transition: color 120ms var(--ease-out) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    .stRadio label:hover p { color: #F0F6FC !important; } }
+  .stRadio label:has(input:checked) p { color: #F0F6FC !important; font-weight: 500 !important; }
 
-  .stButton > button[kind="primary"] {
-    background: linear-gradient(135deg, #3A7CA5 0%, #2E3A45 100%) !important; border: none !important;
-    border-radius: 10px !important; color: #F4F1EB !important;
-    font-family: var(--nx-mono) !important; font-weight: 600 !important;
-    font-size: 11px !important; letter-spacing: 1.5px !important; text-transform: uppercase !important;
-    box-shadow: 0 4px 14px rgba(46,58,69,0.25), 0 1px 3px rgba(46,58,69,0.12) !important;
-    transition: all 0.2s ease !important; }
-  .stButton > button[kind="primary"]:hover {
-    background: linear-gradient(135deg, #4A90B8 0%, #3A4A58 100%) !important; color: #F4F1EB !important;
-    box-shadow: 0 6px 20px rgba(46,58,69,0.30) !important;
-    transform: translateY(-1px) !important; }
-  .stButton > button[kind="primary"]:active { transform: translateY(0) !important; }
-  .stButton > button {
-    border-radius: 10px !important; border: 1.5px solid #D8CFC0 !important;
-    color: #5F5E5A !important; background: #FFFFFF !important;
-    font-family: var(--nx-mono) !important; font-size: 11px !important;
-    letter-spacing: 1px !important; text-transform: uppercase !important;
-    box-shadow: 0 1px 4px rgba(46,58,69,0.07) !important;
-    transition: all 0.2s ease !important; }
-  .stButton > button:hover {
-    background: #F4F1EB !important; border-color: #4A90B8 !important;
-    color: #2E3A45 !important;
-    box-shadow: 0 4px 12px rgba(46,58,69,0.12) !important;
-    transform: translateY(-1px) !important; }
-  .stDownloadButton > button {
-    background: #FFFFFF !important;
-    border: 2px solid #4A90B8 !important; border-radius: 10px !important;
-    color: #2E3A45 !important; font-family: var(--nx-mono) !important; font-weight: 600 !important;
-    font-size: 12px !important; letter-spacing: 1px !important; text-transform: uppercase !important;
-    box-shadow: 0 2px 8px rgba(74,144,184,0.15) !important;
-    transition: all 0.2s ease !important; }
-  .stDownloadButton > button:hover {
-    background: #4A90B8 !important; color: #FFFFFF !important;
-    box-shadow: 0 4px 16px rgba(74,144,184,0.30) !important;
-    transform: translateY(-1px) !important; }
+  /* ── HISTORIAL ── */
+  .nx-hist-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+    border-radius: var(--r-sm); border-left: 2px solid transparent; cursor: pointer;
+    transition: background 120ms var(--ease-out); margin-bottom: 1px; }
+  @media (hover: hover) and (pointer: fine) {
+    .nx-hist-item:hover { background: rgba(255,255,255,0.07); } }
+  .nx-hist-item.activo { background: rgba(53,116,168,0.16); border-left-color: #5B9EC9; }
+  .nx-hist-titulo { flex: 1; min-width: 0; font-size: 11.5px; color: rgba(240,246,252,0.65);
+    line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nx-hist-item.activo .nx-hist-titulo { color: #F0F6FC; font-weight: 500; }
+  .nx-hist-fecha { font-family: var(--nx-mono); font-size: 9px; color: rgba(240,246,252,0.28);
+    letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
+  .nx-hist-empty { font-size: 11px; color: rgba(240,246,252,0.3); padding: 6px 8px; font-style: italic; }
+  div[data-testid="stSidebar"] .nx-hist-btn button {
+    border: none !important; background: transparent !important; padding: 2px 4px !important;
+    min-height: 0 !important; height: auto !important; color: rgba(240,246,252,0.28) !important;
+    font-size: 10px !important; letter-spacing: 0 !important; text-transform: none !important; }
+  div[data-testid="stSidebar"] .nx-hist-btn button:hover { color: #5B9EC9 !important; }
 
+  /* ── INPUTS — web-design-guidelines: no outline-none without replacement ── */
+  input[type="text"],input[type="password"],.stTextInput input,.stTextArea textarea {
+    background: var(--surface) !important; color: var(--text-primary) !important;
+    border: 1px solid var(--border) !important; border-radius: var(--r-md) !important;
+    font-size: 13.5px !important; font-family: var(--nx-sans) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out) !important; }
+  input:focus-visible,textarea:focus-visible {
+    border-color: var(--accent) !important;
+    box-shadow: var(--focus-ring), 0 1px 2px rgba(0,0,0,0.04) !important;
+    outline: none !important; }
+  /* web-design-guidelines: never block paste */
+  input,textarea { -webkit-user-select: text !important; user-select: text !important; }
+  input::placeholder,textarea::placeholder { color: #94A3B8 !important; }
+  .stTextArea textarea { border-radius: var(--r-md) !important; }
+  .stSelectbox>div>div,.stSelectbox [data-baseweb="select"]>div {
+    background: var(--surface) !important; color: var(--text-primary) !important;
+    border: 1px solid var(--border) !important; border-radius: var(--r-md) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important; }
+  .stSelectbox [data-baseweb="select"] span,
+  .stSelectbox [data-baseweb="select"] div { color: var(--text-primary) !important; }
+  [data-baseweb="popover"] ul,[data-baseweb="popover"] li,[data-baseweb="menu"] {
+    background: var(--surface) !important; color: var(--text-primary) !important;
+    border-radius: var(--r-md) !important; box-shadow: var(--sh-card-up) !important; }
+  [data-baseweb="option"]:hover { background: var(--accent-lt) !important; }
+  .stMultiSelect>div>div {
+    background: var(--surface) !important; border: 1px solid var(--border) !important;
+    border-radius: var(--r-md) !important; color: var(--text-primary) !important; }
+
+  /* ── BUTTONS — animate-skill: press scale, named transitions ── */
+  .stButton>button[kind="primary"] {
+    background: #0D1B2A !important; border: none !important;
+    border-radius: var(--r-md) !important; color: #F0F6FC !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    font-family: var(--nx-sans) !important; letter-spacing: 0.15px !important;
+    text-transform: none !important; padding: 9px 20px !important;
+    box-shadow: var(--sh-btn) !important;
+    transition: background 160ms var(--ease-out),
+                transform 160ms var(--ease-out),
+                box-shadow 160ms var(--ease-out) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    .stButton>button[kind="primary"]:hover {
+      background: #1A2736 !important; transform: translateY(-2px) !important;
+      box-shadow: var(--sh-btn-up) !important; } }
+  .stButton>button[kind="primary"]:active {
+    transform: scale(0.97) translateY(0) !important;
+    box-shadow: 0 1px 2px rgba(13,27,42,0.12) !important; }
+  .stButton>button[kind="primary"]:focus-visible {
+    outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }
+  .stButton>button[kind="primary"]:disabled {
+    opacity: 0.5 !important; cursor: not-allowed !important; transform: none !important; }
+
+  .stButton>button {
+    border-radius: var(--r-md) !important; border: 1px solid var(--border-md) !important;
+    color: #334155 !important; background: var(--surface) !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    font-family: var(--nx-sans) !important; letter-spacing: 0.1px !important;
+    text-transform: none !important; padding: 8px 18px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(13,27,42,0.04) !important;
+    transition: border-color 160ms var(--ease-out),
+                color 160ms var(--ease-out),
+                background 160ms var(--ease-out),
+                transform 160ms var(--ease-out),
+                box-shadow 160ms var(--ease-out) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    .stButton>button:hover {
+      border-color: var(--accent) !important; color: var(--accent) !important;
+      background: var(--accent-lt) !important; transform: translateY(-1px) !important;
+      box-shadow: 0 1px 3px rgba(53,116,168,0.1), 0 4px 14px rgba(53,116,168,0.1),
+        0 0 0 0.5px rgba(53,116,168,0.12) !important; } }
+  .stButton>button:active { transform: scale(0.97) !important; box-shadow: none !important; }
+  .stButton>button:focus-visible {
+    outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }
+  .stButton>button:disabled {
+    opacity: 0.5 !important; cursor: not-allowed !important; transform: none !important; }
+
+  .stDownloadButton>button {
+    background: var(--surface) !important; border: 1.5px solid var(--accent) !important;
+    border-radius: var(--r-md) !important; color: var(--accent) !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    font-family: var(--nx-sans) !important; text-transform: none !important;
+    box-shadow: 0 1px 3px rgba(53,116,168,0.1), 0 0 0 0.5px rgba(53,116,168,0.08) !important;
+    transition: background 160ms var(--ease-out),
+                color 160ms var(--ease-out),
+                transform 160ms var(--ease-out),
+                box-shadow 160ms var(--ease-out) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    .stDownloadButton>button:hover {
+      background: var(--accent) !important; color: var(--surface) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 14px rgba(53,116,168,0.3), 0 10px 28px rgba(53,116,168,0.2) !important; } }
+  .stDownloadButton>button:active { transform: scale(0.97) !important; }
+  .stDownloadButton>button:focus-visible {
+    outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }
+
+  /* ── FILE UPLOADER ── */
   [data-testid="stFileUploader"] {
-    background: #FFFFFF !important; border: 1px dashed #B8CBD6 !important; border-radius: 10px !important; }
+    background: var(--surface) !important; border: 1.5px dashed var(--border-md) !important;
+    border-radius: var(--r-lg) !important; box-shadow: var(--sh-card) !important;
+    transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    [data-testid="stFileUploader"]:hover {
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 3px rgba(53,116,168,0.08), var(--sh-card) !important; } }
   [data-testid="stFileUploader"] label {
-    color: #9CA8B0 !important; font-family: var(--nx-mono) !important; font-size: 10px !important;
-    letter-spacing: 1.5px !important; text-transform: uppercase !important; }
+    color: #94A3B8 !important; font-family: var(--nx-mono) !important;
+    font-size: 10px !important; letter-spacing: 1.5px !important; text-transform: uppercase !important; }
   [data-testid="stFileUploader"] span,
-  [data-testid="stFileUploader"] p { color: #2E3A45 !important; }
-  [data-testid="stFileUploader"] section {
-    background: #FFFFFF !important; border: none !important; }
+  [data-testid="stFileUploader"] p { color: var(--text-primary) !important; }
+  [data-testid="stFileUploader"] section { background: var(--surface) !important; border: none !important; }
   [data-testid="stFileUploaderDropzone"] button {
-    background: #F4F1EB !important; border: 1px solid #D8CFC0 !important; border-radius: 6px !important;
-    color: #5F5E5A !important; font-family: var(--nx-mono) !important; font-size: 10px !important;
-    letter-spacing: 1px !important; text-transform: uppercase !important; }
+    background: #F8FAFC !important; border: 1px solid var(--border) !important;
+    border-radius: var(--r-sm) !important; color: #64748B !important; font-size: 12px !important; }
   [data-testid="stFileUploaderFile"] {
-    background: #F4F1EB !important; border: 1px solid #E5DFD3 !important; border-radius: 6px !important; }
-  [data-testid="stFileUploaderFileName"] { color: #2E3A45 !important; font-size: 12px !important; }
+    background: #F8FAFC !important; border: 1px solid var(--border) !important;
+    border-radius: var(--r-sm) !important; box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important; }
+  [data-testid="stFileUploaderFileName"] { color: var(--text-primary) !important; font-size: 12px !important; }
   [data-testid="stFileUploaderFileData"] {
-    color: #B4B2A9 !important; font-family: var(--nx-mono) !important; font-size: 10px !important; }
+    color: #94A3B8 !important; font-family: var(--nx-mono) !important; font-size: 10px !important; }
 
+  /* ── TABS ── */
   .stTabs [data-baseweb="tab-list"] {
-    background: #FFFFFF !important; border-radius: 12px !important;
-    padding: 4px !important; border: 1px solid #E5DFD3 !important;
-    box-shadow: 0 2px 10px rgba(46,58,69,0.07) !important; }
-  .stTabs [data-baseweb="tab"] { color: #7A8590 !important; border-radius: 9px !important; font-weight: 500 !important;
-    transition: all 0.15s ease !important; }
-  .stTabs [data-baseweb="tab"]:hover { color: #4A90B8 !important; background: rgba(74,144,184,0.07) !important; }
+    background: transparent !important; border-radius: 0 !important;
+    padding: 0 !important; border: none !important; box-shadow: none !important;
+    border-bottom: 1px solid var(--border) !important; gap: 0 !important; }
+  .stTabs [data-baseweb="tab"] {
+    color: #94A3B8 !important; border-radius: 0 !important; font-weight: 400 !important;
+    font-size: 13px !important; padding: 10px 18px !important;
+    font-family: var(--nx-sans) !important; border-bottom: 2px solid transparent !important;
+    background: transparent !important;
+    transition: color 120ms var(--ease-out), border-color 120ms var(--ease-out) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    .stTabs [data-baseweb="tab"]:hover { color: var(--text-primary) !important; } }
   .stTabs [aria-selected="true"] {
-    background: linear-gradient(135deg, #4A90B8, #3A7CA5) !important; color: #FFFFFF !important;
-    box-shadow: 0 2px 8px rgba(74,144,184,0.30) !important; }
+    color: var(--text-primary) !important; font-weight: 500 !important;
+    border-bottom-color: var(--accent) !important;
+    background: transparent !important; box-shadow: none !important; }
 
-  .stForm { background: #FFFFFF !important; border: 1.5px solid #B8CBD6 !important;
-    border-radius: 16px !important; padding: 2rem !important; }
-  .stForm label { color: #2E3A45 !important; font-weight: 600 !important; font-size: 14px !important; }
-  .stForm input { background: #ffffff !important; color: #2E3A45 !important;
-    border: 1.5px solid #D8CFC0 !important; border-radius: 8px !important; }
+  .stProgress>div>div { background: var(--accent) !important; border-radius: 4px !important; }
+  .stProgress { background: var(--border) !important; border-radius: 4px !important; }
 
-  .stProgress > div > div { background: linear-gradient(90deg, #4A90B8, #3D7A4D) !important; }
-  .stProgress { background: #E5DFD3 !important; border-radius: 4px !important; }
+  /* ── METRIC CARDS — animate-skill: -4px lift, stronger hover shadow ── */
+  .metric-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-top: 2px solid var(--accent); border-radius: var(--r-lg);
+    padding: 16px 18px; text-align: left; box-shadow: var(--sh-card);
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .metric-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 0 1px rgba(13,27,42,0.06), 0 12px 24px rgba(13,27,42,0.1), 0 24px 48px rgba(13,27,42,0.08); } }
+  .metric-card h2 { font-family: var(--nx-sans); font-size: 1.9rem; margin: 0;
+    font-weight: 700; color: var(--text-primary) !important;
+    letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+  .metric-card p { margin: 0 0 4px; font-size: 10px; letter-spacing: 1.5px;
+    text-transform: uppercase; font-family: var(--nx-mono); color: #94A3B8 !important; }
 
-  .metric-card { background: #FFFFFF; border: 1px solid #E5DFD3; border-top: 3px solid #B4B2A9;
-    padding: 16px 18px; border-radius: 12px; text-align: left;
-    box-shadow: 0 2px 8px rgba(46,58,69,0.07), 0 1px 2px rgba(46,58,69,0.04);
-    transition: transform 0.2s ease, box-shadow 0.2s ease; }
-  .metric-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(46,58,69,0.11), 0 2px 6px rgba(46,58,69,0.06); }
-  .metric-card h2 { font-family: var(--nx-serif); font-size: 1.9rem; margin: 0; font-weight: 600;
-    color: #2E3A45 !important; font-variant-numeric: tabular-nums; }
-  .metric-card p  { margin: 0 0 6px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-    font-family: var(--nx-mono); color: #9CA8B0 !important; }
+  /* ── ROW ITEMS — animate-skill: translateY(-4px) on cards ── */
+  .nx-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px;
+    border-bottom: 1px solid #EEF2F7; border-radius: var(--r-md);
+    transition: background 140ms var(--ease-out),
+                box-shadow 200ms var(--ease-out),
+                transform 200ms var(--ease-out); }
+  .nx-row:last-child { border-bottom: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .nx-row:hover {
+      background: var(--surface);
+      box-shadow: 0 0 0 1px rgba(13,27,42,0.05), 0 4px 12px rgba(13,27,42,0.07), 0 12px 32px rgba(13,27,42,0.06);
+      transform: translateY(-3px); }
+    .nx-row:hover .nx-chev { color: var(--accent); } }
+  /* frontend-design: min-width:0 on flex children with truncation */
+  .nx-rank { font-family: var(--nx-mono); font-size: 11px; color: #CBD5E1;
+    padding-top: 7px; min-width: 18px; flex-shrink: 0;
+    font-variant-numeric: tabular-nums; }
+  .nx-body { flex: 1; min-width: 0; }
+  .nx-name { font-family: var(--nx-sans); font-size: 15px; font-weight: 600;
+    color: var(--text-primary); letter-spacing: -0.2px; text-wrap: balance; }
+  .nx-meta { font-family: var(--nx-mono); font-size: 11px; color: #94A3B8;
+    letter-spacing: 0.2px; margin-bottom: 6px; font-variant-numeric: tabular-nums;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nx-desc { font-size: 13px; color: #475569; line-height: 1.55; text-wrap: pretty; }
+  .nx-chev { padding-top: 9px; color: #CBD5E1;
+    transition: color 140ms var(--ease-out); flex-shrink: 0; }
+  .nx-section-label { display: flex; align-items: center; gap: 12px; margin: 10px 0 6px; }
+  .nx-section-label span { font-family: var(--nx-mono); font-size: 10.5px; letter-spacing: 2px;
+    text-transform: uppercase; color: #94A3B8; white-space: nowrap; }
+  .nx-section-label .nx-rule { flex: 1; height: 1px; background: var(--border); }
 
-  /* â”€â”€ Sistema "expediente": fila con dial, serif y mono â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .nx-row { display:flex; align-items:flex-start; gap:16px; padding:18px 16px;
-    border-bottom:1px solid #EDE8DE; border-radius:10px;
-    transition: background 0.15s, box-shadow 0.2s, transform 0.15s; }
-  .nx-row:last-child { border-bottom:none; }
-  .nx-row:hover { background:#FFFFFF; box-shadow: 0 4px 16px rgba(46,58,69,0.08), 0 1px 4px rgba(46,58,69,0.04); transform: translateY(-1px); }
-  .nx-row:hover .nx-chev { color:#3A7CA5; }
-  .nx-rank { font-family:var(--nx-mono); font-size:12px; color:#B4B2A9; padding-top:8px; min-width:20px; flex-shrink:0; }
-  .nx-name { font-family:var(--nx-serif); font-size:17px; font-weight:600; color:#2E3A45; }
-  .nx-meta { font-family:var(--nx-mono); font-size:11px; color:#9CA8B0; letter-spacing:0.3px; margin-bottom:8px; }
-  .nx-desc { font-size:13px; color:#5F5E5A; line-height:1.5; }
-  .nx-chev { padding-top:10px; color:#D8CFC0; transition:color 0.15s; flex-shrink:0; }
-  .nx-section-label { display:flex; align-items:center; gap:14px; margin:8px 0 6px; }
-  .nx-section-label span { font-family:var(--nx-mono); font-size:11px; letter-spacing:2px;
-    text-transform:uppercase; color:#9CA8B0; white-space:nowrap; }
-  .nx-section-label .nx-rule { flex:1; height:1px; background:#E5DFD3; }
+  /* ── EMPTY STATE — frontend-design: invitation to act, not apology ── */
+  .nx-empty {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 48px 24px; text-align: center;
+    border-radius: var(--r-lg); background: var(--surface);
+    border: 1.5px dashed var(--border-md); box-shadow: var(--sh-card); }
+  .nx-empty-icon { font-size: 32px; margin-bottom: 16px;
+    color: var(--border-md); line-height: 1; }
+  .nx-empty-title { font-size: 15px; font-weight: 600; color: var(--text-primary);
+    margin: 0 0 6px; letter-spacing: -0.2px; }
+  .nx-empty-msg { font-size: 13px; color: var(--text-secondary);
+    margin: 0 0 20px; line-height: 1.55; max-width: 300px; }
 
-  .badge-alto, .badge-prov-a   { background:#E6F4E9; color:#3D7A4D; box-shadow:0 1px 3px rgba(61,122,77,0.15); }
-  .badge-medio, .badge-prov-c  { background:#FBF1DD; color:#A8762E; box-shadow:0 1px 3px rgba(168,118,46,0.15); }
-  .badge-bajo                  { background:#FAE6E6; color:#B3504F; box-shadow:0 1px 3px rgba(179,80,79,0.15); }
-  .badge-prov-b                { background:#EAF3DE; color:#5E7D3C; box-shadow:0 1px 3px rgba(94,125,60,0.15); }
-  .badge-alto, .badge-medio, .badge-bajo, .badge-prov-a, .badge-prov-b, .badge-prov-c {
-    font-family:var(--nx-mono); font-size:10px; letter-spacing:1px; text-transform:uppercase;
-    padding:3px 9px; border-radius:6px; font-weight:600; }
+  /* ── BADGES ── */
+  .badge-alto,.badge-prov-a   { background: #DCFCE7; color: #15803D; }
+  .badge-medio,.badge-prov-c  { background: #FEF9C3; color: #854D0E; }
+  .badge-bajo                 { background: #FEE2E2; color: #991B1B; }
+  .badge-prov-b               { background: #D1FAE5; color: #065F46; }
+  .badge-alto,.badge-medio,.badge-bajo,.badge-prov-a,.badge-prov-b,.badge-prov-c {
+    font-family: var(--nx-mono); font-size: 10px; letter-spacing: 0.8px;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
 
-  hr { border-color: #E5DFD3 !important; }
-  h1, h2, h3, h4 { color: #2E3A45 !important; }
-  [data-testid="stDataFrame"] { border: 1px solid #B8CBD6 !important; border-radius: 10px !important;
-    box-shadow: 0 2px 8px rgba(46,58,69,0.06) !important; }
-
+  /* ── ALERTS — semantic left-border ── */
   [data-testid="stAlertContainer"] {
-    background: #FFFFFF !important; border: 1px solid #E5DFD3 !important;
-    border-radius: 10px !important; padding: 12px 16px !important;
-    box-shadow: 0 2px 8px rgba(46,58,69,0.05) !important; }
-  [data-testid="stAlertContainer"] p { color: #5F5E5A !important; font-size: 13px !important; }
-  div[data-testid="stAlertContainer"]:has(svg[data-testid="stIconMaterial"][title="info"]),
+    background: var(--surface) !important; border: 1px solid var(--border) !important;
+    border-radius: var(--r-md) !important; padding: 12px 16px !important;
+    box-shadow: var(--sh-card) !important; }
+  [data-testid="stAlertContainer"] p { color: #475569 !important; font-size: 13px !important; }
   div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentInfo"]) {
-    border-left: 3px solid #4A90B8 !important; }
+    border-left: 3px solid #3574A8 !important; }
   div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentSuccess"]) {
-    border-left: 3px solid #3D7A4D !important; }
+    border-left: 3px solid #22C55E !important; }
   div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentWarning"]) {
-    border-left: 3px solid #A8762E !important; }
+    border-left: 3px solid #F59E0B !important; }
   div[data-testid="stAlertContainer"]:has([data-testid="stNotificationContentError"]) {
-    border-left: 3px solid #B3504F !important; }
+    border-left: 3px solid #EF4444 !important; }
 
-  .logo-header { display: flex; align-items: center; gap: 14px; padding: 0 0 1rem 0; }
-  .logo-icon { width: 48px; height: 48px; border-radius: 12px;
-    background: linear-gradient(135deg, #4A90B8, #2E3A45);
+  /* ── TYPOGRAPHY — frontend-design + web-design-guidelines ── */
+  hr { border-color: var(--border) !important; }
+  h1 { color: var(--text-primary) !important; font-family: var(--nx-sans) !important;
+    letter-spacing: -0.5px; font-size: 1.6rem !important; font-weight: 700 !important;
+    text-wrap: balance; }
+  h2 { color: var(--text-primary) !important; font-family: var(--nx-sans) !important;
+    letter-spacing: -0.3px; font-size: 1.25rem !important; font-weight: 600 !important;
+    text-wrap: balance; }
+  h3,h4 { color: var(--text-primary) !important; font-family: var(--nx-sans) !important;
+    letter-spacing: -0.2px; text-wrap: balance; }
+  p { text-wrap: pretty; }
+
+  /* ── DATA TABLES — Linear tabular-nums ── */
+  [data-testid="stDataFrame"] {
+    border: 1px solid var(--border) !important; border-radius: var(--r-lg) !important;
+    box-shadow: var(--sh-card) !important; }
+  [data-testid="stDataFrame"] td,[data-testid="stDataFrame"] th {
+    font-variant-numeric: tabular-nums !important; }
+
+  /* ── FORM ── */
+  .stForm {
+    background: var(--surface) !important; border: 1px solid var(--border) !important;
+    border-radius: var(--r-lg) !important; padding: 2rem !important;
+    box-shadow: var(--sh-card) !important; }
+
+  /* ── LOGO — glow ring ── */
+  .logo-icon {
+    width: 48px; height: 48px; border-radius: var(--r-lg); background: #1A2736;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 800; color: #FFFFFF;
-    box-shadow: 0 4px 12px rgba(46,58,69,0.25), 0 1px 3px rgba(46,58,69,0.12); }
+    font-size: 18px; font-weight: 700; color: #F0F6FC;
+    box-shadow: 0 0 0 3px rgba(53,116,168,0.28), 0 4px 14px rgba(13,27,42,0.3); }
+
+  /* ── SKELETON — Stripe/Linear structural skeletons ── */
+  @keyframes nx-shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+  }
+  .nx-skeleton {
+    border-radius: var(--r-sm);
+    background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+    background-size: 800px 100%;
+    animation: nx-shimmer 1.4s ease-in-out infinite; }
+
+  /* ── STAGGER — animate-skill: enter 200ms, exit 150ms (~75%) ── */
+  /* motion-principles: SaaS dashboard = Emil primary → fast, purposeful */
+  .nx-row:nth-child(1) { animation: nx-fadein 200ms var(--ease-out) both; }
+  .nx-row:nth-child(2) { animation: nx-fadein 200ms 40ms  var(--ease-out) both; }
+  .nx-row:nth-child(3) { animation: nx-fadein 200ms 80ms  var(--ease-out) both; }
+  .nx-row:nth-child(4) { animation: nx-fadein 200ms 120ms var(--ease-out) both; }
+  .nx-row:nth-child(5) { animation: nx-fadein 200ms 160ms var(--ease-out) both; }
+  @keyframes nx-fadein {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* animate-skill: GPU-only (transform + opacity). NEVER layout props */
+  /* web-design-guidelines + Linear + Emil: prefers-reduced-motion mandatory */
+  @media (prefers-reduced-motion: reduce) {
+    .nx-row { animation: none !important; }
+    .nx-skeleton { animation: none !important; background: #E2E8F0; }
+    * { transition-duration: 0.01ms !important; } }
 </style>
 """, unsafe_allow_html=True)
 
@@ -426,20 +620,30 @@ with st.sidebar:
 
     SIDEBAR_LABEL = "font-family:var(--nx-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9CA8B0;margin-bottom:10px;"
 
-    modulo = st.radio("M\u00f3dulo activo", ["An\u00e1lisis de CVs", "An\u00e1lisis de Proveedores"],
-                      index=0 if st.session_state.modulo_activo == "cvs" else 1)
-    st.session_state.modulo_activo = "cvs" if "CVs" in modulo else "proveedores"
+    _opts_mod = ["An\u00e1lisis de CVs", "An\u00e1lisis de Proveedores",
+                 "An\u00e1lisis de Contratos", "Generador de RFQ", "An\u00e1lisis de Facturas"]
+    _map_mod  = {"An\u00e1lisis de CVs": "cvs", "An\u00e1lisis de Proveedores": "proveedores",
+                 "An\u00e1lisis de Contratos": "contratos", "Generador de RFQ": "rfq",
+                 "An\u00e1lisis de Facturas": "facturas"}
+    _idx_mod  = list(_map_mod.values()).index(st.session_state.modulo_activo) \
+                if st.session_state.modulo_activo in _map_mod.values() else 0
+    modulo = st.radio("M\u00f3dulo activo", _opts_mod, index=_idx_mod)
+    st.session_state.modulo_activo = _map_mod[modulo]
     st.divider()
 
     # â”€â”€ HISTORIAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if st.session_state.modulo_activo == "cvs":
         modulos_historial = [("cvs", "CVs")]
-    else:
+    elif st.session_state.modulo_activo == "proveedores":
         modulos_historial = [("proveedores", "B\u00fasquedas"), ("propuestas", "Propuestas")]
+    else:
+        modulos_historial = []
 
     st.markdown(f"<p style='{SIDEBAR_LABEL}'>Historial</p>", unsafe_allow_html=True)
 
-    if not SUPABASE_OK:
+    if not modulos_historial:
+        st.markdown('<div class="nx-hist-empty">Sin historial para este módulo</div>', unsafe_allow_html=True)
+    elif not SUPABASE_OK:
         st.markdown('<div class="nx-hist-empty">Historial no disponible</div>', unsafe_allow_html=True)
     else:
         hist_total = 0
@@ -507,7 +711,7 @@ with st.sidebar:
         peso_edu = st.slider("Educaci\u00f3n",   0, 100, 25)
         peso_hab = st.slider("Habilidades", 0, 100, 30)
         peso_idi = st.slider("Idiomas",     0, 100, 10)
-    else:
+    elif st.session_state.modulo_activo == "proveedores":
         st.markdown(f"<p style='{SIDEBAR_LABEL}'>Configurar b\u00fasqueda</p>", unsafe_allow_html=True)
         pais_busqueda   = st.text_input("Pa\u00eds o regi\u00f3n", placeholder="Ej: Per\u00fa, LATAM, Espa\u00f1a")
         rubro_busqueda  = st.text_input("Rubro o industria", placeholder="Ej: Software, Log\u00edstica")
@@ -1546,8 +1750,8 @@ if st.session_state.modulo_activo == "cvs":
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # MODULO 2: PROVEEDORES
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-else:
-    titulo_modulo("M\u00f3dulo de an\u00e1lisis de proveedores", "B\u00fasqueda, documentos &amp; comparaci\u00f3n")
+elif st.session_state.modulo_activo == "proveedores":
+    titulo_moduloo("M\u00f3dulo de an\u00e1lisis de proveedores", "B\u00fasqueda, documentos &amp; comparaci\u00f3n")
     tab_buscar,tab_subir,tab_comparar,tab_dash,tab_export = st.tabs([
         "Buscar en Internet","Analizar Documentos","Comparar Proveedores","Dashboards","Exportar"
     ])
@@ -1945,3 +2149,413 @@ else:
                 file_name="Nexora_Proveedores.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True)
+
+# ── MODULO 3: ANÁLISIS DE CONTRATOS ─────────────────────────────────────────
+elif st.session_state.modulo_activo == "contratos":
+    titulo_modulo("Análisis de Contratos", "Extrae fechas, penalidades y riesgos con IA")
+    client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+
+    if "contrato_resultado" not in st.session_state:
+        st.session_state.contrato_resultado = None
+
+    tab_subir, tab_resultado = st.tabs(["📄 Subir contrato", "📊 Resultado"])
+
+    with tab_subir:
+        archivo = st.file_uploader("Sube el contrato (PDF o DOCX)", type=["pdf", "docx"],
+                                   help="El archivo se analiza localmente — no se almacena")
+        st.info("Claude leerá el contrato completo y extraerá fechas, montos, penalidades, obligaciones y nivel de riesgo.")
+
+        if archivo and st.button("Analizar contrato", type="primary", use_container_width=True):
+            with st.spinner("Analizando contrato..."):
+                try:
+                    if archivo.name.lower().endswith(".pdf"):
+                        reader = PdfReader(archivo)
+                        texto_contrato = "\n".join(p.extract_text() or "" for p in reader.pages)
+                    else:
+                        texto_contrato = archivo.read().decode("utf-8", errors="ignore")
+
+                    prompt_contrato = (
+                        f"Eres un abogado corporativo experto en análisis de contratos comerciales.\n"
+                        f"Analiza el siguiente contrato y responde EXCLUSIVAMENTE con JSON válido.\n\n"
+                        f"Formato JSON requerido:\n"
+                        f'{{"nombre_contrato":"","partes":{{"empresa_a":"","empresa_b":""}},'
+                        f'"fecha_inicio":"","fecha_vencimiento":"","duracion":"","renovacion_automatica":false,'
+                        f'"dias_aviso_no_renovacion":"","monto_contratado":"","moneda":"",'
+                        f'"forma_de_pago":"","penalidades":[],"obligaciones_empresa_a":[],'
+                        f'"obligaciones_empresa_b":[],"clausulas_destacadas":[],'
+                        f'"nivel_riesgo":"Bajo|Medio|Alto","justificacion_riesgo":"",'
+                        f'"alertas":[],"resumen_ejecutivo":""}}\n\n'
+                        f"Instrucciones:\n"
+                        f"- penalidades: lista de strings describiendo cada penalidad o multa\n"
+                        f"- obligaciones_empresa_a y _b: lista de strings, máximo 5 cada una\n"
+                        f"- clausulas_destacadas: lista de strings con las cláusulas más importantes\n"
+                        f"- alertas: lista de strings con riesgos, vencimientos próximos o condiciones desfavorables\n"
+                        f"- nivel_riesgo: 'Bajo' si el contrato es favorable, 'Medio' si tiene cláusulas a negociar, 'Alto' si tiene condiciones muy desventajosas\n"
+                        f"- Si un dato no aparece: escribe 'No especifica'\n\n"
+                        f"Contrato:\n{preparar_texto_documento(texto_contrato)}"
+                    )
+                    msg = client.messages.create(
+                        model="claude-haiku-4-5-20251001", max_tokens=2000,
+                        messages=[{"role": "user", "content": prompt_contrato}]
+                    )
+                    resultado = limpiar_json(msg.content[0].text)
+                    resultado["_archivo"] = archivo.name
+                    st.session_state.contrato_resultado = resultado
+                    st.success("Análisis completado.")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error al analizar el contrato: {e}")
+
+    with tab_resultado:
+        res = st.session_state.contrato_resultado
+        if res is None:
+            st.info("Sube y analiza un contrato para ver los resultados aquí.")
+        else:
+            nivel = res.get("nivel_riesgo", "Medio")
+            color_riesgo = {"Bajo": "#3D7A4D", "Medio": "#B47C2B", "Alto": "#B03A2E"}.get(nivel, "#B47C2B")
+            bg_riesgo    = {"Bajo": "#EAF3DE", "Medio": "#FAEEDA", "Alto": "#FCEBEB"}.get(nivel, "#FAEEDA")
+
+            st.markdown(f"""
+            <div style="background:#fff;border:1px solid #E5DFD3;border-radius:12px;padding:16px 20px;margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div>
+                  <div style="font-weight:600;font-size:15px;color:#2E3A45;">{esc(res.get('nombre_contrato','Contrato'))}</div>
+                  <div style="font-size:12px;color:#9CA8B0;margin-top:2px;">📎 {esc(res.get('_archivo',''))}</div>
+                </div>
+                <span style="background:{bg_riesgo};color:{color_riesgo};padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">
+                  Riesgo {esc(nivel)}
+                </span>
+              </div>
+              <p style="font-size:13px;color:#2E3A45;margin-top:10px;line-height:1.6;">{esc(res.get('resumen_ejecutivo',''))}</p>
+            </div>""", unsafe_allow_html=True)
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**Datos clave**")
+                datos_clave = [
+                    ("Partes", f"{esc(res.get('partes',{}).get('empresa_a',''))} ↔ {esc(res.get('partes',{}).get('empresa_b',''))}"),
+                    ("Inicio", esc(res.get("fecha_inicio", "No especifica"))),
+                    ("Vencimiento", esc(res.get("fecha_vencimiento", "No especifica"))),
+                    ("Duración", esc(res.get("duracion", "No especifica"))),
+                    ("Renovación automática", "Sí" if res.get("renovacion_automatica") else "No"),
+                    ("Aviso no renovación", esc(res.get("dias_aviso_no_renovacion", "No especifica"))),
+                    ("Monto", esc(res.get("monto_contratado", "No especifica"))),
+                    ("Moneda", esc(res.get("moneda", "No especifica"))),
+                    ("Forma de pago", esc(res.get("forma_de_pago", "No especifica"))),
+                ]
+                for lbl, val in datos_clave:
+                    st.markdown(f"""<div style="display:flex;justify-content:space-between;padding:5px 0;
+                    border-bottom:1px solid #F0EBE3;font-size:13px;">
+                    <span style="color:#7A8590;">{lbl}</span>
+                    <span style="font-weight:500;color:#2E3A45;text-align:right;max-width:55%;">{val}</span>
+                    </div>""", unsafe_allow_html=True)
+            with col2:
+                st.markdown("**Alertas**")
+                alertas = res.get("alertas", [])
+                penalidades = res.get("penalidades", [])
+                if alertas:
+                    for a in alertas:
+                        st.markdown(f"""<div style="background:#FAEEDA;border-left:3px solid #EF9F27;
+                        border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:6px;font-size:12px;color:#854F0B;">
+                        ⚠️ {esc(a)}</div>""", unsafe_allow_html=True)
+                else:
+                    st.markdown('<div style="color:#9CA8B0;font-size:13px;">Sin alertas detectadas</div>', unsafe_allow_html=True)
+                if penalidades:
+                    st.markdown("**Penalidades**")
+                    for p in penalidades:
+                        st.markdown(f"""<div style="background:#FCEBEB;border-left:3px solid #E24B4A;
+                        border-radius:0 6px 6px 0;padding:8px 12px;margin-bottom:6px;font-size:12px;color:#A32D2D;">
+                        🔴 {esc(p)}</div>""", unsafe_allow_html=True)
+
+            st.markdown("---")
+            col3, col4 = st.columns(2)
+            with col3:
+                obs_a = res.get("obligaciones_empresa_a", [])
+                partes_str = res.get("partes", {})
+                st.markdown(f"**Obligaciones — {esc(partes_str.get('empresa_a','Empresa A'))}**")
+                for o in obs_a:
+                    st.markdown(f"• {esc(o)}")
+            with col4:
+                obs_b = res.get("obligaciones_empresa_b", [])
+                st.markdown(f"**Obligaciones — {esc(partes_str.get('empresa_b','Empresa B'))}**")
+                for o in obs_b:
+                    st.markdown(f"• {esc(o)}")
+
+            clausulas = res.get("clausulas_destacadas", [])
+            if clausulas:
+                st.markdown("---")
+                st.markdown("**Cláusulas destacadas**")
+                for c in clausulas:
+                    st.markdown(f"""<div style="background:#fff;border:1px solid #E5DFD3;border-left:3px solid #4A90B8;
+                    border-radius:0 8px 8px 0;padding:8px 14px;margin-bottom:6px;font-size:13px;color:#2E3A45;">
+                    {esc(c)}</div>""", unsafe_allow_html=True)
+
+            if res.get("justificacion_riesgo"):
+                st.markdown("---")
+                st.info(f"**Justificación del nivel de riesgo:** {esc(res.get('justificacion_riesgo',''))}")
+
+            resumen_export = f"""ANÁLISIS DE CONTRATO — NEXORA
+{'='*50}
+Contrato: {res.get('nombre_contrato','')}
+Archivo:  {res.get('_archivo','')}
+Nivel de riesgo: {nivel}
+
+DATOS CLAVE
+{'─'*30}
+Partes:       {res.get('partes',{}).get('empresa_a','')} ↔ {res.get('partes',{}).get('empresa_b','')}
+Inicio:       {res.get('fecha_inicio','')}
+Vencimiento:  {res.get('fecha_vencimiento','')}
+Duración:     {res.get('duracion','')}
+Monto:        {res.get('monto_contratado','')} {res.get('moneda','')}
+Forma de pago:{res.get('forma_de_pago','')}
+
+RESUMEN EJECUTIVO
+{'─'*30}
+{res.get('resumen_ejecutivo','')}
+
+ALERTAS
+{'─'*30}
+{chr(10).join('• ' + a for a in res.get('alertas', []))}
+
+PENALIDADES
+{'─'*30}
+{chr(10).join('• ' + p for p in res.get('penalidades', []))}
+
+OBLIGACIONES {res.get('partes',{}).get('empresa_a','')}
+{'─'*30}
+{chr(10).join('• ' + o for o in res.get('obligaciones_empresa_a', []))}
+
+OBLIGACIONES {res.get('partes',{}).get('empresa_b','')}
+{'─'*30}
+{chr(10).join('• ' + o for o in res.get('obligaciones_empresa_b', []))}
+
+JUSTIFICACIÓN DEL RIESGO
+{'─'*30}
+{res.get('justificacion_riesgo','')}
+"""
+            st.download_button("📥 Descargar resumen (.txt)", data=resumen_export.encode("utf-8"),
+                               file_name=f"Nexora_Contrato_{res.get('_archivo','').replace('.pdf','').replace('.docx','')}.txt",
+                               mime="text/plain", use_container_width=True)
+
+# ── MODULO 4: GENERADOR DE RFQ ───────────────────────────────────────────────
+elif st.session_state.modulo_activo == "rfq":
+    titulo_modulo("Generador de RFQ", "Solicitudes de cotización profesionales en segundos")
+    client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+
+    if "rfq_generado" not in st.session_state:
+        st.session_state.rfq_generado = None
+
+    tab_form, tab_rfq = st.tabs(["📋 Completar formulario", "📄 RFQ generado"])
+
+    with tab_form:
+        c1, c2 = st.columns(2)
+        with c1:
+            rfq_empresa       = st.text_input("Nombre de tu empresa", placeholder="Ej: Corporación ABC SAC")
+            rfq_producto      = st.text_input("Producto o servicio requerido", placeholder="Ej: Servicio de limpieza industrial")
+            rfq_cantidad      = st.text_input("Cantidad / alcance", placeholder="Ej: 50 unidades / 3 sedes")
+            rfq_plazo         = st.text_input("Plazo de entrega requerido", placeholder="Ej: 30 días hábiles")
+            rfq_lugar         = st.text_input("Lugar de entrega / sede", placeholder="Ej: Lima, Av. Javier Prado 1234")
+        with c2:
+            rfq_presupuesto   = st.selectbox("Presupuesto referencial",
+                ["No especificado", "< $5,000", "$5,000 - $20,000", "$20,000 - $100,000",
+                 "$100,000 - $500,000", "> $500,000"])
+            rfq_moneda        = st.selectbox("Moneda preferida", ["PEN (Soles)", "USD (Dólares)", "EUR (Euros)"])
+            rfq_condicion_pago = st.selectbox("Condición de pago preferida",
+                ["30 días desde factura", "50% adelanto / 50% entrega", "Contra entrega",
+                 "Crédito 60 días", "A convenir"])
+            rfq_idioma        = st.selectbox("Idioma del documento", ["Español", "Inglés", "Portugués"])
+            rfq_fecha_limite  = st.date_input("Fecha límite de respuesta")
+        rfq_requisitos    = st.text_area("Certificaciones o requisitos técnicos",
+                            placeholder="Ej: ISO 9001, técnicos certificados, garantía mínima 12 meses")
+        rfq_condiciones   = st.text_area("Condiciones especiales",
+                            placeholder="Ej: Trabajo en horario nocturno, proveedor debe traer herramientas propias")
+        rfq_contacto      = st.text_input("Email de contacto para respuestas", placeholder="compras@empresa.com")
+
+        if st.button("Generar RFQ con Claude", type="primary", use_container_width=True):
+            if not rfq_producto.strip():
+                st.error("Completa al menos el campo 'Producto o servicio requerido'.")
+            else:
+                with st.spinner("Generando documento RFQ..."):
+                    try:
+                        prompt_rfq = (
+                            f"Eres un experto en compras corporativas. Genera una Solicitud de Cotización (RFQ) "
+                            f"profesional y completa en {rfq_idioma}.\n\n"
+                            f"Datos del requerimiento:\n"
+                            f"- Empresa solicitante: {rfq_empresa or 'No especificada'}\n"
+                            f"- Producto/servicio: {rfq_producto}\n"
+                            f"- Cantidad/alcance: {rfq_cantidad or 'No especificado'}\n"
+                            f"- Lugar de entrega: {rfq_lugar or 'No especificado'}\n"
+                            f"- Plazo de entrega requerido: {rfq_plazo or 'No especificado'}\n"
+                            f"- Presupuesto referencial: {rfq_presupuesto}\n"
+                            f"- Moneda: {rfq_moneda}\n"
+                            f"- Condición de pago preferida: {rfq_condicion_pago}\n"
+                            f"- Fecha límite de respuesta: {rfq_fecha_limite.strftime('%d de %B de %Y')}\n"
+                            f"- Requisitos técnicos/certificaciones: {rfq_requisitos or 'No especificados'}\n"
+                            f"- Condiciones especiales: {rfq_condiciones or 'Ninguna'}\n"
+                            f"- Email de contacto: {rfq_contacto or 'No especificado'}\n\n"
+                            f"Genera el documento RFQ completo con: encabezado formal, descripción del requerimiento, "
+                            f"especificaciones técnicas, requisitos del proveedor, formato requerido de respuesta, "
+                            f"criterios de evaluación, condiciones de pago, fecha límite y datos de contacto. "
+                            f"El documento debe ser profesional, claro y listo para enviar a proveedores. "
+                            f"Devuelve SOLO el texto del documento, sin comentarios adicionales."
+                        )
+                        msg = client.messages.create(
+                            model="claude-haiku-4-5-20251001", max_tokens=2000,
+                            messages=[{"role": "user", "content": prompt_rfq}]
+                        )
+                        st.session_state.rfq_generado = {
+                            "texto": msg.content[0].text,
+                            "empresa": rfq_empresa,
+                            "producto": rfq_producto,
+                            "fecha": rfq_fecha_limite.strftime("%Y%m%d"),
+                        }
+                        st.success("RFQ generado correctamente.")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Error al generar el RFQ: {e}")
+
+    with tab_rfq:
+        rfq = st.session_state.rfq_generado
+        if rfq is None:
+            st.info("Completa el formulario y haz click en 'Generar RFQ' para ver el documento aquí.")
+        else:
+            st.markdown(f"""
+            <div style="background:#fff;border:1px solid #E5DFD3;border-left:4px solid #4A90B8;
+            border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:16px;">
+              <div style="font-weight:600;color:#2E3A45;font-size:14px;">
+                RFQ — {esc(rfq.get('producto',''))}
+              </div>
+              <div style="font-size:12px;color:#9CA8B0;margin-top:2px;">
+                {esc(rfq.get('empresa',''))} · Generado con Nexora IA
+              </div>
+            </div>""", unsafe_allow_html=True)
+
+            st.markdown(f"""<div style="background:#F9F7F3;border:1px solid #E5DFD3;border-radius:12px;
+            padding:20px 24px;font-size:13px;line-height:1.85;color:#2E3A45;
+            font-family:'IBM Plex Mono',monospace;white-space:pre-wrap;">{esc(rfq.get('texto',''))}</div>""",
+            unsafe_allow_html=True)
+
+            col_a, col_b = st.columns(2)
+            with col_a:
+                st.download_button(
+                    "📥 Descargar RFQ (.txt)",
+                    data=rfq.get("texto", "").encode("utf-8"),
+                    file_name=f"RFQ_{rfq.get('empresa','Empresa').replace(' ','_')}_{rfq.get('fecha','')}.txt",
+                    mime="text/plain", use_container_width=True
+                )
+            with col_b:
+                if st.button("🔄 Generar nuevo RFQ", use_container_width=True):
+                    st.session_state.rfq_generado = None
+                    st.rerun()
+
+# ── MODULO 5: ANÁLISIS DE FACTURAS ──────────────────────────────────────────
+elif st.session_state.modulo_activo == "facturas":
+    titulo_modulo("Análisis de Facturas", "Extrae datos de facturas y exporta a Excel")
+    client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
+
+    if "facturas_df" not in st.session_state:
+        st.session_state.facturas_df = None
+
+    tab_fup, tab_ftab = st.tabs(["📤 Cargar facturas", "📊 Tabla de resultados"])
+
+    with tab_fup:
+        archivos_fac = st.file_uploader(
+            "Sube tus facturas (PDF)", type=["pdf"],
+            accept_multiple_files=True,
+            help="Puedes subir varias facturas a la vez"
+        )
+        st.info("Claude extrae automáticamente: proveedor, N° factura, fecha, montos sin y con IGV, ítems y condiciones de pago.")
+
+        if archivos_fac and st.button("Analizar facturas", type="primary", use_container_width=True):
+            resultados_fac = []
+            pb_fac = st.progress(0)
+            stxt_fac = st.empty()
+            for idx, fac in enumerate(archivos_fac):
+                stxt_fac.markdown(f"Analizando **{fac.name}** ({idx+1}/{len(archivos_fac)})...")
+                try:
+                    reader_fac = PdfReader(fac)
+                    texto_fac  = "\n".join(p.extract_text() or "" for p in reader_fac.pages)
+
+                    prompt_fac = (
+                        f"Eres un experto en contabilidad. Analiza esta factura y responde EXCLUSIVAMENTE con JSON válido.\n\n"
+                        f"Formato JSON requerido:\n"
+                        f'{{"numero_factura":"","fecha_emision":"","fecha_vencimiento":"",'
+                        f'"proveedor":"","ruc_proveedor":"","cliente":"","ruc_cliente":"",'
+                        f'"descripcion_principal":"","cantidad":1,"unidad":"",'
+                        f'"precio_unitario_sin_igv":0,"subtotal_sin_igv":0,'
+                        f'"igv":0,"total_con_igv":0,"moneda":"",'
+                        f'"condicion_pago":"","orden_compra":"","observaciones":""}}\n\n'
+                        f"Instrucciones:\n"
+                        f"- Todos los montos deben ser números (sin símbolos ni comas de miles, usa punto decimal)\n"
+                        f"- Si un dato no aparece: escribe 'No especifica' (o 0 para montos)\n"
+                        f"- descripcion_principal: el ítem o servicio principal de la factura\n\n"
+                        f"Factura:\n{preparar_texto_documento(texto_fac)}"
+                    )
+                    msg_fac = client.messages.create(
+                        model="claude-haiku-4-5-20251001", max_tokens=1000,
+                        messages=[{"role": "user", "content": prompt_fac}]
+                    )
+                    datos_fac = limpiar_json(msg_fac.content[0].text)
+                    datos_fac["Archivo"] = fac.name
+                    resultados_fac.append(datos_fac)
+                except Exception as e:
+                    resultados_fac.append({"Archivo": fac.name, "Error": str(e)})
+                pb_fac.progress((idx + 1) / len(archivos_fac))
+
+            stxt_fac.empty()
+            pb_fac.empty()
+            st.session_state.facturas_df = pd.DataFrame(resultados_fac)
+            st.success(f"Se analizaron {len(resultados_fac)} factura(s).")
+            st.rerun()
+
+    with tab_ftab:
+        df_fac = st.session_state.facturas_df
+        if df_fac is None or df_fac.empty:
+            st.info("Sube y analiza facturas para ver los resultados aquí.")
+        else:
+            col_met1, col_met2, col_met3, col_met4 = st.columns(4)
+            total_sin = pd.to_numeric(df_fac.get("subtotal_sin_igv", pd.Series([])), errors="coerce").sum()
+            total_igv = pd.to_numeric(df_fac.get("igv", pd.Series([])), errors="coerce").sum()
+            total_con = pd.to_numeric(df_fac.get("total_con_igv", pd.Series([])), errors="coerce").sum()
+            with col_met1: st.metric("Facturas analizadas", len(df_fac))
+            with col_met2: st.metric("Total sin IGV", f"{total_sin:,.2f}")
+            with col_met3: st.metric("IGV total", f"{total_igv:,.2f}")
+            with col_met4: st.metric("Total con IGV", f"{total_con:,.2f}")
+
+            columnas_mostrar = [c for c in [
+                "Archivo", "numero_factura", "fecha_emision", "proveedor",
+                "descripcion_principal", "subtotal_sin_igv", "igv", "total_con_igv",
+                "moneda", "condicion_pago"
+            ] if c in df_fac.columns]
+            st.dataframe(df_fac[columnas_mostrar], use_container_width=True, hide_index=True)
+
+            def exportar_excel_facturas(df):
+                buf = io.BytesIO()
+                with pd.ExcelWriter(buf, engine="openpyxl") as writer:
+                    df.to_excel(writer, index=False, sheet_name="Facturas")
+                    ws = writer.sheets["Facturas"]
+                    from openpyxl.styles import Font, PatternFill, Alignment
+                    header_font = Font(bold=True, color="FFFFFF", size=11)
+                    header_fill = PatternFill("solid", fgColor="2E3A45")
+                    for cell in ws[1]:
+                        cell.font = header_font
+                        cell.fill = header_fill
+                        cell.alignment = Alignment(horizontal="center")
+                    for col in ws.columns:
+                        max_len = max((len(str(cell.value or "")) for cell in col), default=10)
+                        ws.column_dimensions[col[0].column_letter].width = min(max_len + 4, 40)
+                return buf.getvalue()
+
+            col_dl1, col_dl2 = st.columns(2)
+            with col_dl1:
+                st.download_button(
+                    "📥 Descargar Excel",
+                    data=exportar_excel_facturas(df_fac),
+                    file_name="Nexora_Facturas.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True
+                )
+            with col_dl2:
+                if st.button("🗑️ Limpiar resultados", use_container_width=True):
+                    st.session_state.facturas_df = None
+                    st.rerun()
