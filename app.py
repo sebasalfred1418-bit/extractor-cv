@@ -128,6 +128,12 @@ st.markdown("""
   [data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.05) !important;
     box-shadow: 8px 0 40px rgba(0,0,0,0.28), inset -1px 0 0 rgba(255,255,255,0.04) !important; }
+  /* Padding interior del sidebar — evita q widgets queden pegados al borde */
+  [data-testid="stSidebarUserContent"],
+  [data-testid="stSidebarUserContent"] > div,
+  [data-testid="stSidebarContent"] > div > div:last-child {
+    padding-left: 10px !important;
+    padding-right: 10px !important; }
   [data-testid="stSidebar"] label,
   [data-testid="stSidebar"] p { color: rgba(240,246,252,0.75) !important; font-weight: 400 !important; }
   [data-testid="stSidebar"] span { color: rgba(240,246,252,0.75) !important; }
@@ -173,7 +179,7 @@ st.markdown("""
   .nx-hist-item.activo .nx-hist-titulo { color: #F0F6FC; font-weight: 500; }
   .nx-hist-fecha { font-family: var(--nx-mono); font-size: 9px; color: rgba(240,246,252,0.28);
     letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
-  .nx-hist-empty { font-size: 11px; color: rgba(240,246,252,0.3); padding: 6px 8px; font-style: italic; }
+  .nx-hist-empty { font-size: 11.5px; color: rgba(240,246,252,0.55); padding: 8px 8px; font-style: italic; }
   div[data-testid="stSidebar"] .nx-hist-btn button {
     border: none !important; background: transparent !important; padding: 2px 4px !important;
     min-height: 0 !important; height: auto !important; color: rgba(240,246,252,0.28) !important;
@@ -321,18 +327,21 @@ st.markdown("""
   .stProgress>div>div { background: var(--accent) !important; border-radius: 4px !important; }
   .stProgress { background: var(--border) !important; border-radius: 4px !important; }
 
-  /* ── SLIDERS — celeste, reemplaza el rojo de Streamlit ── */
-  [data-testid="stSlider"] [role="slider"] {
-    background: #3BADE8 !important; border-color: #3BADE8 !important;
+  /* ── SLIDERS — CSS + attr selector para overridear inline styles de Streamlit ── */
+  [data-testid="stSlider"] [role="slider"],
+  [data-testid="stSlider"] [style*="rgb(255, 75, 75)"],
+  [data-testid="stSlider"] [style*="rgb(255,75,75)"],
+  [data-testid="stSlider"] [style*="rgb(255, 43, 43)"] {
+    background: #3BADE8 !important;
+    background-color: #3BADE8 !important;
+    border-color: #3BADE8 !important;
     box-shadow: 0 0 0 4px rgba(59,173,232,0.2) !important; }
-  [data-testid="stSlider"] [data-baseweb="slider"] div[data-testid="stTickBar"] + div > div:first-child {
-    background: #3BADE8 !important; }
-  [data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(3) {
-    background: #3BADE8 !important; }
-  [data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(5) {
+  [data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(2),
+  [data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(3),
+  [data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(4) > div {
     background: #3BADE8 !important; border-color: #3BADE8 !important; }
-  [data-testid="stSlider"] p { color: #3BADE8 !important; font-family: var(--nx-mono) !important;
-    font-size: 11px !important; }
+  [data-testid="stSlider"] p { color: #3BADE8 !important;
+    font-family: var(--nx-mono) !important; font-size: 11px !important; }
   [data-testid="stSlider"] > label { color: rgba(240,246,252,0.88) !important;
     font-size: 12px !important; font-family: var(--nx-sans) !important; }
 
@@ -481,6 +490,26 @@ st.markdown("""
     .nx-skeleton { animation: none !important; background: #E2E8F0; }
     * { transition-duration: 0.01ms !important; } }
 </style>
+<script>
+(function() {
+  var C = "#3BADE8";
+  function fix() {
+    document.querySelectorAll('[data-testid="stSlider"]').forEach(function(s) {
+      s.querySelectorAll("div,span").forEach(function(el) {
+        var bg = (el.style.backgroundColor||"")+(el.style.background||"");
+        if(bg.indexOf("255, 75")>-1||bg.indexOf("255,75")>-1||
+           bg.indexOf("255, 43")>-1||bg.indexOf("ff4b4b")>-1){
+          el.style.setProperty("background-color",C,"important");
+          el.style.setProperty("background",C,"important");
+          el.style.setProperty("border-color",C,"important");
+        }
+      });
+    });
+  }
+  var n=0,iv=setInterval(function(){fix();if(++n>30)clearInterval(iv);},300);
+  window.addEventListener("load",fix);
+})();
+</script>
 """, unsafe_allow_html=True)
 
 # â”€â”€ LOGIN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -626,24 +655,26 @@ if "historial_item_activo" not in st.session_state: st.session_state.historial_i
 # â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 with st.sidebar:
     st.markdown(f"""
-    <div style="padding:12px 0 8px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-        <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#4A90B8,#2E3A45);
+    <div style="padding:16px 0 10px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+        <div style="width:44px;height:44px;border-radius:11px;
+             background:linear-gradient(135deg,#5B9EC9 0%,#2E6B9E 100%);
              display:flex;align-items:center;justify-content:center;
-             font-size:14px;font-weight:800;color:#FFFFFF;
-             box-shadow:0 3px 8px rgba(46,58,69,0.22);">NX</div>
+             font-size:15px;font-weight:800;color:#FFFFFF;flex-shrink:0;
+             box-shadow:0 0 0 2px rgba(91,158,201,0.35),0 4px 14px rgba(0,0,0,0.40);">NX</div>
         <div>
-          <div style="color:#2E3A45;font-weight:700;font-size:15px;">Nexora</div>
-          <div style="color:#9CA8B0;font-size:9px;letter-spacing:2px;font-family:var(--nx-mono);text-transform:uppercase;">Analiza &middot; Decide &middot; Avanza</div>
+          <div style="color:#F0F6FC;font-weight:700;font-size:16px;line-height:1.2;letter-spacing:-0.2px;">Nexora</div>
+          <div style="color:rgba(240,246,252,0.55);font-size:9px;letter-spacing:2.5px;
+               font-family:var(--nx-mono);text-transform:uppercase;margin-top:2px;">Analiza &middot; Decide &middot; Avanza</div>
         </div>
       </div>
-      <div style="color:#7A8590;font-size:12px;margin-top:8px;">
-        Bienvenido, <strong style="color:#2E3A45;">{name}</strong>
+      <div style="color:rgba(240,246,252,0.52);font-size:11.5px;margin-top:6px;padding-left:2px;">
+        Bienvenido, <strong style="color:rgba(240,246,252,0.88);font-weight:600;">{name}</strong>
       </div>
     </div>""", unsafe_allow_html=True)
     st.divider()
 
-    SIDEBAR_LABEL = "font-family:var(--nx-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#9CA8B0;margin-bottom:10px;"
+    SIDEBAR_LABEL = "font-family:var(--nx-mono);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:rgba(240,246,252,0.55);margin-bottom:10px;"
 
     _opts_mod = ["An\u00e1lisis de CVs", "An\u00e1lisis de Proveedores",
                  "An\u00e1lisis de Contratos", "Generador de RFQ", "An\u00e1lisis de Facturas"]
