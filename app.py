@@ -135,6 +135,9 @@ st.markdown("""
   [data-testid="stSidebar"] h3 { color: #F0F6FC !important; }
   [data-testid="stSidebar"] hr { border-color: rgba(255,255,255,0.07) !important; }
 
+  /* ── NAV — oculta el label "Módulo activo" del radio ── */
+  [data-testid="stSidebar"] .stRadio > label {
+    display: none !important; }
   /* ── NAV — motion-principles: nav is high-freq → keep transitions minimal ── */
   .stRadio [role="radiogroup"] { gap: 1px !important; }
   .stRadio label {
@@ -317,6 +320,21 @@ st.markdown("""
 
   .stProgress>div>div { background: var(--accent) !important; border-radius: 4px !important; }
   .stProgress { background: var(--border) !important; border-radius: 4px !important; }
+
+  /* ── SLIDERS — celeste, reemplaza el rojo de Streamlit ── */
+  [data-testid="stSlider"] [role="slider"] {
+    background: #3BADE8 !important; border-color: #3BADE8 !important;
+    box-shadow: 0 0 0 4px rgba(59,173,232,0.2) !important; }
+  [data-testid="stSlider"] [data-baseweb="slider"] div[data-testid="stTickBar"] + div > div:first-child {
+    background: #3BADE8 !important; }
+  [data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(3) {
+    background: #3BADE8 !important; }
+  [data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(5) {
+    background: #3BADE8 !important; border-color: #3BADE8 !important; }
+  [data-testid="stSlider"] p { color: #3BADE8 !important; font-family: var(--nx-mono) !important;
+    font-size: 11px !important; }
+  [data-testid="stSlider"] > label { color: rgba(240,246,252,0.88) !important;
+    font-size: 12px !important; font-family: var(--nx-sans) !important; }
 
   /* ── METRIC CARDS — animate-skill: -4px lift, stronger hover shadow ── */
   .metric-card {
