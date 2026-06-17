@@ -310,6 +310,29 @@ st.markdown("""
     outline: 2px solid var(--accent) !important; outline-offset: 2px !important; }
   .stButton>button:disabled {
     opacity: 0.5 !important; cursor: not-allowed !important; transform: none !important; }
+  /* Fix: .stApp p/span !important sobreescribe texto de botones — neutralizar */
+  .stButton>button[kind="primary"] p,
+  .stButton>button[kind="primary"] span,
+  .stButton>button[kind="primary"] div { color: #F0F6FC !important; }
+  .stButton>button:not([kind="primary"]) p,
+  .stButton>button:not([kind="primary"]) span { color: #334155 !important; }
+  .stDownloadButton>button p,
+  .stDownloadButton>button span { color: var(--accent) !important; }
+  @media (hover: hover) and (pointer: fine) {
+    .stDownloadButton>button:hover p,
+    .stDownloadButton>button:hover span { color: #FFFFFF !important; } }
+  /* File uploader texto visible */
+  [data-testid="stFileUploaderDropzone"] p,
+  [data-testid="stFileUploaderDropzone"] span,
+  [data-testid="stFileUploaderDropzone"] small,
+  [data-testid="stFileUploaderDropzone"] div { color: var(--text-secondary) !important; }
+  [data-testid="stFileUploaderDropzone"] button p,
+  [data-testid="stFileUploaderDropzone"] button span { color: var(--accent) !important; }
+  /* Sidebar button: ya tiene su color pero aseguramos el texto */
+  [data-testid="stSidebar"] .stButton>button p,
+  [data-testid="stSidebar"] .stButton>button span { color: rgba(240,246,252,0.65) !important; }
+  [data-testid="stSidebar"] .stButton>button:hover p,
+  [data-testid="stSidebar"] .stButton>button:hover span { color: #F0F6FC !important; }
 
   .stDownloadButton>button {
     background: var(--surface) !important; border: 1.5px solid var(--accent) !important;
@@ -812,6 +835,50 @@ with st.sidebar:
         st.markdown(f"<p style='{SIDEBAR_LABEL}'>Matriz econ\u00f3mica</p>", unsafe_allow_html=True)
         peso_matriz_costo = st.slider("Costos de la propuesta", 0, 100, 70)
         peso_matriz_pago  = st.slider("Condici\u00f3n de pago", 0, 100, 30)
+
+    elif st.session_state.modulo_activo == "contratos":
+        st.markdown(f'<p style="{SIDEBAR_LABEL}">Sobre este m&oacute;dulo</p>', unsafe_allow_html=True)
+        st.markdown("""
+        <div style="font-size:11px;line-height:1.8;color:rgba(240,246,252,0.55);">
+          <p style="margin:0 0 10px;">El AI analiza contratos y extrae los puntos clave de forma autom&aacute;tica.</p>
+          <div style="font-size:9.5px;letter-spacing:1.5px;color:rgba(240,246,252,0.32);text-transform:uppercase;font-family:monospace;margin-bottom:5px;">Extrae autom&aacute;ticamente</div>
+          <ul style="margin:0;padding-left:12px;color:rgba(240,246,252,0.50);font-size:10.5px;line-height:1.9;">
+            <li>Partes y vigencia del contrato</li>
+            <li>Cl&aacute;usulas clave y penalidades</li>
+            <li>Montos y condiciones</li>
+            <li>Obligaciones y riesgos</li>
+            <li>Jurisdicci&oacute;n y ley aplicable</li>
+          </ul>
+        </div>""", unsafe_allow_html=True)
+
+    elif st.session_state.modulo_activo == "rfq":
+        st.markdown(f'<p style="{SIDEBAR_LABEL}">C&oacute;mo funciona</p>', unsafe_allow_html=True)
+        st.markdown("""
+        <div style="font-size:11px;line-height:1.8;color:rgba(240,246,252,0.55);">
+          <p style="margin:0 0 10px;">Genera documentos RFQ listos para enviar a proveedores, redactados por IA.</p>
+          <div style="font-size:9.5px;letter-spacing:1.5px;color:rgba(240,246,252,0.32);text-transform:uppercase;font-family:monospace;margin-bottom:5px;">Tips para mejor resultado</div>
+          <ul style="margin:0;padding-left:12px;color:rgba(240,246,252,0.50);font-size:10.5px;line-height:1.9;">
+            <li>S&eacute; espec&iacute;fico en la descripci&oacute;n del producto</li>
+            <li>Incluye especificaciones t&eacute;cnicas detalladas</li>
+            <li>Define plazos y condiciones de entrega</li>
+            <li>Agrega certificaciones requeridas</li>
+          </ul>
+        </div>""", unsafe_allow_html=True)
+
+    elif st.session_state.modulo_activo == "facturas":
+        st.markdown(f'<p style="{SIDEBAR_LABEL}">Datos extra&iacute;dos</p>', unsafe_allow_html=True)
+        st.markdown("""
+        <div style="font-size:11px;line-height:1.8;color:rgba(240,246,252,0.55);">
+          <p style="margin:0 0 10px;">Analiza facturas PDF o imagen y extrae los campos clave.</p>
+          <div style="font-size:9.5px;letter-spacing:1.5px;color:rgba(240,246,252,0.32);text-transform:uppercase;font-family:monospace;margin-bottom:5px;">Campos detectados</div>
+          <ul style="margin:0;padding-left:12px;color:rgba(240,246,252,0.50);font-size:10.5px;line-height:1.9;">
+            <li>Emisor, RUC / NIF y receptor</li>
+            <li>Monto, IGV / IVA y total</li>
+            <li>Fecha de emisi&oacute;n y vencimiento</li>
+            <li>Condiciones de pago</li>
+            <li>Items y descripciones de l&iacute;nea</li>
+          </ul>
+        </div>""", unsafe_allow_html=True)
 
     st.divider()
     authenticator.logout("Cerrar sesi\u00f3n", "sidebar")
