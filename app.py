@@ -148,15 +148,25 @@ st.markdown("""
   [data-testid="stSidebar"] .nx-sb-sub     { color: rgba(240,246,252,0.48) !important; }
   [data-testid="stSidebar"] .nx-sb-muted   { color: rgba(240,246,252,0.48) !important; }
   [data-testid="stSidebar"] .nx-sb-name    { color: rgba(240,246,252,0.90) !important; font-weight: 600 !important; }
-  /* Dividers — ultra-sutiles, solo 1px con 6% blanco */
+  /* Dividers en sidebar — completamente ocultos */
   [data-testid="stSidebar"] hr,
-  [data-testid="stSidebar"] [data-testid="stDivider"] {
-    background-color: rgba(255,255,255,0.06) !important;
-    border: none !important; border-top: none !important;
-    height: 1px !important; margin: 4px 0 !important; }
+  [data-testid="stSidebar"] [data-testid="stDivider"],
   [data-testid="stSidebar"] [data-testid="stDivider"] > * {
-    background-color: rgba(255,255,255,0.06) !important;
-    border: none !important; }
+    display: none !important; }
+  /* Boton cerrar sesion — adaptado al sidebar oscuro */
+  [data-testid="stSidebar"] .stButton > button {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+    color: rgba(240,246,252,0.65) !important;
+    font-size: 12px !important; font-weight: 400 !important;
+    padding: 6px 14px !important;
+    box-shadow: none !important;
+    transition: background 150ms, color 150ms !important; }
+  [data-testid="stSidebar"] .stButton > button:hover {
+    background: rgba(255,255,255,0.10) !important;
+    border-color: rgba(255,255,255,0.18) !important;
+    color: #F0F6FC !important;
+    transform: none !important; }
 
   /* ── NAV — oculta el label "Módulo activo" del radio ── */
   [data-testid="stSidebar"] .stRadio > label {
@@ -777,12 +787,7 @@ with st.sidebar:
         educacion_req   = st.selectbox("Educaci\u00f3n m\u00ednima", ["Cualquiera","T\u00e9cnico","Bachiller","Licenciatura","Maestr\u00eda","Doctorado"])
         habilidades_req = st.text_area("Habilidades requeridas (una por l\u00ednea)", placeholder="Python\nExcel\nSQL")
         idioma_req      = st.selectbox("Idioma requerido", ["No requerido","Ingl\u00e9s","Ingl\u00e9s avanzado","Portugu\u00e9s","Franc\u00e9s"])
-        st.divider()
-        st.markdown(f"<p style='{SIDEBAR_LABEL}'>Pesos de puntuaci\u00f3n</p>", unsafe_allow_html=True)
-        peso_exp = st.slider("Experiencia", 0, 100, 35)
-        peso_edu = st.slider("Educaci\u00f3n",   0, 100, 25)
-        peso_hab = st.slider("Habilidades", 0, 100, 30)
-        peso_idi = st.slider("Idiomas",     0, 100, 10)
+
     elif st.session_state.modulo_activo == "proveedores":
         st.markdown(f"<p style='{SIDEBAR_LABEL}'>Configurar b\u00fasqueda</p>", unsafe_allow_html=True)
         pais_busqueda   = st.text_input("Pa\u00eds o regi\u00f3n", placeholder="Ej: Per\u00fa, LATAM, Espa\u00f1a")
@@ -1668,11 +1673,15 @@ if st.session_state.modulo_activo == "cvs":
                 f'"Puntaje":0,"Nivel_Potencial":"","Justificacion":"","Cumple_Requisitos":false,'
                 f'"Requisitos_Cumplidos":"","Requisitos_Faltantes":""}}\n\n'
                 f'Instrucciones:\n'
-                f'- Calcula el Puntaje del 1 al 10 ponderando: experiencia ({peso_exp}%), educacion ({peso_edu}%), '
-                f'habilidades: {", ".join(habilidades_lista) or "no especificadas"} ({peso_hab}%), '
-                f'idiomas: {idioma_req} ({peso_idi}%)\n'
-                f'- Calculo_Interno: muestra aqui el desglose matematico completo del calculo del puntaje '
-                f'(formula, porcentajes, suma). Este campo es solo para verificacion interna, no se muestra al usuario.\n'
+                f'- Calcula el Puntaje del 1 al 10 usando tu propio criterio para determinar los pesos '
+                f'(experiencia + educacion + habilidades + idiomas = 100%). Adapta los pesos al puesto '
+                f'"{puesto}": si requiere habilidades tecnicas especificas ({len(habilidades_lista)} requeridas), '
+                f'dalas mas peso; si el idioma es critico ({idioma_req}), refleja eso; '
+                f'si la educacion formal define el perfil ({educacion_req}), aumenta su peso. '
+                f'Sé inteligente y contextual, no uses una formula fija.\n'
+                f'- Calculo_Interno: muestra los pesos que decidiste (ej: exp 40%, edu 20%, hab 30%, idi 10%), '
+                f'el desglose matematico del puntaje (formula, sub-puntajes, suma final). '
+                f'Solo para verificacion interna, el usuario no lo ve.\n'
                 f'- Nivel_Potencial: "Alto" si Puntaje >= 7, "Medio" si >= 4, "Bajo" si < 4\n'
                 f'- Cumple_Requisitos: true si experiencia >= {experiencia_min} y Puntaje >= 6\n'
                 f'- Experiencia_Anos: solo numero entero\n'
