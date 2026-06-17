@@ -744,9 +744,12 @@ with st.sidebar:
     _map_mod  = {"An\u00e1lisis de CVs": "cvs", "An\u00e1lisis de Proveedores": "proveedores",
                  "An\u00e1lisis de Contratos": "contratos", "Generador de RFQ": "rfq",
                  "An\u00e1lisis de Facturas": "facturas"}
-    _idx_mod  = list(_map_mod.values()).index(st.session_state.modulo_activo) \
-                if st.session_state.modulo_activo in _map_mod.values() else 0
-    modulo = st.radio("M\u00f3dulo activo", _opts_mod, index=_idx_mod)
+    _rev_mod  = {v: k for k, v in _map_mod.items()}
+    # Fix double-click: usar key= en lugar de index= para que Streamlit
+    # gestione el estado internamente sin competir con los clicks del usuario
+    if "nx_nav" not in st.session_state:
+        st.session_state["nx_nav"] = _rev_mod.get(st.session_state.modulo_activo, _opts_mod[0])
+    modulo = st.radio("M\u00f3dulo activo", _opts_mod, key="nx_nav")
     st.session_state.modulo_activo = _map_mod[modulo]
     st.divider()
 
@@ -789,11 +792,13 @@ with st.sidebar:
                             if mod_key == "cvs":
                                 st.session_state.df_candidatos = pd.DataFrame(datos)
                                 st.session_state.modulo_activo = "cvs"
+                                st.session_state["nx_nav"] = "An\u00e1lisis de CVs"
                             elif mod_key == "proveedores":
                                 st.session_state.proveedores_web = datos.get("proveedores_web", [])
                                 if datos.get("df_proveedores") is not None:
                                     st.session_state.df_proveedores = pd.DataFrame(datos["df_proveedores"])
                                 st.session_state.modulo_activo = "proveedores"
+                                st.session_state["nx_nav"] = "An\u00e1lisis de Proveedores"
                             elif mod_key == "propuestas":
                                 st.session_state.df_propuestas = pd.DataFrame(datos)
                                 if st.session_state.df_proveedores is None:
@@ -802,6 +807,7 @@ with st.sidebar:
                                     st.session_state.df_proveedores = pd.concat(
                                         [st.session_state.df_proveedores, pd.DataFrame(datos)], ignore_index=True)
                                 st.session_state.modulo_activo = "proveedores"
+                                st.session_state["nx_nav"] = "An\u00e1lisis de Proveedores"
                             st.session_state.historial_item_activo = (mod_key, item_id)
                             st.rerun()
                 with c2:
