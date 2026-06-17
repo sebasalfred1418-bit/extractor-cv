@@ -142,6 +142,15 @@ st.markdown("""
     border-right: none !important;
     box-shadow: 4px 0 24px rgba(0,0,0,0.32) !important;
     min-height: 100vh !important; }
+  /* Ocultar el header nativo de Streamlit (barra con botón colapsar) — causa el marco visible */
+  [data-testid="stSidebarHeader"] {
+    background: #1A2736 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    height: auto !important; }
   /* Sidebar content fill 100% height — evita el fondo celeste debajo del contenido */
   [data-testid="stSidebarContent"],
   [data-testid="stSidebarUserContent"],
@@ -2627,7 +2636,7 @@ elif st.session_state.modulo_activo == "facturas":
             accept_multiple_files=True,
             help="Puedes subir varias facturas a la vez"
         )
-        st.info("Claude extrae automáticamente: proveedor, N° factura, fecha, montos sin y con IGV, ítems y condiciones de pago.")
+        st.info("Nexora extrae automáticamente: proveedor, N° factura, fecha, montos sin y con IGV, ítems y condiciones de pago.")
 
         if archivos_fac and st.button("Analizar facturas", type="primary", use_container_width=True):
             resultados_fac = []
